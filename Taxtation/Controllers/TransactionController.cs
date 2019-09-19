@@ -121,13 +121,15 @@ namespace Taxtation.Controllers
                 for (int i = 0; i < obj.detail.detail.Count; i++)
                 {
                     var j = Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]);
-                    if (Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]) != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate>0)
+                    if (obj.detail.detail[i].ItmId != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate>0)
                     {
                         count++;
                     }
                 }
                 if(count > 0)
                 {
+                    obj.master.Id = user.Id;
+                    obj.master.UserName = user.UserName;
                     obj.master.EnterBy = user.UserName;
                     obj.master.EnterDate = System.DateTime.Now;
                     db.TxtpurchaseMaster.Add(obj.master);
@@ -137,9 +139,10 @@ namespace Taxtation.Controllers
                     {
                         if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
                         {
+                            obj.detail.detail[i].Id = user.Id;
+                            obj.detail.detail[i].UserName = user.UserName;
                             obj.detail.detail[i].PurSerialNo = i;
                             obj.detail.detail[i].PurId = obj.master.PurId;
-                            obj.detail.detail[i].ItmId = Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]);
                             db.TxtpurchaseDetail.Add(obj.detail.detail[i]);
                             db.SaveChanges();
                         }
@@ -151,7 +154,7 @@ namespace Taxtation.Controllers
             {
 
             }
-            return View();
+            return RedirectToAction("showPurchase");
         }
 
 

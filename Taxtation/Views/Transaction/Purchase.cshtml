@@ -77,7 +77,7 @@
         </div>
         <div class="col-md-4">
             Exchange Rate:
-            <input type="number" asp-for="master.PurExRate" class="form-control" />
+            <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" value="1" class="form-control" />
         </div>
     </div>
     <div class="row">
@@ -168,36 +168,36 @@
                                         <option value=@j.ItmId>@j.ItmName</option>}
                                 </select>
                             </td>
-                            <td><input type="text" asp-for="detail.pdef[i].UOM" class="form-control" style="width:70px;"/></td>
-                            <td><input type="number" asp-for="detail.pdef[i].lastPrice" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.pdef[i].subAmount" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="detail.pdef[i].UOM" readonly="readonly" class="form-control" style="width:70px;"/></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].lastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].subAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td>
-                                <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeExcise(this)" style="width:230px;">
-                                    <option>Select</option>@foreach (var j in Model.lstExcise)
+                                <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
                                     {
                                         <option value=@j.TaxId>@j.TaxName</option>}
                                 </select>
                             </td>
-                            <td><input type="number" asp-for="detail.detail[i].PurExPer" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurExAmt" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.pdef[i].AmtAfterExcise" class="form-control" style="width:120px;" /></td>
-                            <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeDiscount(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeDiscount(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurDiscountAmt" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.pdef[i].AmtAfterDiscount" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td>
-                                <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeTax(this)" class="form-control" style="width:230px;">
+                                <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
                                     <option value="-1">Select</option> @foreach (var j in Model.lstTax)
                                     {
                                         <option value=@j.TaxId>@j.TaxName</option>}
                                 </select>
                             </td>
-                            <td><input type="number" asp-for="detail.detail[i].PurTaxPer" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurTaxAmt" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurNetAmt" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" asp-for="detail.detail[i].PurGrossAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
                         </tr>
                     }
@@ -210,140 +210,138 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<script>
-    function changeQuantityAndRate(QtyRate) {
-        
-        var rowNo = QtyRate.dataset.rowno;
-        var qty1 = document.getElementById("detail_detail_" + rowNo + "__PurQty");
-        var qty = $('#detail_detail_' + rowNo + '__PurQty').val();
-        var rate = $('#detail_detail_' + rowNo + '__PurRate').val();
-        if (qty != '' && rate != '') {
-            $('#detail_pdef_' + rowNo + '__subAmount').val(parseFloat(qty) * parseFloat(rate));
-        }
-    }
-</script>
-
 
 
 @section Scripts{
 
     <script type="text/javascript">
         function changeItem(item) {
-            debugger;
-            var ItmId = item.id;
             var trNo = item.dataset.rowno;
-
-            //var ItmIdSplit = ItmId.split('');
-            //var newId = item.name;
-            //var no = $('#myTable tr').id;
-            //for (var i = 0; i < ItmIdSplit.length - 5; i++) { newId += ItmIdSplit[i]; }
-            
-            $.ajax({
-                type: 'GET',
-                url: '/Transaction/changeItem',
-                data: { id: item.value },
-                dataType: 'json',
-                contentType: "application/json; charset=utf-8",
-                success: function (result) {
-                    console.log(result);
-                    $('#detail_pdef_' + trNo + '__UOM').val(result.itmUom);
-                    $('#detail_pdef_' + trNo + '__lastPrice').val(result.itmSp);
-                },
-                error: function () {
-
-
-                }
-            })
-        }
-
-        function changeExcise(Excise)
-        {
-            var rowNo = Excise.dataset.rowno;
-            var SubAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
-            var ExciseAmount = $('#detail_detail_' + rowNo + '__PurExAmt');
-            $.ajax({
-                type: 'GET',
-                url: '/Transaction/changeTax',
-                data: { id: Excise.value },
-                dataType: 'json',
-                contentType: "application/json; charset=utf-8",
-                success: function (result) {
-                    $('#detail_detail_' + rowNo + '__PurExPer').val(result.taxPercent);
-                    var ExAmt = parseFloat(SubAmount) * parseFloat(result.taxPercent) / parseFloat(100);
-                    $('#detail_detail_' + rowNo + '__PurExAmt').val(ExAmt);
-                    $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(SubAmount) + ((parseFloat(SubAmount) * parseFloat(result.taxPercent)) / 100)));
-                },
-                error: function () {
-                }
-            })            
-        }
-
-
-        function changeDiscount(discount)
-        {
-            debugger;
-            var rowNo = discount.dataset.rowno;
-            var amtAfterExcise = document.getElementById("detail_pdef_" + rowNo + "__AmtAfterExcise").value;
-            var discType = document.getElementById("detail_detail_" + rowNo + "__PurDisType").value;
-            var disc = document.getElementById("detail_detail_" + rowNo + "__PurDiscountPer").value;
-            var discAmount = document.getElementById("detail_detail_" + rowNo + "__PurDiscountAmt").value;
-            var amtAfterDisc = document.getElementById("detail_pdef_" + rowNo + "__AmtAfterDiscount").value;
-
-            if (amtAfterExcise !='' && disc != '')
-            {
-                if (discType == "PERCENT")
-                {
-                    $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(amtAfterExcise * disc / 100));
-                    $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - (amtAfterExcise * disc / 100)));
-                }
-                if (discType == "AMOUNT")
-                {
-                    $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(disc));
-                    $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - disc));
-                }
+            if (item.value != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeItem',
+                    data: { id: item.value },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_pdef_' + trNo + '__UOM').val(result.itmUom);
+                        $('#detail_pdef_' + trNo + '__lastPrice').val(result.itmSp);
+                    },
+                    error: function () {
+                    }
+                })
+            }
+            else {
+                $('#detail_pdef_' + trNo + '__UOM').val('');
+                $('#detail_pdef_' + trNo + '__lastPrice').val('');
             }
         }
 
-        function changeTax(tax) {
-            var rowNo = tax.dataset.rowno;
-            var AmountAfterDiscount = document.getElementById("detail_pdef_" + rowNo + "__AmtAfterDiscount").value;
+        function changeQuantityAndRate(QtyRate) {
+            debugger;
+            var rowNo = QtyRate.dataset.rowno;
+            var ExciseSlab = $('#detail_detail_' + rowNo + '__ExciseId').val();
+            var TaxSlab = $('#detail_detail_' + rowNo + '__TaxId').val();
+            if (ExciseSlab != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTax',
+                    data: { id: ExciseSlab },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_detail_' + rowNo + '__PurExPer').val(result.taxPercent);
+                        var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                        $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                    },
+                    error: function () {
+                    }
+                })        
+            }
 
-            $.ajax({
-                type: 'GET',
-                url: '/Transaction/changeTax',
-                data: { id: tax.value },
-                dataType: 'json',
-                contentType: "application/json; charset=utf-8",
-                success: function (result) {
-                    
-                    $('#detail_detail_' + rowNo + '__PurTaxPer').val(result.taxPercent);
-                    var ExAmt = parseFloat(AmountAfterDiscount) * parseFloat(result.taxPercent) / parseFloat(100);
-                    $('#detail_detail_' + rowNo + '__PurTaxAmt').val(ExAmt);
-                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(AmountAfterDiscount) + parseFloat(ExAmt));
-                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val(parseFloat(AmountAfterDiscount) + parseFloat(ExAmt));
-                },
-                error: function () {
+            if (TaxSlab != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTax',
+                    data: { id: TaxSlab },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_detail_' + rowNo + '__PurTaxPer').val(result.taxPercent);
+                        var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                        $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                    },
+                    error: function () {
+                    }
+                })
+            }
+
+            var ExhRate = $('#master_PurExRate').val();
+            var qty = $('#detail_detail_' + rowNo + '__PurQty').val();
+            var rate = $('#detail_detail_' + rowNo + '__PurRate').val();
+            var ExcPercent = $('#detail_detail_' + rowNo + '__PurExPer').val();
+            var discount = $('#detail_detail_' + rowNo + '__PurDiscountPer').val();
+            var Vat = $('#detail_detail_' + rowNo + '__PurTaxPer').val();
+            if (qty != '' && rate != '') {
+                $('#detail_pdef_' + rowNo + '__subAmount').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_detail_' + rowNo + '__PurNetAmt').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(qty) * parseFloat(rate) * parseFloat(ExhRate)).toFixed(2));
+                var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                if (ExcPercent != '') {
+                    $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(ExcPercent) / parseFloat(100)).toFixed(2));
+                    $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(subAmount) + ((parseFloat(subAmount) * parseFloat(ExcPercent)) / 100)).toFixed(2));
+                    var afterExcise = $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val();
+                    $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val((parseFloat(afterExcise)).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(afterExcise).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(afterExcise) * parseFloat(ExhRate)).toFixed(2));
                 }
-            })            
+                if (discount != '') {
+                    var amtAfterExcise = document.getElementById("detail_pdef_" + rowNo + "__AmtAfterExcise").value;
+                    var discType = document.getElementById("detail_detail_" + rowNo + "__PurDisType").value;
+                    if (discType == "PERCENT") {
+                        $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(amtAfterExcise * discount / 100));
+                        $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - (amtAfterExcise * discount / 100)));
+                    }
+                    if (discType == "AMOUNT") {
+                        $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(discount));
+                        $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - discount));
+                    }
+                    var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(AmtAfterDisc).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(AmtAfterDisc) * parseFloat(ExhRate)).toFixed(2));
+                }
+                if (Vat != '') {
+                    var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                    $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100)).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val(((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))) * parseFloat(ExhRate)).toFixed(2));
+                }
+            }
+            else {
+                $('#detail_pdef_' + rowNo + '__subAmount').val('');
+                $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val('');
+                $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val('');
+                $('#detail_detail_' + rowNo + '__PurNetAmt').val('');
+                $('#detail_detail_' + rowNo + '__PurGrossAmt').val('');
+            }
+        }
 
+        function ExchangeRate()
+        {
+            debugger;
+            var ExRate = $('#master_PurExRate').val();
+            var rows = $('#myTable tbody tr').length;
+            for (var i = 0; i < rows; i++) {
+                var NetAmount = $('#detail_detail_' + i + '__PurNetAmt').val();
+                if (NetAmount != '') {
+                    $('#detail_detail_' + i + '__PurGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
+                }
+            }
         }
 
     </script>
 
 }
-
-
-@*<script>
-
-    @if(Model.detail.detail!=null)
-    {
-        @for (int i = 0; i < Model.detail.detail.Count; i++)
-        {
-
-
-        }
-    }
-
-
-
-</script>*@
