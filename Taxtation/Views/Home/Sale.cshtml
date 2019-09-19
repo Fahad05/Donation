@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Taxtation.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div style="margin-left:45%;margin-top:20px;">
+        <img src="~/images/sales.gif" />
+    </div>
+    <div style="margin-left:40%;margin-top:180px;">
+        <ul class="nav navbar-nav">
+            <li>
+                <a asp-action="showSales" asp-controller="Transaction" class="w3-bar-item w3-button" style="color:#EA70B1"><img src="~/images/sales.png" class="ImgStyleMain" style="background-color:#EA70B1;" /><br /> SALE DETAIL</a>
+            </li>
+            <li>
+                <a asp-action="showCreditNote" asp-controller="Transaction" class="w3-bar-item w3-button" style="color:#EA70B1"><img src="~/images/note.png" class="ImgStyleMain" style="background-color:#EA70B1;" /><br /> CREDIT NOTE</a>
+            </li>
+        </ul>
+    </div>
+}
+

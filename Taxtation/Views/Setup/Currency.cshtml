@@ -1,0 +1,65 @@
+﻿@model Taxtation.Models.TxscurrencyDetail
+
+<h4>Currency Detail</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Currency Detail</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            ×
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("Currency", "Setup", FormMethod.Post))
+                        {
+                            <div>
+                                @Html.TextBoxFor(model => model.CurId, new { @class = "form-control", @Hidden = "Hidden" })
+                            </div>
+                            <div>
+                                Name:
+                                @Html.TextBoxFor(model => model.CurName, new { @class = "form-control", @required = true })
+                            </div>
+                            <div>
+                                @Html.CheckBox("CurActive", Model.CurActive.Value)Active
+                                @Html.CheckBox("CurIsLocal", Model.CurIsLocal.Value)Is Local
+                            </div>
+                            <div>
+                                Abbriviation:
+                                @Html.TextBoxFor(model => model.CurAbbr, new { @class = "form-control", @required = true })
+                            </div>
+
+                            <br />
+                            <div>
+                                @if (ViewData["_Save"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                                }
+                                @if (ViewData["_Update"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)"  class="btnControlDML">Update</button>
+                                }
+                                 <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
+                                    Hide
+                                </button>
+                            </div>
+                           
+                        }
+                    </div>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

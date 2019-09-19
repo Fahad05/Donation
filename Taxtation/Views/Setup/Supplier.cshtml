@@ -1,0 +1,152 @@
+﻿@model Taxtation.ViewModel.TXSSupplierDetailView
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Supplier Detail</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            ×
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("Supplier", "Setup", FormMethod.Post))
+                        {
+                            <div>
+                                <input type="text" asp-for="master.SupId" class="form-control" hidden="hidden" />
+                            </div>
+                            <div>
+                                Type:
+                                <select asp-for="master.SupType" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    <option value="MANUFACTURE">MANUFACTURE</option>
+                                    <option value="TRADER">TRADER</option>
+                                    <option value="SERVICE PROVIDER">SERVICE PROVIDER</option>
+                                </select>
+                            </div>
+                            <div>
+                                Name:
+                                <input type="text" asp-for="master.SupName" class="form-control" required="required" />
+                                @Html.CheckBox("SupActive", Model.master.SupActive.Value)Active
+                            </div>
+                            <div>
+                                Abbriviation:
+                                <input type="text" asp-for="master.SupAbbr" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Person:
+                                <input type="text" asp-for="master.SupPerson" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Address:
+                                <input type="text" asp-for="master.SupAddress" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Phone No:
+                                <input type="text" asp-for="master.SupPhNo" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Fax:
+                                <input type="text" asp-for="master.SupFaxNo" class="form-control" required="required" />
+                            </div>
+
+                            <div>
+                                Email:
+                                <input type="email" asp-for="master.SupEmail" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                NTN:
+                                <input type="number" asp-for="master.SupNtn" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                STRN:
+                                <input type="number" asp-for="master.SupStrn" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Country:
+                                <select asp-for="master.SupCountry" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstCountry)
+                                    {
+                                        <option value=@j.CouCode>@j.CouName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                City:
+                                <select asp-for="master.SupCity" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstCity)
+                                    {
+                                        <option value=@j.CtyCode>@j.CtyName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Credit Days:
+                                <input type="number" asp-for="master.SupCrDays" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Description:
+                                <input type="text" asp-for="master.SupDesc" class="form-control" />
+                            </div>
+                            <br />
+                            <div>
+                                @if (ViewData["_Save"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                                }
+                                @if (ViewData["_Update"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                                }
+                                <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
+                                    Hide
+                                </button>
+                            </div>
+
+                        }
+                    </div>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}
+<script>
+    $(document).ready(function () {
+        $('#master_SupCountry').change(function () {
+            var couCode = document.getElementById("master_SupCountry").value;
+            var city = "<option value='-1'>Select</option>";
+            $.ajax({
+                type: 'GET',
+                url: '/Setup/lstCity',
+                data: { id: couCode },
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    for (var i = 0; i < result.length; i++) {
+                        city += "<option value='" + result[i].ctyCode + "'>" + result[i].ctyName + "</option>";
+                    }
+                    $('#master_SupCity option').remove();
+                    $('#master_SupCity').append(city);
+                },
+                error: function () {
+
+
+                }
+            })
+        })
+    })
+</script>

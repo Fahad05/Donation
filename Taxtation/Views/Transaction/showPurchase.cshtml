@@ -1,0 +1,129 @@
+﻿@model Taxtation.ViewModel.TXTPurchaseDetailView
+@{
+    ViewData["Title"] = "showPurchase";
+    var query = from mas in Model.lstMaster
+                join det in Model.detail.detail on mas.PurId equals det.PurId
+                join bank in Model.lstBank on mas.BnkId equals bank.BnkId into banks
+                from bank in banks.DefaultIfEmpty()
+                join currency in Model.lstCurrency on mas.CurId equals currency.CurId into currencies
+                from currency in currencies.DefaultIfEmpty()
+                join supplier in Model.lstSupplier on mas.SupId equals supplier.SupId into suppliers
+                from supplier in suppliers.DefaultIfEmpty()
+                join store in Model.lstStore on mas.StrId equals store.StrId into stores
+                from store in stores.DefaultIfEmpty()
+                select new { mas, det, bank, currency, supplier, store };
+}
+
+<div class="MainDiv">
+    <div>
+        <h2>List Purchase</h2>
+    </div>
+    <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Purchase","Transaction")'></div>
+    <br />
+    <div style="float:left;">
+        <a asp-action="Purchase" asp-controller="Transaction" class="form-control-btn" style="width:120px;" >Add New</a>
+    </div>
+    <div style="float:right;">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+    </div>
+</div>
+<div class="GridStyle">
+    <table class="table table-striped" id="myTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Purchase Order</th>
+                <th>Purchase Date</th>
+                <th>Pur. Sup Date</th>
+                <th>Purchase Type</th>
+                <th>Supplier</th>
+                <th>Pay Term</th>
+                <th>Bank</th>
+                <th>Cheque No</th>
+                <th>Cheque Date</th>
+                <th>Scope</th>
+                <th>Prices</th>
+                <th>Remarks</th>
+                <th>Currency</th>
+                <th>Store</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var j in query)
+            {
+                <tr>
+                    <td>@Html.ActionLink("Edit", "Purchase", "Transaction", new { id = j.mas.PurId })</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurId)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurDate)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurSupDate)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurType)</td>
+                    <td>@Html.DisplayFor(modelItem => j.supplier.SupName)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurPayTerm)</td>
+                    <td>@Html.DisplayFor(modelItem => j.bank.BnkName)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurChqNo)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurChqDate)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurScope)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurPrices)</td>
+                    <td>@Html.DisplayFor(modelItem => j.mas.PurRemarks)</td>
+                    <td>@Html.DisplayFor(modelItem => j.currency.CurName)</td>
+                    <td>@Html.DisplayFor(modelItem => j.store.StrName)</td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnAddRow").click(function () {
+                var url = $('#myModal').data('url');
+                $.get(url, function (data) {
+                    $('#myModal').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $(".btnEdits").click(function (event) {
+                var url = event.target.dataset.url;
+                $.get(url, function (data) {
+                    $('#myModal').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+    </script>
+
+    <script>
+        function myFunction() {
+            debugger;
+            var input, filter, table, tr, td, i, txtValue, j;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            var tds = $('#myTable').children('tbody').children('tr').children('td').length;
+            tds = tds / tr.length;
+            for (i = 1; i < tr.length; i++) {
+                for (j = 0; j < tds; j++) {
+                    td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+}
