@@ -20,6 +20,13 @@ namespace Taxtation.ViewModel
         public List<TxsitemDetail> lstItem { get; set; }
         public List<TxstaxDetail> lstTax { get; set; }
         public List<TxstaxDetail> lstExcise { get; set; }
+        public double? SubTotal { get; set; }
+        public double? ExciseTax { get; set; }
+        public double? VAT { get; set; }
+        public double? TotalAmount { get; set; }
+        public double? Advance { get; set; }
+        public double? Paid { get; set; }
+        public double? TotalBalance { get; set; }
 
 
         public TXTPurchaseDetailView()
@@ -35,6 +42,13 @@ namespace Taxtation.ViewModel
             lstItem = new List<TxsitemDetail>();
             lstTax = new List<TxstaxDetail>();
             lstExcise = new List<TxstaxDetail>();
+            SubTotal = new double();
+            ExciseTax = new double();
+            VAT = new double();
+            TotalAmount = new double();
+            Advance = new double();
+            Paid = new double();
+            TotalBalance = new double();
         }
     }
 }
