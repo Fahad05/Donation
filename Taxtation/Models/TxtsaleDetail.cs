@@ -21,5 +21,13 @@ namespace Taxtation.Models
         public double? SalGrossAmt { get; set; }
         public double? SalNetAmt { get; set; }
         public double? SalReturned { get; set; }
+        public string SalDisType { get; set; }
+        public int? ExciseId { get; set; }
+        public double? SalExcisePer { get; set; }
+        public double? SalTaxAmount { get; set; }
+        public double? SalReturnQuantity { get; set; }
+        public double? SalReturnTax { get; set; }
+        public string SalSubRemarks { get; set; }
+        public double? SalExciseAmt { get; set; }
     }
 }

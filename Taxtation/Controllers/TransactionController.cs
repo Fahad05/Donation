@@ -161,6 +161,49 @@ namespace Taxtation.Controllers
         #endregion
 
 
+        #region Salae
+
+        [HttpGet]
+        public async Task<IActionResult> showSale()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TXTSaleDetailView sale = new TXTSaleDetailView();
+            sale.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstCustomer=db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstExcise=db.TxstaxDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstItem=db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstSite=db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstStore=db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstTax=db.TxstaxDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstMaster=db.TxtsaleMaster.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstDetails = db.TxtsaleDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
+            return View(sale);
+        }
+
+        [HttpGet]
+        public IActionResult Sale(string id)
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Sale(TXTSaleDetailView obj)
+        {
+            
+
+            return View();
+        }
+
+
+
+        #endregion
+
 
         #region Function
 

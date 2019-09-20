@@ -1,0 +1,394 @@
+﻿@model Taxtation.ViewModel.TXTSaleDetailView
+
+@{
+    ViewData["Title"] = "Sale";
+    var index = 5;
+    if(Model.Detail.saleDetail != null)
+    {
+        index = Model.Detail.saleDetail.Count;
+    }
+}
+
+<h2>Sale</h2>
+
+<h4>TXTSaleDetailView</h4>
+<hr />
+<form asp-action="Sale" asp-controller="Transaction" method="post">
+    <div class="row">
+        <div class="col-sm-12">
+            @if (ViewData["_Save"].ToString() == "True")
+            {
+                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+            }
+            @if (ViewData["_Update"].ToString() == "True")
+            {
+                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+            }
+        </div>
+    </div>
+    <div class="row" style="padding-top:70px;z-index:1">
+        <div class="col-md-3">
+            Purchase Order:
+            <input type="text" asp-for="master.SalSoRef" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Transaction Date:
+            <input type="date" asp-for="master.SalDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Cash/Bank:
+            <select asp-for="master.BnkId" class="form-control">
+                <option>Select</option>
+                @foreach (var j in Model.lstBank)
+                {
+                    <option value=@j.BnkId>@j.BnkName</option>
+                }
+            </select>
+        </div><div class="col-md-3">
+            Term:
+            <select asp-for="master.SalType" class="form-control">
+                <option value="CREDIT">CREDIT</option>
+                <option value="CASH">CASH</option>
+                <option value="BANK">BANK</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-md-3">
+            Cheque/Ref No:
+            <input type="text" asp-for="master.SalChqNo" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Cheque Date:
+            <input type="date" asp-for="master.SalChqDate" class="form-control" />
+        </div> <div class="col-md-3">
+            Purchase Type:
+            <select asp-for="master.SalType" class="form-control">
+                <option value="LOCAL">LOCAL</option>
+                <option value="IMPORT">IMPORT</option>
+                <option value="EXEMPT">EXEMPT</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            Item Type:
+            <select asp-for="master.SalItemType" class="form-control">
+                <option value="LOCAL">LOCAL</option>
+                <option value="IMPORT">IMPORTED</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-3">
+            Exchange Rate:
+            <input type="number" asp-for="master.SalExRate" onchange="ExchangeRate()" value="1" class="form-control" />
+        </div> <div class="col-md-3">
+            Site:
+            <select asp-for="master.SitId" class="form-control" required="required">
+                <option>Select</option>
+                @foreach (var j in Model.lstSite)
+                {
+                    <option value=@j.SitId>@j.SitName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Store Name:
+            <select asp-for="master.StrId" class="form-control" required="required">
+                <option>Select</option>
+                @foreach (var j in Model.lstStore)
+                {
+                    <option value=@j.StrId>@j.StrName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Customer Name:
+            <select asp-for="master.CusId" class="form-control" required="required">
+                <option>Select</option>
+                @foreach (var j in Model.lstCustomer)
+                {
+                    <option value=@j.CusId>@j.CusName</option>
+                }
+            </select>
+        </div>
+        <div class="row">
+
+
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-md-3">
+            Currency:
+            <select asp-for="master.CurId" class="form-control" required="required">
+                <option>Select</option>
+                @foreach (var j in Model.lstCurrency)
+                {
+                    <option value=@j.CurId>@j.CurName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Remarks:
+            <input type="text" asp-for="master.SalRemarks" class="form-control" />
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:230px;">Item</th>
+                        <th style="width:70px;">Bar Code</th>
+                        <th style="width:70px;">UOM</th>
+                        <th style="width:120px;">Last Price</th>
+                        <th style="width:120px;">Quantity</th>
+                        <th style="width:120px;">Price</th>
+                        <th style="width:120px;">Sub. Amount</th>
+                        <th style="width:230px;">Excise Slab</th>
+                        <th style="width:120px;">Excise Percent</th>
+                        <th style="width:120px;">Excise Amount</th>
+                        <th style="width:120px;">Amt. After Excise</th>
+                        <th style="width:120px;">Disc. Type</th>
+                        <th style="width:120px;">Disc.</th>
+                        <th style="width:120px;">Disc. Amount</th>
+                        <th style="width:120px;">Amt. After Disc.</th>
+                        <th style="width:230px;">VAT Slab</th>
+                        <th style="width:120px;">VAT Percent</th>
+                        <th style="width:120px;">VAT Amount</th>
+                        <th style="width:120px;">Net Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index; i++)
+                    {
+                    <tr>
+                        <td>
+                            <select asp-for="Detail.saleDetail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
+                                <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                {
+                                    <option value=@j.ItmId>@j.ItmName</option>}
+                            </select>
+                        </td>
+                        <td><input type="text" asp-for="Detail.sale[i].BarCode" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                        <td><input type="text" asp-for="Detail.sale[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.sale[i].LastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.sale[i].Amount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td>
+                            <select asp-for="Detail.saleDetail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
+                                <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
+                                {
+                                    <option value=@j.TaxId>@j.TaxName</option>}
+                            </select>
+                        </td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExcisePer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExciseAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><select asp-for="Detail.saleDetail[i].SalDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td>
+                            <select asp-for="Detail.saleDetail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
+                                <option value="-1">Select</option> @foreach (var j in Model.lstTax)
+                                {
+                                    <option value=@j.TaxId>@j.TaxName</option>}
+                            </select>
+                        </td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalVatper" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalTaxAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="text" asp-for="Detail.saleDetail[i].SalSubRemarks" class="form-control" style="width:230px;" /></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div><div class="row" style="position:fixed;z-index:2;background-color:#EEEEEE;width:102%;left:16px;right:0;bottom:0px;height:70px;border-top:2px solid black;">
+        <div class="row">
+            <div class="col-md-2">
+                Sub Total
+                <input type="text" asp-for="SubTotal" class="form-control-footer" />
+            </div>
+            <div class="col-md-1">
+                Exise Tax
+                <input type="text" asp-for="ExciseTax" class="form-control-footer" />
+            </div>
+            <div class="col-md-1">
+                Vat
+                <input type="text" asp-for="VAT" class="form-control-footer" />
+            </div>
+            <div class="col-md-2">
+                Total
+                <input type="text" asp-for="TotalAmount" class="form-control-footer" />
+            </div>
+            <div class="col-md-2">
+                Advance
+                <input type="text" asp-for="Advance" class="form-control-footer" />
+            </div>
+            <div class="col-md-2">
+                Paid
+                <input type="text" asp-for="Paid" class="form-control-footer" />
+            </div>
+            <div class="col-md-2">
+                Balance
+                <input type="text" asp-for="TotalBalance" class="form-control-footer" />
+            </div>
+        </div>
+
+    </div>
+</form>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+        function changeItem(item) {
+            var trNo = item.dataset.rowno;
+            if (item.value != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeItem',
+                    data: { id: item.value },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_pdef_' + trNo + '__UOM').val(result.itmUom);
+                        $('#detail_pdef_' + trNo + '__lastPrice').val(result.itmSp);
+                    },
+                    error: function () {
+                    }
+                })
+            }
+            else {
+                $('#detail_pdef_' + trNo + '__UOM').val('');
+                $('#detail_pdef_' + trNo + '__lastPrice').val('');
+            }
+        }
+
+        function changeQuantityAndRate(QtyRate) {
+            debugger;
+            var rowNo = QtyRate.dataset.rowno;
+            var ExciseSlab = $('#detail_detail_' + rowNo + '__ExciseId').val();
+            var TaxSlab = $('#detail_detail_' + rowNo + '__TaxId').val();
+            if (ExciseSlab != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTax',
+                    data: { id: ExciseSlab },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_detail_' + rowNo + '__PurExPer').val(result.taxPercent);
+                        var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                        $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                    },
+                    error: function () {
+                    }
+                })
+            }
+
+            if (TaxSlab != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTax',
+                    data: { id: TaxSlab },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_detail_' + rowNo + '__PurTaxPer').val(result.taxPercent);
+                        var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                        $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                    },
+                    error: function () {
+                    }
+                })
+            }
+
+            var ExhRate = $('#master_PurExRate').val();
+            var qty = $('#detail_detail_' + rowNo + '__PurQty').val();
+            var rate = $('#detail_detail_' + rowNo + '__PurRate').val();
+            var ExcPercent = $('#detail_detail_' + rowNo + '__PurExPer').val();
+            var discount = $('#detail_detail_' + rowNo + '__PurDiscountPer').val();
+            var Vat = $('#detail_detail_' + rowNo + '__PurTaxPer').val();
+            if (qty != '' && rate != '') {
+                $('#detail_pdef_' + rowNo + '__subAmount').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_detail_' + rowNo + '__PurNetAmt').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(qty) * parseFloat(rate) * parseFloat(ExhRate)).toFixed(2));
+                var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                if (ExcPercent != '') {
+                    $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(ExcPercent) / parseFloat(100)).toFixed(2));
+                    $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(subAmount) + ((parseFloat(subAmount) * parseFloat(ExcPercent)) / 100)).toFixed(2));
+                    var afterExcise = $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val();
+                    $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val((parseFloat(afterExcise)).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(afterExcise).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(afterExcise) * parseFloat(ExhRate)).toFixed(2));
+                }
+                if (discount != '') {
+                    var amtAfterExcise = document.getElementById("detail_pdef_" + rowNo + "__AmtAfterExcise").value;
+                    var discType = document.getElementById("detail_detail_" + rowNo + "__PurDisType").value;
+                    if (discType == "PERCENT") {
+                        $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(amtAfterExcise * discount / 100));
+                        $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - (amtAfterExcise * discount / 100)));
+                    }
+                    if (discType == "AMOUNT") {
+                        $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(discount));
+                        $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - discount));
+                    }
+                    var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(AmtAfterDisc).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(AmtAfterDisc) * parseFloat(ExhRate)).toFixed(2));
+                }
+                if (Vat != '') {
+                    var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                    $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100)).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val(((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))) * parseFloat(ExhRate)).toFixed(2));
+                }
+            }
+            else {
+                $('#detail_pdef_' + rowNo + '__subAmount').val('');
+                $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val('');
+                $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val('');
+                $('#detail_detail_' + rowNo + '__PurNetAmt').val('');
+                $('#detail_detail_' + rowNo + '__PurGrossAmt').val('');
+            }
+        }
+
+        function ExchangeRate() {
+            debugger;
+            var ExRate = $('#master_PurExRate').val();
+            var rows = $('#myTable tbody tr').length;
+            for (var i = 0; i < rows; i++) {
+                var NetAmount = $('#detail_detail_' + i + '__PurNetAmt').val();
+                if (NetAmount != '') {
+                    $('#detail_detail_' + i + '__PurGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
+                }
+            }
+        }
+
+        function AddRow() {
+            var rowCount = $('#myTable tr').length;
+            rowCount = rowCount - 1;
+            var dropDown = document.getElementById('ddobj_0__InvCode').innerHTML;
+            $('#myTable').append('<tr><td><select class="form-control" onchange="InventoryChange(this)" id="ddobj_' + rowCount + '__InvCode" name="ddobj[' + rowCount + '].InvCode">' + dropDown + '</select></td><td><input type="text" id="ddobj_' + rowCount + '__RcpWaste" name="ddobj[' + rowCount + '].RcpWaste" onblur="wastechange(this)"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpOutput" name="ddobj[' + rowCount + '].RcpOutput"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpMix" name="ddobj[' + rowCount + '].RcpMix"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpSubRemarks" name="ddobj[' + rowCount + '].RcpSubRemarks"  class="form-control" /></td></tr>')
+            $('#ddobj_' + rowCount + '__InvCode').attr('Selected', true).val("-1");
+        }
+
+    </script>
+
+}
+
