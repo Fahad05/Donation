@@ -610,6 +610,10 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.Id).HasMaxLength(450);
 
+                entity.Property(e => e.SalDisType).HasMaxLength(50);
+
+                entity.Property(e => e.SalSubRemarks).HasMaxLength(500);
+
                 entity.Property(e => e.SalVatper).HasColumnName("SalVATPer");
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
@@ -642,6 +646,8 @@ namespace Taxtation.Models
                 entity.Property(e => e.SalChqNo).HasMaxLength(50);
 
                 entity.Property(e => e.SalDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.SalItemType).HasMaxLength(50);
 
                 entity.Property(e => e.SalLporef)
                     .HasColumnName("SalLPORef")

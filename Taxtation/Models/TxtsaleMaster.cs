@@ -29,5 +29,9 @@ namespace Taxtation.Models
         public DateTime? EditDate { get; set; }
         public int? CurId { get; set; }
         public int? StrId { get; set; }
+        public double? SalExRate { get; set; }
+        public string SalItemType { get; set; }
+        public int? SitId { get; set; }
+        
     }
 }
