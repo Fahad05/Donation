@@ -30,5 +30,27 @@ namespace Taxtation.App_Code
 
             return temp;
         }
+
+
+
+        public string SaleOrder(string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtsaleMaster.Where(x => x.UserName == userName).OrderByDescending(x => x.SalSoRef).FirstOrDefault().SalSoRef;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "SM-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "SM-00000001";
+            }
+
+            return temp;
+        }
     }
 }

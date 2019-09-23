@@ -8,14 +8,9 @@
         index = Model.Detail.saleDetail.Count;
     }
 }
-
-<h2>Sale</h2>
-
-<h4>TXTSaleDetailView</h4>
-<hr />
 <form asp-action="Sale" asp-controller="Transaction" method="post">
-    <div class="row">
-        <div class="col-sm-12">
+    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;width:102%;left:0;right:0">
+        <div class="col-sm-10" style="padding-left:120px;">
             @if (ViewData["_Save"].ToString() == "True")
             {
                 <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
@@ -25,10 +20,13 @@
                 <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
             }
         </div>
+        <div class="col-sm-2" style="padding-left:45px;">
+            <a asp-action="showSale" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+        </div>
     </div>
     <div class="row" style="padding-top:70px;z-index:1">
         <div class="col-md-3">
-            Purchase Order:
+            Sale Order:
             <input type="text" asp-for="master.SalSoRef" class="form-control" />
         </div>
         <div class="col-md-3">
@@ -170,47 +168,47 @@
                 <tbody>
                     @for (int i = 0; i < index; i++)
                     {
-                    <tr>
-                        <td>
-                            <select asp-for="Detail.saleDetail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
-                                <option value="-1">Select</option>@foreach (var j in Model.lstItem)
-                                {
-                                    <option value=@j.ItmId>@j.ItmName</option>}
-                            </select>
-                        </td>
-                        <td><input type="text" asp-for="Detail.sale[i].BarCode" readonly="readonly" class="form-control" style="width:70px;" /></td>
-                        <td><input type="text" asp-for="Detail.sale[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.sale[i].LastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.sale[i].Amount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td>
-                            <select asp-for="Detail.saleDetail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
-                                <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
-                                {
-                                    <option value=@j.TaxId>@j.TaxName</option>}
-                            </select>
-                        </td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExcisePer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><select asp-for="Detail.saleDetail[i].SalDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td>
-                            <select asp-for="Detail.saleDetail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
-                                <option value="-1">Select</option> @foreach (var j in Model.lstTax)
-                                {
-                                    <option value=@j.TaxId>@j.TaxName</option>}
-                            </select>
-                        </td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalVatper" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalTaxAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="text" asp-for="Detail.saleDetail[i].SalSubRemarks" class="form-control" style="width:230px;" /></td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <select asp-for="Detail.saleDetail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                    {
+                                        <option value=@j.ItmId>@j.ItmName</option>}
+                                </select>
+                            </td>
+                            <td><input type="text" asp-for="Detail.sale[i].BarCode" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                            <td><input type="text" asp-for="Detail.sale[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.sale[i].LastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.sale[i].Amount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="Detail.saleDetail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExcisePer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><select asp-for="Detail.saleDetail[i].SalDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="Detail.saleDetail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option> @foreach (var j in Model.lstTax)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalVatper" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalTaxAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="Detail.saleDetail[i].SalSubRemarks" class="form-control" style="width:230px;" /></td>
+                        </tr>
                     }
                 </tbody>
             </table>
