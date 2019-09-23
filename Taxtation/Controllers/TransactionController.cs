@@ -186,10 +186,42 @@ namespace Taxtation.Controllers
         }
 
         [HttpGet]
-        public IActionResult Sale(string id)
+        public async Task<IActionResult> Sale(string id)
         {
-
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TXTSaleDetailView obj = new TXTSaleDetailView();
+            obj.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstCustomer = db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
+            obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName ).ToList();
+            obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
+            if(id==null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                obj.Detail.saleDetail = null;
+                obj.Detail.sale = null;
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                obj.master = db.TxtsaleMaster.Where(x => x.SalId == Convert.ToInt32(id) && x.UserName == user.UserName).FirstOrDefault();
+                obj.Detail.saleDetail = db.TxtsaleDetail.Where(x => x.UserName == user.UserName && x.SalId == Convert.ToInt32(id)).OrderBy(x => x.SalSerialNo).ToList();
+                for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                {
+                    
+                }
+            }
+            
+            return View(obj);
         }
 
         [HttpPost]

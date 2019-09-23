@@ -192,7 +192,7 @@
                             </select>
                         </td>
                         <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExcisePer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExciseAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                         <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
                         <td><select asp-for="Detail.saleDetail[i].SalDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
                         <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>

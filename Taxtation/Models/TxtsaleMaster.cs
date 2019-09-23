@@ -32,6 +32,5 @@ namespace Taxtation.Models
         public double? SalExRate { get; set; }
         public string SalItemType { get; set; }
         public int? SitId { get; set; }
-        
     }
 }
