@@ -5,11 +5,9 @@
     var index = 5;
     if (Model.detail.detail != null) { index = Model.detail.detail.Count; }
 }
-
-<h2>Purchase</h2>
 <form asp-action="Purchase" method="post">
-    <div class="row">
-        <div class="col-sm-12">
+    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;width:102%;left:0;right:0">
+        <div class="col-sm-10" style="padding-left:120px;">
             @if (ViewData["_Save"].ToString() == "True")
             {
                 <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
@@ -19,28 +17,20 @@
                 <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
             }
         </div>
+        <div class="col-sm-2" style="padding-left:45px;">
+            <a asp-action="showPurchase" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+        </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
+    <div class="row" style="padding-top:70px;z-index:1">
+        <div class="col-md-3">
             Purchase Order:
             <input type="text" asp-for="master.PurPoref" class="form-control" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             Transaction Date:
             <input type="date" asp-for="master.PurDate" class="form-control" />
         </div>
-        <div class="col-md-4">
-            Term:
-            <select asp-for="master.PurType" class="form-control">
-                <option value="CREDIT">CREDIT</option>
-                <option value="CASH">CASH</option>
-                <option value="BANK">BANK</option>
-            </select>
-        </div>
-
-    </div>
-    <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             Cash/Bank:
             <select asp-for="master.BnkId" class="form-control">
                 <option>Select</option>
@@ -49,18 +39,26 @@
                     <option value=@j.BnkId>@j.BnkName</option>
                 }
             </select>
-        </div>
-        <div class="col-md-4">
+        </div><div class="col-md-3">
+    Term:
+    <select asp-for="master.PurType" class="form-control">
+        <option value="CREDIT">CREDIT</option>
+        <option value="CASH">CASH</option>
+        <option value="BANK">BANK</option>
+    </select>
+</div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-md-3">
             Cheque/Ref No:
             <input type="text" asp-for="master.PurChqNo" class="form-control" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             Cheque Date:
             <input type="date" asp-for="master.PurChqDate" class="form-control" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
+        </div> <div class="col-md-3">
             Purchase Type:
             <select asp-for="master.PurType" class="form-control">
                 <option value="LOCAL">LOCAL</option>
@@ -68,148 +66,182 @@
                 <option value="EXEMPT">EXEMPT</option>
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             Item Type:
             <select asp-for="master.PurItmType" class="form-control">
                 <option value="LOCAL">LOCAL</option>
                 <option value="IMPORT">IMPORTED</option>
             </select>
         </div>
-        <div class="col-md-4">
-            Exchange Rate:
-            <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" value="1" class="form-control" />
-        </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            Site:
-            <select asp-for="master.SitId" class="form-control" required="required">
-                <option>Select</option>
-                @foreach (var j in Model.lstSite)
-                {
-                    <option value=@j.SitId>@j.SitName</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-4">
-            Remarks:
-            <input type="text" asp-for="master.PurRemarks" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            Currency:
-            <select asp-for="master.CurId" class="form-control" required="required">
-                <option>Select</option>
-                @foreach (var j in Model.lstCurrency)
-                {
-                    <option value=@j.CurId>@j.CurName</option>
-                }
-            </select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            Store Name:
-            <select asp-for="master.StrId" class="form-control" required="required">
-            <option >Select</option>
-                @foreach(var j in Model.lstStore)
-                {
-                    <option value=@j.StrId>@j.StrName</option>
-                }
-</select>
-        </div>
-        <div class="col-md-4">
-            Supplier Name:
-            <select asp-for="master.SupId" class="form-control" required="required">
-                <option>Select</option>
-                @foreach (var j in Model.lstSupplier)
-                {
-                    <option value=@j.SupId>@j.SupName</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12" style="overflow-x:scroll;">
-            <table id="myTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th style="width:230px;">Item</th>
-                        <th style="width:70px;">UOM</th>
-                        <th style="width:120px;">Last Price</th>
-                        <th style="width:120px;">Quantity</th>
-                        <th style="width:120px;">Price</th>
-                        <th style="width:120px;">Sub. Amount</th>
-                        <th style="width:230px;">Excise Slab</th>
-                        <th style="width:120px;">Excise Percent</th>
-                        <th style="width:120px;">Excise Amount</th>
-                        <th style="width:120px;">Amt. After Excise</th>
-                        <th style="width:120px;">Disc. Type</th>
-                        <th style="width:120px;">Disc.</th>
-                        <th style="width:120px;">Disc. Amount</th>
-                        <th style="width:120px;">Amt. After Disc.</th>
-                        <th style="width:230px;">VAT Slab</th>
-                        <th style="width:120px;">VAT Percent</th>
-                        <th style="width:120px;">VAT Amount</th>
-                        <th style="width:120px;">Net Amount</th>
-                        <th style="width:120px;">Exc. Amount</th>
-                        <th style="width:230px;">Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < index; i++)
+        <div class="row">
+           
+            <div class="col-md-3">
+                Exchange Rate:
+                <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" value="1" class="form-control" />
+            </div> <div class="col-md-3">
+                Site:
+                <select asp-for="master.SitId" class="form-control" required="required">
+                    <option>Select</option>
+                    @foreach (var j in Model.lstSite)
                     {
-                        <tr>
-                            <td>
-                                <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
-                                    <option value="-1">Select</option>@foreach (var j in Model.lstItem)
-                                    {
-                                        <option value=@j.ItmId>@j.ItmName</option>}
-                                </select>
-                            </td>
-                            <td><input type="text" asp-for="detail.pdef[i].UOM" readonly="readonly" class="form-control" style="width:70px;"/></td>
-                            <td><input type="number" step="any" asp-for="detail.pdef[i].lastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.pdef[i].subAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td>
-                                <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
-                                    <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
-                                    {
-                                        <option value=@j.TaxId>@j.TaxName</option>}
-                                </select>
-                            </td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td>
-                                <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
-                                    <option value="-1">Select</option> @foreach (var j in Model.lstTax)
-                                    {
-                                        <option value=@j.TaxId>@j.TaxName</option>}
-                                </select>
-                            </td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
-                        </tr>
+                        <option value=@j.SitId>@j.SitName</option>
                     }
-                </tbody>
-            </table>
+                </select>
+            </div>
+            <div class="col-md-3">
+                Store Name:
+                <select asp-for="master.StrId" class="form-control" required="required">
+                    <option>Select</option>
+                    @foreach (var j in Model.lstStore)
+                    {
+                        <option value=@j.StrId>@j.StrName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                Supplier Name:
+                <select asp-for="master.SupId" class="form-control" required="required">
+                    <option>Select</option>
+                    @foreach (var j in Model.lstSupplier)
+                    {
+                        <option value=@j.SupId>@j.SupName</option>
+                    }
+                </select>
         </div>
-    </div>
-</form>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+        <div class="row">
+           
+           
+            </div>
+        </div>
+        <div class="row">
 
+
+            <div class="col-md-3">
+                Currency:
+                <select asp-for="master.CurId" class="form-control" required="required">
+                    <option>Select</option>
+                    @foreach (var j in Model.lstCurrency)
+                    {
+                        <option value=@j.CurId>@j.CurName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                Remarks:
+                <input type="text" asp-for="master.PurRemarks" class="form-control" />
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-12" style="overflow-x:scroll;">
+                <table id="myTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:230px;">Item</th>
+                            <th style="width:70px;">UOM</th>
+                            <th style="width:120px;">Last Price</th>
+                            <th style="width:120px;">Quantity</th>
+                            <th style="width:120px;">Price</th>
+                            <th style="width:120px;">Sub. Amount</th>
+                            <th style="width:230px;">Excise Slab</th>
+                            <th style="width:120px;">Excise Percent</th>
+                            <th style="width:120px;">Excise Amount</th>
+                            <th style="width:120px;">Amt. After Excise</th>
+                            <th style="width:120px;">Disc. Type</th>
+                            <th style="width:120px;">Disc.</th>
+                            <th style="width:120px;">Disc. Amount</th>
+                            <th style="width:120px;">Amt. After Disc.</th>
+                            <th style="width:230px;">VAT Slab</th>
+                            <th style="width:120px;">VAT Percent</th>
+                            <th style="width:120px;">VAT Amount</th>
+                            <th style="width:120px;">Net Amount</th>
+                            <th style="width:120px;">Exc. Amount</th>
+                            <th style="width:230px;">Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < index; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
+                                        <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                        {
+                                            <option value=@j.ItmId>@j.ItmName</option>}
+                                    </select>
+                                </td>
+                                <td><input type="text" asp-for="detail.pdef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.pdef[i].lastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.pdef[i].subAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td>
+                                    <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
+                                        <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
+                                        {
+                                            <option value=@j.TaxId>@j.TaxName</option>}
+                                    </select>
+                                </td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td>
+                                    <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
+                                        <option value="-1">Select</option> @foreach (var j in Model.lstTax)
+                                        {
+                                            <option value=@j.TaxId>@j.TaxName</option>}
+                                    </select>
+                                </td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                                <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><div class="row" style="position:fixed;z-index:2;background-color:#EEEEEE;width:102%;left:16px;right:0;bottom:0px;height:70px;border-top:2px solid black;">
+                  <div class="row" >
+                      <div class="col-md-2">
+                          Sub Total
+                          <input type="text" asp-for="SubTotal" class="form-control-footer" />
+                      </div>
+                      <div class="col-md-1">
+                          Exise Tax
+                          <input type="text" asp-for="ExciseTax" class="form-control-footer" />
+                      </div>
+                      <div class="col-md-1">
+                          Vat
+                          <input type="text" asp-for="VAT" class="form-control-footer" />
+                      </div>
+                      <div class="col-md-2">
+                          Total
+                          <input type="text" asp-for="TotalAmount" class="form-control-footer" />
+                      </div>
+                      <div class="col-md-2">
+                          Advance
+                          <input type="text" asp-for="Advance" class="form-control-footer" />
+                      </div>
+                      <div class="col-md-2">
+                          Paid
+                          <input type="text" asp-for="Paid" class="form-control-footer" />
+                      </div>
+                      <div class="col-md-2">
+                          Balance
+                          <input type="text" asp-for="TotalBalance" class="form-control-footer" />
+                      </div>
+                  </div>
+   
+</div>
+</form>
 
 
 @section Scripts{
@@ -257,7 +289,7 @@
                     },
                     error: function () {
                     }
-                })        
+                })
             }
 
             if (TaxSlab != '-1') {
@@ -329,8 +361,7 @@
             }
         }
 
-        function ExchangeRate()
-        {
+        function ExchangeRate() {
             debugger;
             var ExRate = $('#master_PurExRate').val();
             var rows = $('#myTable tbody tr').length;
@@ -340,6 +371,14 @@
                     $('#detail_detail_' + i + '__PurGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
                 }
             }
+        }
+
+        function AddRow() {
+            var rowCount = $('#myTable tr').length;
+            rowCount = rowCount - 1;
+            var dropDown = document.getElementById('ddobj_0__InvCode').innerHTML;
+            $('#myTable').append('<tr><td><select class="form-control" onchange="InventoryChange(this)" id="ddobj_' + rowCount + '__InvCode" name="ddobj[' + rowCount + '].InvCode">' + dropDown + '</select></td><td><input type="text" id="ddobj_' + rowCount + '__RcpWaste" name="ddobj[' + rowCount + '].RcpWaste" onblur="wastechange(this)"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpOutput" name="ddobj[' + rowCount + '].RcpOutput"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpMix" name="ddobj[' + rowCount + '].RcpMix"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpSubRemarks" name="ddobj[' + rowCount + '].RcpSubRemarks"  class="form-control" /></td></tr>')
+            $('#ddobj_' + rowCount + '__InvCode').attr('Selected', true).val("-1");
         }
 
     </script>
