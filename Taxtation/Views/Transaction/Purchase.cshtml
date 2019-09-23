@@ -379,7 +379,7 @@
         function AddRow() {
             var rowCount = $('#myTable tr').length;
             rowCount = rowCount - 1;
-            var dropDown = document.getElementById('ddobj_0__InvCode').innerHTML;
+            var dropDown = document.getElementById('detail_detail_0__ItmId').innerHTML;
             $('#myTable').append('<tr><td><select class="form-control" onchange="InventoryChange(this)" id="ddobj_' + rowCount + '__InvCode" name="ddobj[' + rowCount + '].InvCode">' + dropDown + '</select></td><td><input type="text" id="ddobj_' + rowCount + '__RcpWaste" name="ddobj[' + rowCount + '].RcpWaste" onblur="wastechange(this)"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpOutput" name="ddobj[' + rowCount + '].RcpOutput"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpMix" name="ddobj[' + rowCount + '].RcpMix"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpSubRemarks" name="ddobj[' + rowCount + '].RcpSubRemarks"  class="form-control" /></td></tr>')
             $('#ddobj_' + rowCount + '__InvCode').attr('Selected', true).val("-1");
         }
