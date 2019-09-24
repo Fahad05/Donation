@@ -2,29 +2,34 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
+<style>
+    .chart {
+        width: 100%;
+       
+    }
 
+    .row {
+        margin: 0 !important;
+    }
+</style>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<table>
-    <tr>
-        <td>
-            <div id="chart_div"></div>
-        </td>
-        <td>
-            <div id="chart_div1"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div id="chart_div2"></div>
-        </td>
-        <td>
-            <div id="chart_div3"></div>
-        </td>
-    </tr>
+<div class="row">
+    <div class="col-md-6">
+        <div id="chart_div" class="chart"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="chart_div1" class="chart"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div id="chart_div2" class="chart"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="chart_div3" class="chart"></div>
+    </div>
+</div>
 
-</table>
-   
-    
 
 <script type="text/javascript">
 
@@ -61,7 +66,7 @@
         var options = {
             title: 'Currency',
             chartArea: { left: 80, top: 70, right: 100, width: "50%", height: "70%" },
-            width: 600,
+          
             height: 250,
             colors: ['#03103A', '#9AB5CA'],
             hAxis: {
@@ -83,6 +88,11 @@
         chart3.draw(data, options);
         return false;
     }
+
+    $(window).resize(function () {
+        LoadData();
+        
+    });
 </script>
 
 
