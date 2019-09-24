@@ -206,6 +206,7 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
+                obj.master.SalSoRef = tX.SaleOrder(user.UserName);
                 obj.Detail.saleDetail = null;
                 obj.Detail.sale = null;
             }
