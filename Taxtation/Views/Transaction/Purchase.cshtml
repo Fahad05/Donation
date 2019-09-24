@@ -15,8 +15,10 @@
             @if (ViewData["_Update"].ToString() == "True")
             {
                 <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
-            } 
-            <div style="float:right;padding-right:8.3%" >
+                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+
+            }
+            <div style="float:right;padding-right:8.3%">
                 <a asp-action="showPurchase" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
             </div>
         </div>
