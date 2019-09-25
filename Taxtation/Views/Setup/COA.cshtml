@@ -1,0 +1,360 @@
+﻿@model Taxtation.ViewModel.TXSCOADetailView
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chart of Account</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            ×
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("COA", "Setup", FormMethod.Post))
+                        {
+                            <div>
+                                Account Nature:
+                                <select asp-for="coa.AccAccountNature" class="form-control" onchange="accountNatureChangeFunction()" style="width:75%;">
+                                    <option value="ASSET">ASSET</option>
+                                    <option value="LIABILITY">LIABILITY</option>
+                                    <option value="EQUITY">EQUITY</option>
+                                    <option value="REVENUE">REVENUE</option>
+                                    <option value="EXPENCE">EXPENCE</option>
+                                </select>
+                            </div>
+                            <div>
+                                Account Sub Nature:
+                                <select asp-for="coa.AccAccountSubNature" class="form-control" style="width:75%;">
+                                    <option value="NORMAL">NORMAL</option>
+                                    <option value="CASH ACCOUNT">CASH ACCOUNT</option>
+                                    <option value="BANK ACCOUNT">BANK ACCOUNT</option>
+                                    <option value="CUSTOMER">CUSTOMER</option>
+                                </select>
+                            </div>
+                            <div>
+                                Account Type:
+                                <select asp-for="coa.AccAccountType" class="form-control" style="width:75%;">
+                                    <option value="TRANSACTION">TRANSACTION</option>
+                                    <option value="CONTROL">CONTROL</option>
+                                </select>
+                            </div>
+                            <div>
+                                Parent Account:
+                                <select asp-for="coa.AccParentAccount" class="form-control" onchange="parentAccountChangeFunction()" style="width:75%;">
+                                    <option value="-1">Select Parent Account</option>
+                                    <option value="1">Root</option>
+                                    @foreach (var j in Model.lstCoa)
+                                    {
+                                        <option value=@j.AccCode>@j.AccAccountNature -  @j.AccAccountSubNature - @j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Code:
+                                @Html.TextBoxFor(model => model.coa.AccCode, new { @class = "form-control", @readonly = "readonly" })
+                                @Html.CheckBox("AccActive", Model.coa.AccActive.Value)Active
+                            </div>
+                            <div>
+                                Name:
+                                @Html.TextBoxFor(model => model.coa.AccName, new { @class = "form-control", @required = "required" })
+                            </div>
+
+                            <div>
+                                Description:
+                                @Html.TextBoxFor(model => model.coa.AccDesc, new { @class = "form-control" })
+                            </div>
+
+
+
+                            <div>
+                                Effective Date:
+                                <input type="date" asp-for="coa.AccEffectPeriodStart" class="form-control" />
+                            </div>
+                            <div>
+                                Opening Balance:
+                                <input type="number" asp-for="coa.AccOpeningBalance" class="form-control" />
+                            </div>
+                            <div>
+                                <input type="text" id="TRCode" value=@ViewData["_HiddenCode"].ToString() hidden="hidden" />
+                                <input type="text" id="ParentAccountCode" value=@ViewData["_ParentAccountCode"].ToString() hidden="hidden" />
+                                <input type="text" id="COAUpdate" value="0" name="BankCash" class="Cash" hidden="hidden" />
+                            </div>
+                            <div>
+                                @if (ViewData["_Save"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Save" id="Save" value="Save" class="btn btn-primary button button4">Save</button>
+                                }
+                                @if (ViewData["_Update"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Update" id="Update" value="Update" class="btn btn-primary button button4">Update</button>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnHideModal" data-dismiss="modal" class="btn btn-primary button button4">
+                            Hide
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Save').click(function (event) {
+            debugger;
+            var accCode = document.getElementById("AccCode").value;
+            var accName = document.getElementById("AccName").value;
+            var parentAccount = document.getElementById("AccParentAccount").value;
+            var accountType = document.getElementById("AccAccountType").value;
+            if (accCode.length == 5) {
+                if (accName != "ASSET" && accName != "ASSETS" && accName != "LIABILITIES" && accName != "LIABILITY" && accName != "EQUITY" && accName != "CAPITAL" && accName != "REVENUE" && accName != "INCOME" && accName != "SALE" && accName != "SALES" && accName != "EXPENSE" && accName != "EXPENSES" && accName != "PURCHASE" && accName != "PURCHASES")
+                    alert("Main account name must be ASSET, ASSETS, LIABILITIES, LIABILITY, EQUITY, CAPITAL, REVENUE, INCOME, EXPENSE, EXPENSES, PURCHASE, PURCHASES!");
+                event.preventDefault();
+            }
+
+            if (accCode == "") {
+                alert("Please Select any Parent Account!");
+                event.preventDefault();
+            }
+
+
+            $.ajax({
+                type: 'GET',
+                url: '/Setup/findParentAccount',
+                data: { table:'Glscoadetail', AccCode: accCode },
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+
+                    if (result != undefined) {
+                        if (accountType == "TRANSACTION") {
+                            alert("Please select Account Type as Control. Because some Accounts found under this Control!");
+                            event.preventDefault();
+                        }
+                    }
+                },
+                error: function () {
+                    alert('Error');
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('#Update').click(function (event) {
+            debugger;
+            var accCode = document.getElementById("AccCode").value;
+            var accName = document.getElementById("AccName").value;
+            var parentAccount = document.getElementById("AccParentAccount").value;
+            var accountType = document.getElementById("AccAccountType").value;
+            var hiddenCode = document.getElementById("TRCode").value;
+            var hiddenParentCode = document.getElementById("ParentAccountCode").value;
+            var accountSubNature = document.getElementById("AccAccountSubNature").value;
+            var BankCash = document.getElementById("BankCash");
+            if (accCode.length == 5) {
+                if (accName != "ASSET" && accName != "ASSETS" && accName != "LIABILITIES" && accName != "LIABILITY" && accName != "EQUITY" && accName != "CAPITAL" && accName != "REVENUE" && accName != "INCOME" && accName != "SALE" && accName != "SALES" && accName != "EXPENSE" && accName != "EXPENSES" && accName != "PURCHASE" && accName != "PURCHASES")
+                    alert("Main account name must be ASSET, ASSETS, LIABILITIES, LIABILITY, EQUITY, CAPITAL, REVENUE, INCOME, EXPENSE, EXPENSES, PURCHASE, PURCHASES!");
+                event.preventDefault();
+            }
+
+            if (accCode == "") {
+
+                alert("Please Select any Parent Account!");
+                event.preventDefault();
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: '/Setup/findParentAccount',
+                data: { table: 'Glscoadetail', AccCode: accCode },
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    console.log(result);
+                    if (result != undefined) {
+                        if (accountType == "TRANSACTION") {
+                            alert("Please select Account Type as Control. Because some Accounts found under this Control!");
+                            event.preventDefault();
+                        }
+                        if (accCode != hiddenCode) {
+                            accCode = hiddenCode;
+                            setSelectedValue(parentAccount, hiddenParentCode);
+                            alert("Cannot Change Parent Account. Because some Control/Transaction found under this Control!");
+                            event.preventDefault();
+                        }
+                        $('#COAUpdate').val("1");
+                        alert($('#COAUpdate').val());
+                    }
+                    else {
+                        $('#COAUpdate').val("2");
+                        alert($('#COAUpdate').val());
+                        $.ajax({
+                            type: 'GET',
+                            url: '/Setup/findParentAccount',
+                            data: { table: 'GltreceiptMaster', AccCode: accCode },
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8",
+                            success: function (result) {
+                                console.log(result);
+                                if (result != undefined) {
+                                    if (result.trType == "BANK") {
+                                        if (accountSubNature != "BANK ACCOUNT") {
+                                            alert("Entries found in Receipts. Please Select Sub Nature as Bank Account!");
+                                            event.preventDefault();
+                                        }
+                                    }
+                                    if (result.trType == "CASH") {
+                                        if (accountSubNature != "CASH") {
+                                            alert("Entries found in Receipts. Please Select Sub Nature as Cash Account!");
+                                            event.preventDefault();
+                                        }
+                                    }
+                                }
+
+
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '/Setup/findParentAccount',
+                                    data: { table: 'GltpaymentMaster', AccCode: accCode },
+                                    dataType: 'json',
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function (result) {
+                                        console.log(result);
+                                        console.log("Payment Master trType");
+                                        if (result != undefined) {
+                                            if (result.trType == "BANK") {
+                                                if (accountSubNature != "BANK ACCOUNT") {
+                                                    alert("Entries found in Payments. Please Select Sub Nature as Bank Account!");
+                                                    event.preventDefault();
+                                                }
+                                            }
+                                            if (result.trType == "CASH") {
+                                                if (accountSubNature != "CASH") {
+                                                    alert("Entries found in Payments. Please Select Sub Nature as Cash Account!");
+                                                    event.preventDefault();
+                                                }
+                                            }
+                                        }
+                                    },
+                                    error: function () {
+                                        alert("Error");
+                                    }
+                                });
+                            },
+                            error: function () {
+                                alert("Error");
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    alert('Error');
+                }
+            });
+            //event.preventDefault();
+        });
+
+    });
+
+
+    function setSelectedValue(selectObj, valueToSet) {
+        for (var i = 0; i < selectObj.options.length; i++) {
+            if (selectObj.options[i].text == valueToSet) {
+                selectObj.options[i].selected = true;
+                return;
+            }
+        }
+    }
+</script>
+
+
+
+<script >
+    
+        function accountNatureChangeFunction() {
+            var nature = document.getElementById("AccAccountNature").value;
+
+            var subNature = "";
+            if (nature == 'ASSET') {
+                subNature = "<option value='NORMAL'>NORMAL</option>";
+                subNature += "<option value='CASH ACCOUNT'>CASH ACCOUNT</option>";
+                subNature += "<option value='BANK ACCOUNT'>BANK ACCOUNT</option>";
+                subNature += "<option value='CUSTOMER'>CUSTOMER</option>";
+                subNature += "<option value='VAT'>VAT</option>";
+            }
+            else if (nature == 'LIABILITY') {
+                subNature = "<option value='NORMAL'>NORMAL</option>";
+                subNature += "<option value='SUPPLIER'>SUPPLIER</option>";
+                subNature += "<option value='AGENT'>AGENT</option>";
+                subNature += "<option value='CONTRACTOR'>CONTRACTOR</option>";
+                subNature += "<option value='VAT'>VAT</option>";
+            }
+            else {
+                subNature = "<option value='NORMAL'>NORMAL</option>";
+            }
+
+
+            $('#AccAccountSubNature option').remove();
+            $('#AccAccountSubNature').append(subNature);
+
+            var accNature = document.getElementById("AccAccountNature").value;
+            var trCode = document.getElementById("AccCode").value;
+            var parentHtml = "";
+            parentHtml = "<option value='1'>Root</option>";
+            $.ajax({
+                type: 'GET',
+                url: '/Setup/getParentAccountDetail',
+                data: { AccountNature: accNature, AccCode: trCode },
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    console.log(result);
+                    for (var i = 0; i < result.length; i++) {
+                        console.log(i);
+                        parentHtml += "<option value='" + result[i].accCode + "'>" + result[i].accAccountNature + " - " + result[i].accAccountSubNature + " - " + result[i].accName + "</option>";
+                    }
+
+                    $('#AccParentAccount option').remove();
+                    $('#AccParentAccount').append(parentHtml);
+
+                },
+                error: function () { }
+
+            });
+
+        }
+
+        function parentAccountChangeFunction() {
+            debugger;
+
+            var parentAccount = document.getElementById("AccParentAccount").value;
+            if (parentAccount != "-1") {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Setup/getParentAccountCodeDetail',
+                    data: { AccCode: parentAccount, len: parentAccount.length },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#AccCode').val(parentAccount + "." + result);
+                    },
+                    error: function () {
+                        alert('Error');
+
+                    }
+                })
+            }
+            else { $('#AccCode').val(""); }
+        }
+
+</script>

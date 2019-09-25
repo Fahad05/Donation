@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rotativa.AspNetCore;
+using Taxtation.App_Code;
 using Taxtation.Models;
 using Taxtation.Services;
 using Taxtation.ViewModel;
@@ -22,7 +23,7 @@ namespace Taxtation.Controllers
     [Route("[controller]/[action]")]
     public class SetupController : Controller
     {
-
+        TX tX = new TX();
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -901,6 +902,145 @@ namespace Taxtation.Controllers
         }
         #endregion
 
+
+        #region COA
+
+        public async Task<IActionResult> showCOA()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<Txscoadetail> lstCOA = new List<Txscoadetail>();
+            lstCOA = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return View(lstCOA);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> COA(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                TXSCOADetailView obj = new TXSCOADetailView();
+                obj.coa.AccActive = (obj.coa.AccActive == null) ? true : false;
+                obj.lstCoa = db.Txscoadetail.Where(x=>x.UserName==user.UserName).ToList();
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                TXSCOADetailView obj = new TXSCOADetailView();
+                obj.coa = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Coaid == Convert.ToInt32(id)).FirstOrDefault();
+                obj.coa.AccActive = (obj.coa.AccActive == true) ? true : false;
+                return PartialView(obj);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> COA(Txscoadetail obj, string AccActive, string Save, string Update)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            return View();
+        }
+
+        #endregion
+
+
+        #region Project
+
+        [HttpGet]
+        public async Task<IActionResult> showProject()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<TxsprojectDetail> lstProj = new List<TxsprojectDetail>();
+            lstProj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return View(lstProj);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Project(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                TxsprojectDetail obj = new TxsprojectDetail();
+                obj.ProActive = (obj.ProActive == null) ? true : false;
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                TxsprojectDetail obj = new TxsprojectDetail();
+                obj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.ProActive = (obj.ProActive == true) ? true : false;
+                return PartialView(obj);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Project(TxsprojectDetail obj, string SitActive, string Save, string Update)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (Save != null)
+            {
+                obj.Id = user.Id;
+                obj.UserName = user.UserName;
+                obj.ProActive = (obj.ProActive == true) ? true : false;
+                obj.EnterBy = user.UserName;
+                obj.EnterDate = System.DateTime.Now;
+                db.TxsprojectDetail.Add(obj);
+                db.SaveChanges();
+            }
+            if (Update != null)
+            {
+                TxsprojectDetail obj1 = new TxsprojectDetail();
+                obj1 = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == obj.ProId).FirstOrDefault();
+                if (obj1 != null)
+                {
+                    obj1.ProName = obj.ProName;
+                    obj1.ProAbbr = obj.ProAbbr;
+                    obj1.ProDesc = obj.ProDesc;
+                    obj1.ProActive = (obj.ProActive == true) ? true : false;
+                    obj1.EditBy = user.UserName;
+                    obj1.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("showProject");
+        }
+
+        #endregion
+
+
+
         [HttpGet]
         public List<TxscityDetail> lstCity(string id)
         {
@@ -908,5 +1048,73 @@ namespace Taxtation.Controllers
             lst = db.TxscityDetail.Where(x => x.CouCode == id).ToList();
             return lst;
         }
+
+        [HttpGet]
+        public IActionResult getParentAccountDetail(string AccountNature, string AccCode)
+        {
+            List<Txscoadetail> obj = new List<Txscoadetail>();
+            obj = db.Txscoadetail.Where(x => x.AccAccountNature == AccountNature && x.AccCode != AccCode && x.AccAccountType == "CONTROL").OrderBy(x => x.AccName).ToList();
+            return Ok(obj);
+        }
+
+        [HttpGet]
+        public IActionResult getParentAccountCodeDetail(string AccCode, string len)
+        {
+            string parentCode = "";
+            parentCode = tX.getParentAccountCodeDetail(AccCode);
+            //if (parentCode != null)
+            //{
+            if (len == "1") { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 3)) + 1).ToString("D3"); } else { parentCode = "001"; } }
+            if (len == "5") { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 4)) + 1).ToString("D4"); } else { parentCode = "0001"; } }
+            if (len == "10") { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 5)) + 1).ToString("D5"); } else { parentCode = "00001"; } }
+            if (Convert.ToInt32(len) >= 16) { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 6)) + 1).ToString("D6"); } else { parentCode = "000001"; } }
+            //}
+            return Json(parentCode);
+        }
+
+        [HttpGet]
+        public IActionResult findParentAccount(string table, string AccCode)
+        {
+            if (table == "Glscoadetail")
+            {
+                Txscoadetail obj = new Txscoadetail();
+                obj = tX.findParentAccount(AccCode);
+                return Ok(obj);
+            }
+            //if (table == "GltreceiptMaster")
+            //{
+            //    //TRTypeAccount
+            //    GltreceiptMaster obj = new GltreceiptMaster();
+            //    obj = setup.findParentAccountReceiptMaster(AccCode);
+            //    return Ok(obj);
+            //}
+            //if (table == "GltpaymentMaster")
+            //{
+            //    //TRTypeAccount
+            //    GltpaymentMaster obj = new GltpaymentMaster();
+            //    obj = setup.findParentAccountPaymentMaster(AccCode);
+            //    return Ok(obj);
+            //}
+            return Ok();
+        }
+
+
+        #region Methods
+
+        public string Left(string str, int length)
+        {
+            str = (str ?? string.Empty);
+            return str.Substring(0, Math.Min(length, str.Length));
+        }
+
+        public string Right(string str, int length)
+        {
+            str = (str ?? string.Empty);
+            return (str.Length >= length)
+                ? str.Substring(str.Length - length, length)
+                : str;
+        }
+
+        #endregion
     }
 }

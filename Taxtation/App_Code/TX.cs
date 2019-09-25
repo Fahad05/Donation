@@ -52,5 +52,26 @@ namespace Taxtation.App_Code
 
             return temp;
         }
+
+
+        public string getParentAccountCodeDetail(string id)
+        {
+            return db.Txscoadetail.Where(x => x.AccParentAccount == id).Max(x => x.AccCode);
+        }
+
+        public Txscoadetail findParentAccount(string accCode)
+        {
+            return db.Txscoadetail.Where(x => x.AccParentAccount == accCode).FirstOrDefault();
+        }
+
+        //public TxtpurchaseMaster findParentAccountPaymentMaster(string accCode)
+        //{
+        //    return db.TxtpurchaseMaster.Where(x => x.TrtypeAccount == accCode).FirstOrDefault();
+        //}
+
+        //public GltreceiptMaster findParentAccountReceiptMaster(string accCode)
+        //{
+        //    return db.GltreceiptMaster.Where(x => x.TrtypeAccount == accCode).FirstOrDefault();
+        //}
     }
 }

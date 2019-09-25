@@ -15,10 +15,12 @@ namespace Taxtation.Models
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<TxsbankDetail> TxsbankDetail { get; set; }
         public virtual DbSet<TxscityDetail> TxscityDetail { get; set; }
+        public virtual DbSet<Txscoadetail> Txscoadetail { get; set; }
         public virtual DbSet<TxscountryDetail> TxscountryDetail { get; set; }
         public virtual DbSet<TxscurrencyDetail> TxscurrencyDetail { get; set; }
         public virtual DbSet<TxscustomerDetail> TxscustomerDetail { get; set; }
         public virtual DbSet<TxsitemDetail> TxsitemDetail { get; set; }
+        public virtual DbSet<TxsprojectDetail> TxsprojectDetail { get; set; }
         public virtual DbSet<TxssiteDetail> TxssiteDetail { get; set; }
         public virtual DbSet<TxsstoreDetail> TxsstoreDetail { get; set; }
         public virtual DbSet<TxssupplierDetail> TxssupplierDetail { get; set; }
@@ -207,6 +209,105 @@ namespace Taxtation.Models
                     .HasMaxLength(50);
             });
 
+            modelBuilder.Entity<Txscoadetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.Coaid });
+
+                entity.ToTable("TXSCOADetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.Coaid)
+                    .HasColumnName("COAId")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.AccAbbr).HasMaxLength(50);
+
+                entity.Property(e => e.AccAccountNature).HasMaxLength(50);
+
+                entity.Property(e => e.AccAccountSubNature).HasMaxLength(50);
+
+                entity.Property(e => e.AccAccountType).HasMaxLength(50);
+
+                entity.Property(e => e.AccAccountTypeShort).HasMaxLength(50);
+
+                entity.Property(e => e.AccBsuCode).HasMaxLength(50);
+
+                entity.Property(e => e.AccCode)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AccComCode).HasMaxLength(50);
+
+                entity.Property(e => e.AccDesc).HasMaxLength(250);
+
+                entity.Property(e => e.AccEffectPeriodEnd).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.AccEffectPeriodStart).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.AccGrpCode).HasMaxLength(50);
+
+                entity.Property(e => e.AccHierarchyCode).HasMaxLength(50);
+
+                entity.Property(e => e.AccLevel).HasMaxLength(50);
+
+                entity.Property(e => e.AccName).HasMaxLength(250);
+
+                entity.Property(e => e.AccNameLevelWise).HasMaxLength(250);
+
+                entity.Property(e => e.AccParentAccount).HasMaxLength(50);
+
+                entity.Property(e => e.Bs).HasColumnName("BS");
+
+                entity.Property(e => e.Ce).HasColumnName("CE");
+
+                entity.Property(e => e.Ce1).HasColumnName("CE1");
+
+                entity.Property(e => e.Ce2).HasColumnName("CE2");
+
+                entity.Property(e => e.Cf).HasColumnName("CF");
+
+                entity.Property(e => e.Cf1).HasColumnName("CF1");
+
+                entity.Property(e => e.Cf2).HasColumnName("CF2");
+
+                entity.Property(e => e.ClosingBalanceCr).HasColumnName("ClosingBalanceCR");
+
+                entity.Property(e => e.EditBy).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EditOutSide).HasMaxLength(50);
+
+                entity.Property(e => e.EnterBy).HasMaxLength(50);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.OpeningBalanceCr).HasColumnName("OpeningBalanceCR");
+
+                entity.Property(e => e.Pl).HasColumnName("PL");
+
+                entity.Property(e => e.TclosingBalance).HasColumnName("TClosingBalance");
+
+                entity.Property(e => e.TclosingBalanceCr).HasColumnName("TClosingBalanceCR");
+
+                entity.Property(e => e.TopeningBalance).HasColumnName("TOpeningBalance");
+
+                entity.Property(e => e.TopeningBalanceCr).HasColumnName("TOpeningBalanceCR");
+
+                entity.Property(e => e.TransactionCr).HasColumnName("TransactionCR");
+
+                entity.Property(e => e.TransactionDr).HasColumnName("TransactionDR");
+
+                entity.Property(e => e.TtransactionCr).HasColumnName("TTransactionCR");
+
+                entity.Property(e => e.TtransactionDr).HasColumnName("TTransactionDR");
+            });
+
             modelBuilder.Entity<TxscountryDetail>(entity =>
             {
                 entity.HasKey(e => e.CouCode);
@@ -355,6 +456,35 @@ namespace Taxtation.Models
                 entity.Property(e => e.ItmUom)
                     .HasColumnName("ItmUOM")
                     .HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<TxsprojectDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.ProId });
+
+                entity.ToTable("TXSProjectDetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.ProId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.EditBy).HasMaxLength(256);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(256);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.ProAbbr).HasMaxLength(50);
+
+                entity.Property(e => e.ProDesc).HasMaxLength(450);
+
+                entity.Property(e => e.ProName).HasMaxLength(250);
             });
 
             modelBuilder.Entity<TxssiteDetail>(entity =>
