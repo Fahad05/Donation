@@ -152,7 +152,43 @@ namespace Taxtation.Controllers
             }
             if (Update != null)
             {
+                int count = 0;
+                for (int i = 0; i < obj.detail.detail.Count; i++)
+                {
+                    var j = Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]);
+                    if (obj.detail.detail[i].ItmId != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
+                    {
+                        count++;
+                    }
+                }
+                if(count > 0)
+                {
+                    TxtpurchaseMaster master = new TxtpurchaseMaster();
+                    master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).FirstOrDefault();
+                    master.PurDcref = obj.master.PurDcref;
+                    master.PurDate = obj.master.PurDate;
+                    master.PurSupDate = obj.master.PurSupDate;
+                    master.PurType = obj.master.PurType;
+                    master.SupId = obj.master.SupId;
+                    master.PurPayTerm = obj.master.PurPayTerm;
+                    master.BnkId = obj.master.BnkId;
+                    master.PurChqNo = obj.master.PurChqNo;
+                    master.PurChqDate = obj.master.PurChqDate;
+                    master.PurScope = obj.master.PurScope;
+                    master.PurPrices = obj.master.PurPrices;
+                    master.PurRemarks = obj.master.PurRemarks;
+                    master.PurActive = obj.master.PurActive;
+                    master.PurPomapCode = obj.master.PurPomapCode;
+                    master.CurId = obj.master.CurId;
+                    master.StrId = obj.master.StrId;
+                    master.PurExRate = obj.master.PurExRate;
+                    master.PurItmType = obj.master.PurItmType;
+                    master.SitId = obj.master.SitId;
+                    master.EditBy = user.UserName;
+                    master.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
 
+                }
             }
             return RedirectToAction("showPurchase");
         }
@@ -226,11 +262,101 @@ namespace Taxtation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Sale(TXTSaleDetailView obj)
+        public async Task<IActionResult> Sale(TXTSaleDetailView obj, string Save, string Update)
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if(Save!=null)
+            {
+                int count = 0;
+                for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                {
+                    if(obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                    {
+                        count++;
+                    }
+                }
+                if(count>0)
+                {
+                    obj.master.Id = user.Id;
+                    obj.master.UserName = user.UserName;
+                    obj.master.EnterBy = user.UserName;
+                    obj.master.EnterDate = System.DateTime.Now;
 
+                    db.TxtsaleMaster.Add(obj.master);
+                    db.SaveChanges();
 
-            return View();
+                    for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                    {
+                        obj.Detail.saleDetail[i].Id = user.Id;
+                        obj.Detail.saleDetail[i].UserName = user.UserName;
+                        obj.Detail.saleDetail[i].SalId = obj.master.SalId;
+
+                        db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            if(Update!=null)
+            {
+                int count = 0;
+                for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                {
+                    if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                    {
+                        count++;
+                    }
+                }
+                if(count > 0)
+                {
+                    TxtsaleMaster master = new TxtsaleMaster();
+                    master = db.TxtsaleMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).FirstOrDefault();
+                    master.SalLporef = obj.master.SalLporef;
+                    master.SalDate = obj.master.SalDate;
+                    master.SalSupplyDate = obj.master.SalSupplyDate;
+                    master.SalType = obj.master.SalType;
+                    master.CusId = obj.master.CusId;
+                    master.SalPayTerms = obj.master.SalPayTerms;
+                    master.BnkId = obj.master.BnkId;
+                    master.SalChqNo = obj.master.SalChqNo;
+                    master.SalChqDate = obj.master.SalChqDate;
+                    master.SalScope = obj.master.SalScope;
+                    master.SalPrices = obj.master.SalPrices;
+                    master.SalRemarks = obj.master.SalRemarks;
+                    master.SalActive = obj.master.SalActive;
+                    master.SalSalesMapCo = obj.master.SalSalesMapCo;
+                    master.CurId = obj.master.CurId;
+                    master.StrId = obj.master.StrId;
+                    master.SalExRate = obj.master.SalExRate;
+                    master.SalItemType = obj.master.SalItemType;
+                    master.SitId = obj.master.SitId;
+                    master.EditBy = user.UserName;
+                    master.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
+
+                    List<TxtsaleDetail> lstSale = new List<TxtsaleDetail>();
+                    lstSale = db.TxtsaleDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).OrderBy(x => x.SalSerialNo).ToList();
+                    for (int i = 0; i < lstSale.Count; i++)
+                    {
+                        db.TxtsaleDetail.Remove(lstSale[i]);
+                        db.SaveChanges();
+                    }
+
+                    for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                    {
+                        obj.Detail.saleDetail[i].Id = user.Id;
+                        obj.Detail.saleDetail[i].UserName = user.UserName;
+                        obj.Detail.saleDetail[i].SalId = obj.master.SalId;
+                        db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            return RedirectToAction("showSale");
         }
 
 
@@ -239,7 +365,7 @@ namespace Taxtation.Controllers
 
 
 
-        //#region Journal Detail
+        #region Journal Detail
 
         //[HttpGet]
         //public async Task<IActionResult> JournalDetail(string id)
@@ -346,7 +472,7 @@ namespace Taxtation.Controllers
         //    return View();
         //}
 
-        //#endregion
+        #endregion
 
         #region Function
 
