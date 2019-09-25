@@ -115,18 +115,18 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            if(Save != null)
+            if (Save != null)
             {
                 int count = 0;
                 for (int i = 0; i < obj.detail.detail.Count; i++)
                 {
                     var j = Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]);
-                    if (obj.detail.detail[i].ItmId != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate>0)
+                    if (obj.detail.detail[i].ItmId != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
                     {
                         count++;
                     }
                 }
-                if(count > 0)
+                if (count > 0)
                 {
                     obj.master.Id = user.Id;
                     obj.master.UserName = user.UserName;
@@ -150,7 +150,7 @@ namespace Taxtation.Controllers
 
                 }
             }
-            if(Update != null)
+            if (Update != null)
             {
 
             }
@@ -173,13 +173,13 @@ namespace Taxtation.Controllers
             }
             TXTSaleDetailView sale = new TXTSaleDetailView();
             sale.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstCustomer=db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstExcise=db.TxstaxDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstItem=db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstSite=db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstStore=db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstTax=db.TxstaxDetail.Where(x => x.UserName == user.UserName).ToList();
-            sale.lstMaster=db.TxtsaleMaster.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstCustomer = db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName).ToList();
+            sale.lstMaster = db.TxtsaleMaster.Where(x => x.UserName == user.UserName).ToList();
             sale.lstDetails = db.TxtsaleDetail.Where(x => x.UserName == user.UserName).ToList();
             sale.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
             return View(sale);
@@ -200,9 +200,9 @@ namespace Taxtation.Controllers
             obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
             obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
-            obj.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName ).ToList();
+            obj.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
-            if(id==null)
+            if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
@@ -218,17 +218,17 @@ namespace Taxtation.Controllers
                 obj.Detail.saleDetail = db.TxtsaleDetail.Where(x => x.UserName == user.UserName && x.SalId == Convert.ToInt32(id)).OrderBy(x => x.SalSerialNo).ToList();
                 for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                 {
-                    
+
                 }
             }
-            
+
             return View(obj);
         }
 
         [HttpPost]
         public IActionResult Sale(TXTSaleDetailView obj)
         {
-            
+
 
             return View();
         }
@@ -238,6 +238,116 @@ namespace Taxtation.Controllers
         #endregion
 
 
+
+        //#region Journal Detail
+
+        //[HttpGet]
+        //public async Task<IActionResult> JournalDetail(string id)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (User == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
+
+        //    if (id == null)
+        //    {
+
+        //        data.Tradjusting = (data.Tradjusting == null) ? true : false;
+        //        return View(data);
+
+        //    }
+        //    else
+        //    {
+
+
+        //        data.Tradjusting = (data.Tradjusting == true) ? true : false;
+        //        double? exchangeRate = data.TrexchangeRate;
+        //        double? Debit = (from n in data.lstLedger select n.Trdebit).Sum();
+        //        double? Credit = (from n in data.lstLedger select n.Trcredit).Sum();
+        //        data.totalDebit = Debit * exchangeRate;
+        //        data.totalCredit = Credit * exchangeRate;
+        //        for (int i = 0; i < data.lstLedger.Count; i++)
+        //        {
+        //            if (data.lstLedger[i].Trdebit == 0)
+        //            {
+        //                data.lstLedger[i].Trdebit = 001;
+        //                data.lstLedger[i].TrinvAmount = data.lstLedger[i].Trcredit;
+        //            }
+        //            if (data.lstLedger[i].Trcredit == 0)
+        //            {
+        //                data.lstLedger[i].TrinvAmount = data.lstLedger[i].Trdebit;
+        //                data.lstLedger[i].Trdebit = 002;
+        //            }
+        //        }
+        //        return View(data);
+
+        //    }
+        //    return View();
+        //}
+
+
+        //[HttpPost]
+        //public IActionResult JournalDetail(GLTJournalMaster obj, string Save, string Find, string Update, string CB_Adjusting)
+        //{
+        //    ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+        //    ViewData["UserCode"] = HttpContext.Session.GetString("UserCode");
+        //    if (HttpContext.Session.GetString("UserName") == null && HttpContext.Session.GetString("UserCode") == null) { return RedirectToAction("Login", "Account"); }
+        //    string serverUrl = _iconfiguration["ServerUrl"];
+        //    obj.Tradjusting = (CB_Adjusting == "true") ? true : false;
+        //    HttpClient client = new HttpClient();
+        //    client.BaseAddress = new Uri(serverUrl);
+        //    if (Save != null)
+        //    {
+        //        var myContent = JsonConvert.SerializeObject(obj);
+        //        var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+        //        var byteContent = new ByteArrayContent(buffer);
+        //        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        //        var response = client.PostAsync("postJournalDetail", byteContent).Result;
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            return RedirectToAction("showJournalDetail", "JournalLedger");
+        //        }
+        //    }
+        //    if (Update != null)
+        //    {
+        //        var myContent = JsonConvert.SerializeObject(obj);
+        //        var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+        //        var byteContent = new ByteArrayContent(buffer);
+        //        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        //        var response = client.PutAsync("updateJournalDetail", byteContent).Result;
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            return RedirectToAction("showJournalDetail", "JournalLedger");
+        //        }
+        //    }
+        //    return RedirectToAction("showJournalDetail", "JournalLedger");
+        //}
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> showJournalDetail()
+        //{
+        //    ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+        //    ViewData["UserCode"] = HttpContext.Session.GetString("UserCode");
+        //    if (HttpContext.Session.GetString("UserName") == null && HttpContext.Session.GetString("UserCode") == null) { return RedirectToAction("Login", "Account"); }
+        //    string serverUrl = _iconfiguration["ServerUrl"];
+
+        //    HttpClient client = new HttpClient();
+        //    client.BaseAddress = new Uri(serverUrl);
+        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    HttpResponseMessage response = await client.GetAsync("showJournalDetail");
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var result = response.Content.ReadAsStringAsync().Result;
+        //        var data = JsonConvert.DeserializeObject<GLTJournalMasterView>(result);
+        //        return View(data);
+        //    }
+        //    return View();
+        //}
+
+        //#endregion
+
         #region Function
 
         public async Task<TxsitemDetail> changeItem(string id)
@@ -245,7 +355,7 @@ namespace Taxtation.Controllers
             var user = await _userManager.GetUserAsync(User);
             TxsitemDetail obj = new TxsitemDetail();
             Txsuomdetail uom = new Txsuomdetail();
-            obj = db.TxsitemDetail.Where(x => x.UserName == user.UserName && x.ItmId == Convert.ToInt32(id)).OrderByDescending(x=>x.ItmId).FirstOrDefault();
+            obj = db.TxsitemDetail.Where(x => x.UserName == user.UserName && x.ItmId == Convert.ToInt32(id)).OrderByDescending(x => x.ItmId).FirstOrDefault();
             uom = db.Txsuomdetail.Where(x => x.Uomid == Convert.ToInt32(obj.ItmUom)).FirstOrDefault();
             obj.ItmUom = uom.Uomname;
             return obj;

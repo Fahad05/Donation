@@ -112,14 +112,16 @@
     $(document).ready(function () {
         $('#Save').click(function (event) {
             debugger;
-            var accCode = document.getElementById("AccCode").value;
-            var accName = document.getElementById("AccName").value;
-            var parentAccount = document.getElementById("AccParentAccount").value;
-            var accountType = document.getElementById("AccAccountType").value;
+            var accCode = document.getElementById("coa_AccCode").value;
+            var accName = document.getElementById("coa_AccName").value;
+            var parentAccount = document.getElementById("coa_AccParentAccount").value;
+            var accountType = document.getElementById("coa_AccAccountType").value;
             if (accCode.length == 5) {
                 if (accName != "ASSET" && accName != "ASSETS" && accName != "LIABILITIES" && accName != "LIABILITY" && accName != "EQUITY" && accName != "CAPITAL" && accName != "REVENUE" && accName != "INCOME" && accName != "SALE" && accName != "SALES" && accName != "EXPENSE" && accName != "EXPENSES" && accName != "PURCHASE" && accName != "PURCHASES")
+                {
                     alert("Main account name must be ASSET, ASSETS, LIABILITIES, LIABILITY, EQUITY, CAPITAL, REVENUE, INCOME, EXPENSE, EXPENSES, PURCHASE, PURCHASES!");
-                event.preventDefault();
+                    event.preventDefault();
+                }
             }
 
             if (accCode == "") {
@@ -131,11 +133,10 @@
             $.ajax({
                 type: 'GET',
                 url: '/Setup/findParentAccount',
-                data: { table:'Glscoadetail', AccCode: accCode },
+                data: { table:'Txscoadetail', AccCode: accCode },
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
-
                     if (result != undefined) {
                         if (accountType == "TRANSACTION") {
                             alert("Please select Account Type as Control. Because some Accounts found under this Control!");
@@ -153,14 +154,14 @@
     $(document).ready(function () {
         $('#Update').click(function (event) {
             debugger;
-            var accCode = document.getElementById("AccCode").value;
-            var accName = document.getElementById("AccName").value;
-            var parentAccount = document.getElementById("AccParentAccount").value;
-            var accountType = document.getElementById("AccAccountType").value;
-            var hiddenCode = document.getElementById("TRCode").value;
-            var hiddenParentCode = document.getElementById("ParentAccountCode").value;
-            var accountSubNature = document.getElementById("AccAccountSubNature").value;
-            var BankCash = document.getElementById("BankCash");
+            var accCode = document.getElementById("coa_AccCode").value;
+            var accName = document.getElementById("coa_AccName").value;
+            var parentAccount = document.getElementById("coa_AccParentAccount").value;
+            var accountType = document.getElementById("coa_AccAccountType").value;
+            var hiddenCode = document.getElementById("coa_TRCode").value;
+            var hiddenParentCode = document.getElementById("coa_ParentAccountCode").value;
+            var accountSubNature = document.getElementById("coa_AccAccountSubNature").value;
+            var BankCash = document.getElementById("coa_BankCash");
             if (accCode.length == 5) {
                 if (accName != "ASSET" && accName != "ASSETS" && accName != "LIABILITIES" && accName != "LIABILITY" && accName != "EQUITY" && accName != "CAPITAL" && accName != "REVENUE" && accName != "INCOME" && accName != "SALE" && accName != "SALES" && accName != "EXPENSE" && accName != "EXPENSES" && accName != "PURCHASE" && accName != "PURCHASES")
                     alert("Main account name must be ASSET, ASSETS, LIABILITIES, LIABILITY, EQUITY, CAPITAL, REVENUE, INCOME, EXPENSE, EXPENSES, PURCHASE, PURCHASES!");
@@ -282,7 +283,7 @@
 <script >
     
         function accountNatureChangeFunction() {
-            var nature = document.getElementById("AccAccountNature").value;
+            var nature = document.getElementById("coa_AccAccountNature").value;
 
             var subNature = "";
             if (nature == 'ASSET') {
@@ -304,8 +305,8 @@
             }
 
 
-            $('#AccAccountSubNature option').remove();
-            $('#AccAccountSubNature').append(subNature);
+            $('#coa_AccAccountSubNature option').remove();
+            $('#coa_AccAccountSubNature').append(subNature);
 
             var accNature = document.getElementById("AccAccountNature").value;
             var trCode = document.getElementById("AccCode").value;
@@ -324,8 +325,8 @@
                         parentHtml += "<option value='" + result[i].accCode + "'>" + result[i].accAccountNature + " - " + result[i].accAccountSubNature + " - " + result[i].accName + "</option>";
                     }
 
-                    $('#AccParentAccount option').remove();
-                    $('#AccParentAccount').append(parentHtml);
+                    $('#coa_AccParentAccount option').remove();
+                    $('#coa_AccParentAccount').append(parentHtml);
 
                 },
                 error: function () { }
@@ -337,7 +338,7 @@
         function parentAccountChangeFunction() {
             debugger;
 
-            var parentAccount = document.getElementById("AccParentAccount").value;
+            var parentAccount = document.getElementById("coa_AccParentAccount").value;
             if (parentAccount != "-1") {
                 $.ajax({
                     type: 'GET',
@@ -346,7 +347,7 @@
                     dataType: 'json',
                     contentType: "application/json; charset=utf-8",
                     success: function (result) {
-                        $('#AccCode').val(parentAccount + "." + result);
+                        $('#coa_AccCode').val(parentAccount + "." + result);
                     },
                     error: function () {
                         alert('Error');
@@ -354,7 +355,7 @@
                     }
                 })
             }
-            else { $('#AccCode').val(""); }
+            else { $('#coa_AccCode').val(""); }
         }
 
 </script>

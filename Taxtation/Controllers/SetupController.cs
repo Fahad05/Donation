@@ -929,6 +929,8 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
+                ViewData["_HiddenCode"] = "0";
+                ViewData["_ParentAccountCode"] = "0";
                 TXSCOADetailView obj = new TXSCOADetailView();
                 obj.coa.AccActive = (obj.coa.AccActive == null) ? true : false;
                 obj.lstCoa = db.Txscoadetail.Where(x=>x.UserName==user.UserName).ToList();
@@ -941,19 +943,91 @@ namespace Taxtation.Controllers
                 TXSCOADetailView obj = new TXSCOADetailView();
                 obj.coa = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Coaid == Convert.ToInt32(id)).FirstOrDefault();
                 obj.coa.AccActive = (obj.coa.AccActive == true) ? true : false;
+                ViewData["_HiddenCode"] = obj.coa.AccCode;
+                ViewData["_ParentAccountCode"] = obj.coa.AccParentAccount;
                 return PartialView(obj);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> COA(Txscoadetail obj, string AccActive, string Save, string Update)
+        public async Task<IActionResult> COA(TXSCOADetailView obj, string AccActive, string Save, string Update)
         {
             var user = await _userManager.GetUserAsync(User);
             if (User == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            return View();
+            obj.coa.Id = user.Id;
+            obj.coa.UserName = user.UserName;
+            obj.coa.AccActive = (AccActive == "true") ? true : false;
+            obj.coa.AccHierarchyCode = obj.coa.AccCode;
+            obj.coa.AccGrpCode = obj.coa.AccAccountNature;
+            obj.coa.AccTaxAccount = false;
+            obj.coa.AccAllowBudgeting = false;
+            obj.coa.AccAllowPosting = false;
+            obj.coa.AccReconcile = false;
+            obj.coa.AccThirdParty = false;
+            if (Save!=null)
+            {
+                obj.coa.EnterBy = user.UserName;
+                obj.coa.EnterDate = System.DateTime.Now;
+                db.Txscoadetail.Add(obj.coa);
+                db.SaveChanges();
+            }
+            if(Update != null)
+            {
+                Txscoadetail txscoadetail = new Txscoadetail();
+                txscoadetail = db.Txscoadetail.Where(x => x.Id == obj.coa.Id && x.UserName == user.UserName && x.Coaid == obj.coa.Coaid).FirstOrDefault();
+                txscoadetail.AccName = obj.coa.AccName;
+                txscoadetail.AccAbbr = obj.coa.AccAbbr;
+                txscoadetail.AccDesc = obj.coa.AccDesc;
+                txscoadetail.AccHierarchyCode = obj.coa.AccCode;
+                txscoadetail.AccGrpCode = obj.coa.AccAccountNature;
+
+                txscoadetail.AccComCode = obj.coa.AccComCode;
+                txscoadetail.AccBsuCode = obj.coa.AccBsuCode;
+                txscoadetail.AccParentAccount = obj.coa.AccParentAccount;
+                txscoadetail.AccAccountType = obj.coa.AccAccountType;
+                txscoadetail.AccAccountNature = obj.coa.AccAccountNature;
+                txscoadetail.AccAccountSubNature = obj.coa.AccAccountSubNature;
+                txscoadetail.AccTaxAccount = obj.coa.AccTaxAccount;
+                txscoadetail.AccAllowBudgeting = obj.coa.AccAllowBudgeting;
+                txscoadetail.AccReconcile = obj.coa.AccReconcile;
+                txscoadetail.AccThirdParty = obj.coa.AccThirdParty;
+                txscoadetail.AccEffectPeriodStart = obj.coa.AccEffectPeriodStart;
+                txscoadetail.AccEffectPeriodEnd = obj.coa.AccEffectPeriodEnd;
+                txscoadetail.AccActive = obj.coa.AccActive;
+                txscoadetail.EditOutSide = obj.coa.EditOutSide;
+                txscoadetail.OpeningBalance = obj.coa.OpeningBalance;
+                txscoadetail.ClosingBalance = obj.coa.ClosingBalance;
+                txscoadetail.OpeningBalanceCr = obj.coa.OpeningBalanceCr;
+                txscoadetail.ClosingBalanceCr = obj.coa.ClosingBalanceCr;
+                txscoadetail.TransactionDr = obj.coa.TransactionDr;
+                txscoadetail.TransactionCr = obj.coa.TransactionCr;
+                txscoadetail.AccLevel = obj.coa.AccLevel;
+                txscoadetail.TopeningBalance = obj.coa.TopeningBalance;
+                txscoadetail.TclosingBalance = obj.coa.TclosingBalance;
+                txscoadetail.TopeningBalanceCr = obj.coa.TopeningBalanceCr;
+                txscoadetail.TclosingBalanceCr = obj.coa.TopeningBalanceCr;
+                txscoadetail.TtransactionDr = obj.coa.TtransactionDr;
+                txscoadetail.TtransactionCr = obj.coa.TtransactionCr;
+                txscoadetail.Pl = obj.coa.Pl;
+                txscoadetail.Bs = obj.coa.Bs;
+                txscoadetail.Cf = obj.coa.Cf;
+                txscoadetail.Ce = obj.coa.Ce;
+                txscoadetail.Cf1 = obj.coa.Cf1;
+                txscoadetail.Cf2 = obj.coa.Cf2;
+                txscoadetail.Ce1 = obj.coa.Ce1;
+                txscoadetail.Ce2 = obj.coa.Ce2;
+                txscoadetail.AccLevelNo = obj.coa.AccLevelNo;
+                txscoadetail.AccNameLevelWise = obj.coa.AccNameLevelWise;
+                txscoadetail.AccAccountTypeShort = obj.coa.AccAccountTypeShort;
+                txscoadetail.AccOpeningBalance = obj.coa.AccOpeningBalance;
+                obj.coa.EditBy = user.UserName;
+                obj.coa.EditDate = System.DateTime.Now;
+                db.SaveChanges();
+            }
+            return RedirectToAction("showCOA");
         }
 
         #endregion
@@ -1002,7 +1076,7 @@ namespace Taxtation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Project(TxsprojectDetail obj, string SitActive, string Save, string Update)
+        public async Task<IActionResult> Project(TxsprojectDetail obj, string ProActive, string Save, string Update)
         {
             var user = await _userManager.GetUserAsync(User);
             if (User == null)
@@ -1013,7 +1087,7 @@ namespace Taxtation.Controllers
             {
                 obj.Id = user.Id;
                 obj.UserName = user.UserName;
-                obj.ProActive = (obj.ProActive == true) ? true : false;
+                obj.ProActive = (ProActive == "true") ? true : false;
                 obj.EnterBy = user.UserName;
                 obj.EnterDate = System.DateTime.Now;
                 db.TxsprojectDetail.Add(obj);
@@ -1028,7 +1102,7 @@ namespace Taxtation.Controllers
                     obj1.ProName = obj.ProName;
                     obj1.ProAbbr = obj.ProAbbr;
                     obj1.ProDesc = obj.ProDesc;
-                    obj1.ProActive = (obj.ProActive == true) ? true : false;
+                    obj1.ProActive = (ProActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
@@ -1075,7 +1149,7 @@ namespace Taxtation.Controllers
         [HttpGet]
         public IActionResult findParentAccount(string table, string AccCode)
         {
-            if (table == "Glscoadetail")
+            if (table == "Txscoadetail")
             {
                 Txscoadetail obj = new Txscoadetail();
                 obj = tX.findParentAccount(AccCode);
