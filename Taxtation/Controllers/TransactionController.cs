@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -82,19 +83,19 @@ namespace Taxtation.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             TXTPurchaseDetailView obj = new TXTPurchaseDetailView();
+            obj.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstSupplier = db.TxssupplierDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
+            obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
                 obj.master.PurPoref = tX.PurchaseOrder(user.UserName);
-                obj.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
-                obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
-                obj.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
-                obj.lstSupplier = db.TxssupplierDetail.Where(x => x.UserName == user.UserName).ToList();
-                obj.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
-                obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
-                obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
-                obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
                 obj.detail.detail = null;
                 obj.detail.pdef = null;
             }
@@ -102,6 +103,27 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
+
+                obj.master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.detail.detail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == Convert.ToInt32(id)).OrderBy(x => x.PurSerialNo).ToList();
+                for (int i = 0; i < obj.detail.detail.Count; i++)
+                {
+                    PDEF pDEF = new PDEF();
+                    TXSItemUOMDetail item = new TXSItemUOMDetail();
+                    int itmid = (int) obj.detail.detail[i].ItmId;
+                    if (itmid != -1)
+                    {
+                        item = changeItems(itmid, user.Id, user.UserName);
+                        pDEF.UOM = item.Txuom.Uomname;
+                        pDEF.lastPrice = item.Txsitem.ItmSp;
+                    }
+                    
+                    pDEF.subAmount = obj.detail.detail[i].PurQty * obj.detail.detail[i].PurRate;
+                    pDEF.AmtAfterExcise = pDEF.subAmount + obj.detail.detail[i].PurExAmt;
+                    pDEF.AmtAfterDiscount = pDEF.subAmount + obj.detail.detail[i].PurExAmt - obj.detail.detail[i].PurDiscountAmt;
+                    obj.detail.pdef.Add(pDEF);
+                    obj.detail.detail[i].PurGrossAmt = obj.detail.detail[i].PurNetAmt * obj.master.PurExRate;
+                }
             }
             return View(obj);
         }
@@ -188,6 +210,26 @@ namespace Taxtation.Controllers
                     master.EditDate = System.DateTime.Now;
                     db.SaveChanges();
 
+                    List<TxtpurchaseDetail> lstPurchase = new List<TxtpurchaseDetail>();
+                    lstPurchase = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).ToList();
+                    for (int i = 0; i < lstPurchase.Count; i++)
+                    {
+                        db.TxtpurchaseDetail.Remove(lstPurchase[i]);
+                        db.SaveChanges();
+                    }
+
+                    for (int i = 0; i < obj.detail.detail.Count; i++)
+                    {
+                        if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
+                        {
+                            obj.detail.detail[i].Id = user.Id;
+                            obj.detail.detail[i].UserName = user.UserName;
+                            obj.detail.detail[i].PurSerialNo = i;
+                            obj.detail.detail[i].PurId = obj.master.PurId;
+                            db.TxtpurchaseDetail.Add(obj.detail.detail[i]);
+                            db.SaveChanges();
+                        }
+                    }
                 }
             }
             return RedirectToAction("showPurchase");
@@ -484,6 +526,14 @@ namespace Taxtation.Controllers
             obj = db.TxsitemDetail.Where(x => x.UserName == user.UserName && x.ItmId == Convert.ToInt32(id)).OrderByDescending(x => x.ItmId).FirstOrDefault();
             uom = db.Txsuomdetail.Where(x => x.Uomid == Convert.ToInt32(obj.ItmUom)).FirstOrDefault();
             obj.ItmUom = uom.Uomname;
+            return obj;
+        }
+
+        public TXSItemUOMDetail changeItems(int id, string userid, string userName)
+        {
+            TXSItemUOMDetail obj = new TXSItemUOMDetail();
+            obj.Txsitem = db.TxsitemDetail.Where(x => x.UserName == userName && x.Id == userid && x.ItmId == id).OrderByDescending(x => x.ItmId).FirstOrDefault();
+            obj.Txuom = db.Txsuomdetail.Where(x => x.Uomid == Convert.ToInt32(obj.Txsitem.ItmUom)).FirstOrDefault();
             return obj;
         }
 
