@@ -350,7 +350,22 @@ namespace Taxtation.Controllers
                 obj.Detail.saleDetail = db.TxtsaleDetail.Where(x => x.UserName == user.UserName && x.SalId == Convert.ToInt32(id)).OrderBy(x => x.SalSerialNo).ToList();
                 for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                 {
+                    saleDetail sale = new saleDetail();
+                    TXSItemUOMDetail item = new TXSItemUOMDetail();
+                    int itmid = (int)obj.Detail.saleDetail[i].ItmId;
+                    if (itmid != -1)
+                    {
+                        item = changeItems(itmid, user.Id, user.UserName);
+                        sale.UOM = item.Txuom.Uomname;
+                        sale.LastPrice = item.Txsitem.ItmSp;
+                        sale.BarCode = item.Txsitem.ItmBcode;
+                    }
 
+                    sale.Amount = obj.Detail.saleDetail[i].SalQty * obj.Detail.saleDetail[i].SalRate;
+                    sale.AmtAfterExcise = sale.Amount + obj.Detail.saleDetail[i].SalExAmt;
+                    sale.AmtAfterDiscount = sale.Amount + obj.Detail.saleDetail[i].SalExAmt - obj.Detail.saleDetail[i].SalDiscAmt;
+                    obj.Detail.sale.Add(sale);
+                    obj.Detail.saleDetail[i].SalGrossAmt = obj.Detail.saleDetail[i].SalNetAmt * obj.master.SalExRate;
                 }
             }
 
@@ -387,12 +402,15 @@ namespace Taxtation.Controllers
 
                     for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                     {
-                        obj.Detail.saleDetail[i].Id = user.Id;
-                        obj.Detail.saleDetail[i].UserName = user.UserName;
-                        obj.Detail.saleDetail[i].SalId = obj.master.SalId;
+                        if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                        {
+                            obj.Detail.saleDetail[i].Id = user.Id;
+                            obj.Detail.saleDetail[i].UserName = user.UserName;
+                            obj.Detail.saleDetail[i].SalId = obj.master.SalId;
 
-                        db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
-                        db.SaveChanges();
+                            db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
+                            db.SaveChanges();
+                        }
                     }
                 }
             }
@@ -443,11 +461,14 @@ namespace Taxtation.Controllers
 
                     for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                     {
-                        obj.Detail.saleDetail[i].Id = user.Id;
-                        obj.Detail.saleDetail[i].UserName = user.UserName;
-                        obj.Detail.saleDetail[i].SalId = obj.master.SalId;
-                        db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
-                        db.SaveChanges();
+                        if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                        {
+                            obj.Detail.saleDetail[i].Id = user.Id;
+                            obj.Detail.saleDetail[i].UserName = user.UserName;
+                            obj.Detail.saleDetail[i].SalId = obj.master.SalId;
+                            db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
+                            db.SaveChanges();
+                        }
                     }
                 }
             }
