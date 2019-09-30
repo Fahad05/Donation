@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Rotativa.AspNetCore;
 using Taxtation.App_Code;
 using Taxtation.Models;
 using Taxtation.Models.ManageViewModels;
@@ -29,7 +30,8 @@ namespace Taxtation.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly UrlEncoder _urlEncoder;
-
+        static string UId;
+        static string UName;
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
         TAXTATIONContext db = new TAXTATIONContext();
@@ -57,11 +59,13 @@ namespace Taxtation.Controllers
         public async Task<IActionResult> showPurchase()
         {
             var user = await _userManager.GetUserAsync(User);
+           
             if (User == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             TXTPurchaseDetailView obj = new TXTPurchaseDetailView();
+            
             obj.lstMaster = db.TxtpurchaseMaster.Where(x => x.UserName == user.UserName).ToList();
             obj.detail.detail = db.TxtpurchaseDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
@@ -91,6 +95,8 @@ namespace Taxtation.Controllers
             obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
             obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
+            UId=user.Id;
+            UName = user.UserName;
             if (id == null)
             {
                 ViewData["_Save"] = "True";
@@ -235,6 +241,54 @@ namespace Taxtation.Controllers
             return RedirectToAction("showPurchase");
         }
 
+
+        public IActionResult PrintAllPurchase(string id)
+        {
+
+            //var user = await _userManager.GetUserAsync(User);
+            //if (User == null)
+            //{
+            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            //}
+
+            TXTPurchaseDetailView lstPurchase = new TXTPurchaseDetailView();
+            lstPurchase.lstMaster = db.TxtpurchaseMaster.Where(x => x.Id == UId && x.UserName == UName).ToList();
+            lstPurchase.detail.detail = db.TxtpurchaseDetail.Where(x => x.Id == UId && x.UserName == UName).OrderBy(x => x.PurSerialNo).ToList();
+            lstPurchase.lstBank = db.TxsbankDetail.Where(x => x.UserName == UName).ToList();
+            lstPurchase.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == UName).ToList();
+            lstPurchase.lstStore = db.TxsstoreDetail.Where(x => x.UserName == UName).ToList();
+            lstPurchase.lstSupplier = db.TxssupplierDetail.Where(x => x.UserName == UName).ToList();
+            lstPurchase.lstSite = db.TxssiteDetail.Where(x => x.UserName == UName).ToList();
+            lstPurchase.lstItem = db.TxsitemDetail.Where(x => x.UserName == UName).ToList();
+            lstPurchase.lstTax = db.TxstaxDetail.Where(x => x.UserName == UName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
+            lstPurchase.lstExcise = db.TxstaxDetail.Where(x => x.UserName == UName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
+            for (int i = 0; i < lstPurchase.detail.detail.Count; i++)
+            {
+                PDEF pDEF = new PDEF();
+                TXSItemUOMDetail item = new TXSItemUOMDetail();
+                int itmid = (int)lstPurchase.detail.detail[i].ItmId;
+                if (itmid != -1)
+                {
+                    item = changeItems(itmid, UId, UName);
+                    pDEF.UOM = item.Txuom.Uomname;
+                    pDEF.lastPrice = item.Txsitem.ItmSp;
+                }
+
+                pDEF.subAmount = lstPurchase.detail.detail[i].PurQty * lstPurchase.detail.detail[i].PurRate;
+                pDEF.AmtAfterExcise = pDEF.subAmount + lstPurchase.detail.detail[i].PurExAmt;
+                pDEF.AmtAfterDiscount = pDEF.subAmount + lstPurchase.detail.detail[i].PurExAmt - lstPurchase.detail.detail[i].PurDiscountAmt;
+                lstPurchase.detail.pdef.Add(pDEF);
+                lstPurchase.detail.detail[i].PurGrossAmt = lstPurchase.detail.detail[i].PurNetAmt * lstPurchase.master.PurExRate;
+            }
+
+            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return new ViewAsPdf("ReportAllPurchase", lstPurchase)
+            {
+                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
+                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
+            };
+
+        }
 
         #endregion
 

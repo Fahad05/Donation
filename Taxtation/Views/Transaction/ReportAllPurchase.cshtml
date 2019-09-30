@@ -1,0 +1,75 @@
+﻿@model Taxtation.ViewModel.TXTPurchaseDetailView
+@{
+    Layout = null;
+    
+
+    var query = from mas in Model.lstMaster
+                join det in Model.detail.detail on mas.PurId equals det.PurId
+                join bank in Model.lstBank on mas.BnkId equals bank.BnkId into banks
+                from bank in banks.DefaultIfEmpty()
+                join currency in Model.lstCurrency on mas.CurId equals currency.CurId into currencies
+                from currency in currencies.DefaultIfEmpty()
+                join supplier in Model.lstSupplier on mas.SupId equals supplier.SupId into suppliers
+                from supplier in suppliers.DefaultIfEmpty()
+                join store in Model.lstStore on mas.StrId equals store.StrId into stores
+                from store in stores.DefaultIfEmpty()
+                select new { mas, det, bank, currency, supplier, store };
+
+    var a = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Report:Purchase Detail</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <p style="float:right">@Html.Label(DateTime.Today.ToString("dd-MM-yyyy"))</p>
+        <h2>ALL PURCHASE DETAIL</h2>
+        <div style="width:100%;border-top:1px solid black"></div>
+        <br />
+        <table class="table table-bordered">
+            <thead>
+                <tr style="background-color:#F1F1F1">
+                    <th>Code</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Payment Term</th>
+                    <th>Bank</th>
+                    <th>Cheque No by</th>
+                    <th>Cheque Date</th>
+                    <th>Currency</th>
+                    <th>Store</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in query)
+                {
+                    <tr>
+                        <td>
+                            @item.mas.PurId
+                        </td>
+                        <td>@item.mas.PurDate</td>
+                        <td>@item.supplier.SupName</td>
+                        <td>@item.mas.PurPayTerm</td>
+                        <td>@item.bank.BnkName</td>
+                        <td>@item.mas.PurChqNo</td>
+                        <td> @item.mas.PurChqDate</td>
+                        <td>@item.currency.CurName</td>
+                        <td>@item.store.StrName</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html> 
