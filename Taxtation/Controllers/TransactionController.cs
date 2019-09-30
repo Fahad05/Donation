@@ -65,7 +65,8 @@ namespace Taxtation.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             TXTPurchaseDetailView obj = new TXTPurchaseDetailView();
-            
+            UId = user.Id;
+            UName = user.UserName;
             obj.lstMaster = db.TxtpurchaseMaster.Where(x => x.UserName == user.UserName).ToList();
             obj.detail.detail = db.TxtpurchaseDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
@@ -95,8 +96,7 @@ namespace Taxtation.Controllers
             obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
             obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
-            UId=user.Id;
-            UName = user.UserName;
+           
             if (id == null)
             {
                 ViewData["_Save"] = "True";
@@ -480,7 +480,59 @@ namespace Taxtation.Controllers
 
         #endregion
 
+        #region Credit Note
+        [HttpGet]
+        public async Task<IActionResult> CreditNote(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
+            TXTCreditNoteDetailView lstcreditNote = new TXTCreditNoteDetailView();
+            lstcreditNote.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
+            lstcreditNote.lstCustomer = db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
+            lstcreditNote.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            lstcreditNote.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                lstcreditNote.master.ScnRefNo = tX.CreditNote(user.UserName);
+                lstcreditNote.detail.detail = null;
+                lstcreditNote.detail.cndef = null;
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+
+                //lstcreditNote.master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == Convert.ToInt32(id)).FirstOrDefault();
+                //lstcreditNote.detail.detail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == Convert.ToInt32(id)).OrderBy(x => x.PurSerialNo).ToList();
+                //for (int i = 0; i < obj.detail.detail.Count; i++)
+                //{
+                //    PDEF pDEF = new PDEF();
+                //    TXSItemUOMDetail item = new TXSItemUOMDetail();
+                //    int itmid = (int)obj.detail.detail[i].ItmId;
+                //    if (itmid != -1)
+                //    {
+                //        item = changeItems(itmid, user.Id, user.UserName);
+                //        pDEF.UOM = item.Txuom.Uomname;
+                //        pDEF.lastPrice = item.Txsitem.ItmSp;
+                //    }
+
+                //    pDEF.subAmount = obj.detail.detail[i].PurQty * obj.detail.detail[i].PurRate;
+                //    pDEF.AmtAfterExcise = pDEF.subAmount + obj.detail.detail[i].PurExAmt;
+                //    pDEF.AmtAfterDiscount = pDEF.subAmount + obj.detail.detail[i].PurExAmt - obj.detail.detail[i].PurDiscountAmt;
+                //    obj.detail.pdef.Add(pDEF);
+                //    obj.detail.detail[i].PurGrossAmt = obj.detail.detail[i].PurNetAmt * obj.master.PurExRate;
+                //
+            }
+            return View(lstcreditNote);
+        }
+           
+        #endregion
 
         #region Journal Detail
 
