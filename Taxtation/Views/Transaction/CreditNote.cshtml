@@ -1,0 +1,349 @@
+﻿@model Taxtation.ViewModel.TXTCreditNoteDetailView
+
+@{
+    ViewData["Title"] = "CreditNote";
+    var index = 5;
+    if (Model.detail.detail != null) { index = Model.detail.detail.Count; }
+}
+<form asp-action="Purchase" method="post">
+    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
+        <div class="col-sm-12" style="padding-left:8.2%;">
+            @if (ViewData["_Save"].ToString() == "True")
+            {
+                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+            }
+            @if (ViewData["_Update"].ToString() == "True")
+            {
+                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+
+            }
+            <div style="float:right;padding-right:8.3%">
+                <a asp-action="showCreditNote" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <input type="text" asp-for="master.ScnCode" hidden="hidden" class="form-control" />
+        </div>
+    </div>
+    <div class="row" style="padding-top:70px;z-index:1">
+        <div class="col-md-3">
+            Purchase Order:
+            <input type="text" asp-for="master.ScnRefNo" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Transaction Date:
+            <input type="date" asp-for="master.ScnDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Sale Type:
+            <select asp-for="master.ScnSaleType" class="form-control">
+                <option value="OrderSale">Order Sale</option>
+                <option value="DirectSale">Direct Sale</option>
+            </select>
+        </div><div class="col-md-3">
+            Sale TR No:
+            <input type="text" asp-for="master.ScnSaleTrNo" class="form-control" />
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Invoice No:
+            <input type="text" asp-for="master.ScnInvoiceNo" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Sale Number:
+            <input type="text" asp-for="master.ScnSaleCode" class="form-control" />
+        </div> <div class="col-md-3">
+            Purchase Type:
+            <input type="date" asp-for="master.ScnSaleDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Item Type:
+            <select asp-for="master.AccId" class="form-control">
+                <option>Select</option>
+                @foreach (var j in Model.lstCustomer)
+                {
+                    <option value=@j.CusId>@j.CusName</option>
+                }
+            </select>
+           
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-3">
+            Gate Pass No:
+            <input type="text" asp-for="master.ScnGpno" class="form-control" />
+        </div> <div class="col-md-3">
+            Site:
+            <input type="date" asp-for="master.ScnGpdate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Site:
+            <select asp-for="master.SitId" class="form-control" required="required">
+                <option>Select</option>
+                @foreach (var j in Model.lstSite)
+                {
+                    <option value=@j.SitId>@j.SitName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Condition:
+            <select asp-for="master.ScnCondition" class="form-control" required="required">
+                <option value="Excellent">Excellent</option>
+                <option value="Good">Good</option>
+            </select>
+        </div>
+        <div class="row">
+
+
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-md-3">
+            Store:
+            <select asp-for="master.StrId" class="form-control" required="required">
+                <option>Select</option>
+                @foreach (var j in Model.lstStore)
+                {
+                    <option value=@j.StrId>@j.StrName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Remarks:
+            <input type="text" asp-for="master.ScnRemarks" class="form-control" />
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:230px;">Item</th>
+                        <th style="width:70px;">UOM</th>
+                        <th style="width:120px;">Sale Qty</th>
+                        <th style="width:120px;">Rcvd Qty</th>
+                        <th style="width:120px;">Rec Qty</th>
+                        <th style="width:120px;">Bal Qty</th>
+                        <th style="width:120px;">Amount</th>
+                        <th style="width:120px;">Excise Amount</th>
+                        <th style="width:120px;">Disc. Amount</th>
+                        <th style="width:120px;">VAT Amount</th>
+                        <th style="width:120px;">Net Amount</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index; i++)
+                    {
+                    <tr>
+                        <td>
+                            <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
+                                <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                {
+                                    <option value=@j.ItmId>@j.ItmName</option>}
+                            </select>
+                        </td>
+                        <td><input type="text" asp-for="detail.cndef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnSaleQuantity" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnReceivedQuantity" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnRecQuantity" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.cndef[i].BalAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnExciseTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnDiscountAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnNetAmount" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                        <td><input type="text" asp-for="detail.detail[i].ScnSubRemarks" class="form-control" style="width:230px;" /></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br />
+
+    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
+
+        <div class="col-md-2">
+            Sub Total
+            <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Exise Tax
+            <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control-footer" />
+        </div>  
+        <div class="col-md-2">
+            Disc. Amount
+            <input type="text" asp-for="DiscountAmount" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Vat
+            <input type="text" asp-for="VAT" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Total
+            <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Quantity
+            <input type="text" asp-for="Quantity" readonly="readonly" class="form-control-footer" />
+        </div>
+
+
+    </div>
+</form>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+        function changeItem(item) {
+            var trNo = item.dataset.rowno;
+            if (item.value != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeItem',
+                    data: { id: item.value },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_pdef_' + trNo + '__UOM').val(result.itmUom);
+                        $('#detail_pdef_' + trNo + '__lastPrice').val(result.itmSp);
+                    },
+                    error: function () {
+                    }
+                })
+            }
+            else {
+                $('#detail_pdef_' + trNo + '__UOM').val('');
+                $('#detail_pdef_' + trNo + '__lastPrice').val('');
+            }
+        }
+
+        function changeQuantityAndRate(QtyRate) {
+            debugger;
+            var rowNo = QtyRate.dataset.rowno;
+            var ExciseSlab = $('#detail_detail_' + rowNo + '__ExciseId').val();
+            var TaxSlab = $('#detail_detail_' + rowNo + '__TaxId').val();
+            if (ExciseSlab != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTax',
+                    data: { id: ExciseSlab },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_detail_' + rowNo + '__PurExPer').val(result.taxPercent);
+                        var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                        $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                    },
+                    error: function () {
+                    }
+                })
+            }
+
+            if (TaxSlab != '-1') {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTax',
+                    data: { id: TaxSlab },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $('#detail_detail_' + rowNo + '__PurTaxPer').val(result.taxPercent);
+                        var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                        $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                    },
+                    error: function () {
+                    }
+                })
+            }
+
+            var ExhRate = $('#master_PurExRate').val();
+            var qty = $('#detail_detail_' + rowNo + '__PurQty').val();
+            var rate = $('#detail_detail_' + rowNo + '__PurRate').val();
+            var ExcPercent = $('#detail_detail_' + rowNo + '__PurExPer').val();
+            var discount = $('#detail_detail_' + rowNo + '__PurDiscountPer').val();
+            var Vat = $('#detail_detail_' + rowNo + '__PurTaxPer').val();
+            if (qty != '' && rate != '') {
+                $('#detail_pdef_' + rowNo + '__subAmount').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_detail_' + rowNo + '__PurNetAmt').val((parseFloat(qty) * parseFloat(rate)).toFixed(2));
+                $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(qty) * parseFloat(rate) * parseFloat(ExhRate)).toFixed(2));
+                var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                if (ExcPercent != '') {
+                    $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(ExcPercent) / parseFloat(100)).toFixed(2));
+                    $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val((parseFloat(subAmount) + ((parseFloat(subAmount) * parseFloat(ExcPercent)) / 100)).toFixed(2));
+                    var afterExcise = $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val();
+                    $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val((parseFloat(afterExcise)).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(afterExcise).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(afterExcise) * parseFloat(ExhRate)).toFixed(2));
+                }
+                if (discount != '') {
+                    var amtAfterExcise = document.getElementById("detail_pdef_" + rowNo + "__AmtAfterExcise").value;
+                    var discType = document.getElementById("detail_detail_" + rowNo + "__PurDisType").value;
+                    if (discType == "PERCENT") {
+                        $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(amtAfterExcise * discount / 100));
+                        $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - (amtAfterExcise * discount / 100)));
+                    }
+                    if (discType == "AMOUNT") {
+                        $('#detail_detail_' + rowNo + '__PurDiscountAmt').val(parseFloat(discount));
+                        $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val(parseFloat(amtAfterExcise - discount));
+                    }
+                    var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val(parseFloat(AmtAfterDisc).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val((parseFloat(AmtAfterDisc) * parseFloat(ExhRate)).toFixed(2));
+                }
+                if (Vat != '') {
+                    var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                    $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100)).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurNetAmt').val((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))).toFixed(2));
+                    $('#detail_detail_' + rowNo + '__PurGrossAmt').val(((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))) * parseFloat(ExhRate)).toFixed(2));
+                }
+            }
+            else {
+                $('#detail_pdef_' + rowNo + '__subAmount').val('');
+                $('#detail_pdef_' + rowNo + '__AmtAfterExcise').val('');
+                $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val('');
+                $('#detail_detail_' + rowNo + '__PurNetAmt').val('');
+                $('#detail_detail_' + rowNo + '__PurGrossAmt').val('');
+            }
+        }
+
+        function ExchangeRate() {
+            debugger;
+            var ExRate = $('#master_PurExRate').val();
+            var rows = $('#myTable tbody tr').length;
+            for (var i = 0; i < rows; i++) {
+                var NetAmount = $('#detail_detail_' + i + '__PurNetAmt').val();
+                if (NetAmount != '') {
+                    $('#detail_detail_' + i + '__PurGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
+                }
+            }
+        }
+
+        function AddRow() {
+            var rowCount = $('#myTable tr').length;
+            rowCount = rowCount - 1;
+            var dropDown = document.getElementById('detail_detail_0__ItmId').innerHTML;
+            $('#myTable').append('<tr><td><select class="form-control" onchange="InventoryChange(this)" id="ddobj_' + rowCount + '__InvCode" name="ddobj[' + rowCount + '].InvCode">' + dropDown + '</select></td><td><input type="text" id="ddobj_' + rowCount + '__RcpWaste" name="ddobj[' + rowCount + '].RcpWaste" onblur="wastechange(this)"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpOutput" name="ddobj[' + rowCount + '].RcpOutput"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpMix" name="ddobj[' + rowCount + '].RcpMix"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpSubRemarks" name="ddobj[' + rowCount + '].RcpSubRemarks"  class="form-control" /></td></tr>')
+            $('#ddobj_' + rowCount + '__InvCode').attr('Selected', true).val("-1");
+        }
+
+    </script>
+
+}

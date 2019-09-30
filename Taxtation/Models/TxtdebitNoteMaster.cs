@@ -40,5 +40,7 @@ namespace Taxtation.Models
         public string AccId { get; set; }
         public string PdnBillNo { get; set; }
         public double? PdnTotalExciseTaxMain { get; set; }
+        public string PdnPurchaseTrNo { get; set; }
+        public DateTime? PdnPurchaseDate { get; set; }
     }
 }

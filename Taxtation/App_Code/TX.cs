@@ -30,7 +30,25 @@ namespace Taxtation.App_Code
 
             return temp;
         }
+        public string CreditNote(string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtcreditNoteMaster.Where(x => x.UserName == userName).OrderByDescending(x => x.ScnRefNo).FirstOrDefault().ScnRefNo;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "PM-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "CN-00000001";
+            }
 
+            return temp;
+        }
 
 
         public string SaleOrder(string userName)
