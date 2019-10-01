@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Sale";
     var index = 5;
-    if(Model.Detail.saleDetail != null)
+    if (Model.Detail.saleDetail != null)
     {
         index = Model.Detail.saleDetail.Count;
     }
@@ -220,37 +220,37 @@
                 </tbody>
             </table>
         </div>
-        </div>
+    </div>
     <br />
-        <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
-            <div class="col-md-2">
-                Sub Total
-                <input type="text" asp-for="SubTotal" class="form-control-footer" />
-            </div>
-            <div class="col-md-1">
-                Exise Tax
-                <input type="text" asp-for="ExciseTax" class="form-control-footer" />
-            </div>
-            <div class="col-md-1">
-                Vat
-                <input type="text" asp-for="VAT" class="form-control-footer" />
-            </div>
-            <div class="col-md-2">
-                Total
-                <input type="text" asp-for="TotalAmount" class="form-control-footer" />
-            </div>
-            <div class="col-md-2">
-                Advance
-                <input type="text" asp-for="Advance" class="form-control-footer" />
-            </div>
-            <div class="col-md-2">
-                Paid
-                <input type="text" asp-for="Paid" class="form-control-footer" />
-            </div>
-            <div class="col-md-2">
-                Balance
-                <input type="text" asp-for="TotalBalance" class="form-control-footer" />
-            </div>
+    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
+        <div class="col-md-2">
+            Sub Total
+            <input type="text" asp-for="SubTotal" class="form-control-footer" />
+        </div>
+        <div class="col-md-1">
+            Exise Tax
+            <input type="text" asp-for="ExciseTax" class="form-control-footer" />
+        </div>
+        <div class="col-md-1">
+            Vat
+            <input type="text" asp-for="VAT" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Total
+            <input type="text" asp-for="TotalAmount" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Advance
+            <input type="text" asp-for="Advance" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Paid
+            <input type="text" asp-for="Paid" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Balance
+            <input type="text" asp-for="TotalBalance" class="form-control-footer" />
+        </div>
     </div>
 </form>
 
@@ -260,6 +260,7 @@
     <script type="text/javascript">
         function changeItem(item) {
             var trNo = item.dataset.rowno;
+
             if (item.value != '-1') {
                 $.ajax({
                     type: 'GET',
@@ -286,6 +287,7 @@
         function changeQuantityAndRate(QtyRate) {
             debugger;
             var rowNo = QtyRate.dataset.rowno;
+            
             var ExciseSlab = $('#Detail_saleDetail_' + rowNo + '__ExciseId').val();
             var TaxSlab = $('#Detail_saleDetail_' + rowNo + '__TaxId').val();
             if (ExciseSlab != '-1') {
@@ -299,10 +301,15 @@
                         $('#Detail_saleDetail_' + rowNo + '__SalExcisePer').val(result.taxPercent);
                         var subAmount = $('#Detail_sale_' + rowNo + '__Amount').val();
                         $('#Detail_saleDetail_' + rowNo + '__SalExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                        changeQuantityAndRate(QtyRate);
                     },
                     error: function () {
                     }
                 })
+            }
+            else {
+                $('#Detail_saleDetail_' + rowNo + '__SalExcisePer').val('');
+                $('#Detail_saleDetail_' + rowNo + '__SalExAmt').val('');
             }
 
             if (TaxSlab != '-1') {
@@ -316,10 +323,15 @@
                         $('#Detail_saleDetail_' + rowNo + '__SalVatper').val(result.taxPercent);
                         var AmtAfterDisc = $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val();
                         $('#Detail_saleDetail_' + rowNo + '__SalTaxAmount').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                        changeQuantityAndRate(QtyRate);
                     },
                     error: function () {
                     }
                 })
+            }
+            else {
+                $('#Detail_saleDetail_' + rowNo + '__SalVatper').val('');
+                $('#Detail_saleDetail_' + rowNo + '__SalTaxAmount').val('');
             }
 
             var ExhRate = $('#master_SalExRate').val();
@@ -339,7 +351,7 @@
                     $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(ExcPercent) / parseFloat(100)).toFixed(2));
                     $('#Detail_sale_' + rowNo + '__AmtAfterExcise').val((parseFloat(subAmount) + ((parseFloat(subAmount) * parseFloat(ExcPercent)) / 100)).toFixed(2));
                     var afterExcise = $('#Detail_sale_' + rowNo + '__AmtAfterExcise').val();
-                    $('#Detail_sale_' + rowNo + '__AmtAfterExcise').val((parseFloat(afterExcise)).toFixed(2));
+                    $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val((parseFloat(afterExcise)).toFixed(2));
                     $('#Detail_saleDetail_' + rowNo + '__SalNetAmt').val(parseFloat(afterExcise).toFixed(2));
                     $('#Detail_saleDetail_' + rowNo + '__SalGrossAmt').val((parseFloat(afterExcise) * parseFloat(ExhRate)).toFixed(2));
                 }
@@ -358,12 +370,19 @@
                     $('#Detail_saleDetail_' + rowNo + '__SalNetAmt').val(parseFloat(AmtAfterDisc).toFixed(2));
                     $('#Detail_saleDetail_' + rowNo + '__SalGrossAmt').val((parseFloat(AmtAfterDisc) * parseFloat(ExhRate)).toFixed(2));
                 }
+                else {
+                    var AmtAfterExcise = $('#Detail_sale_' + rowNo + '__AmtAfterExcise').val();
+                    $('#Detail_saleDetail_' + rowNo + '__SalDiscPer').val('');
+                    $('#Detail_saleDetail_' + rowNo + '__SalDiscAmt').val('');
+                    $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val(AmtAfterExcise);
+                }
                 if (Vat != '') {
                     var AmtAfterDisc = $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val();
                     $('#Detail_saleDetail_' + rowNo + '__SalTaxAmount').val((parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100)).toFixed(2));
                     $('#Detail_saleDetail_' + rowNo + '__SalNetAmt').val((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))).toFixed(2));
                     $('#Detail_saleDetail_' + rowNo + '__SalGrossAmt').val(((parseFloat(AmtAfterDisc) + (parseFloat(AmtAfterDisc) * parseFloat(Vat) / parseFloat(100))) * parseFloat(ExhRate)).toFixed(2));
                 }
+                ExchangeRate();
             }
             else {
                 $('#Detail_sale_' + rowNo + '__Amount').val('');
@@ -371,6 +390,7 @@
                 $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val('');
                 $('#Detail_saleDetail_' + rowNo + '__SalNetAmt').val('');
                 $('#Detail_saleDetail_' + rowNo + '__SalGrossAmt').val('');
+                ExchangeRate();
             }
         }
 
@@ -378,12 +398,29 @@
             debugger;
             var ExRate = $('#master_SalExRate').val();
             var rows = $('#myTable tbody tr').length;
+            var subAmountTotal = 0;
+            var ExciseTotal = 0;
+            var TaxTotal = 0;
             for (var i = 0; i < rows; i++) {
                 var NetAmount = $('#Detail_saleDetail_' + i + '__SalNetAmt').val();
+                NetAmount = (NetAmount == '') ? 0 : NetAmount;
+                var ExciseAmount = $('#Detail_saleDetail_' + i + '__SalExAmt').val();
+                ExciseAmount = (ExciseAmount == '') ? 0 : ExciseAmount;
+                var TaxAmount = $('#Detail_saleDetail_' + i + '__SalTaxAmount').val();
+                TaxAmount = (TaxAmount == '') ? 0 : TaxAmount;
+                var Amount = $('#Detail_sale_' + i + '__Amount').val();
+                Amount = (Amount == '') ? 0 : Amount;
                 if (NetAmount != '') {
                     $('#Detail_saleDetail_' + i + '__SalGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
+                    subAmountTotal += parseFloat(Amount);
+                    ExciseTotal += parseFloat(ExciseAmount);
+                    TaxTotal += parseFloat(TaxAmount);
                 }
+
             }
+            $('#SubTotal').val(subAmountTotal);
+            $('#ExciseTax').val(ExciseTotal);
+            $('#VAT').val(TaxTotal);
         }
 
         function AddRow() {
