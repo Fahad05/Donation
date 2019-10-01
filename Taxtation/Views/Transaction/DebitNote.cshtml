@@ -1,11 +1,11 @@
-﻿@model Taxtation.ViewModel.TXTCreditNoteDetailView
+﻿@model Taxtation.ViewModel.TXTDebitNoteDetailView
 
 @{
-    ViewData["Title"] = "Credit Note";
+    ViewData["Title"] = "Debit Note";
     var index = 5;
     if (Model.detail.detail != null) { index = Model.detail.detail.Count; }
 }
-<form asp-action="CreditNote" method="post">
+<form asp-action="DebitNote" method="post">
     <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
         <div class="col-sm-12" style="padding-left:8.2%;">
             @if (ViewData["_Save"].ToString() == "True")
@@ -27,62 +27,63 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <input type="text" asp-for="master.ScnId" hidden="hidden" class="form-control" />
+            <input type="text" asp-for="master.PdnId" hidden="hidden" class="form-control" />
         </div>
     </div>
     <div class="row" style="padding-top:70px;z-index:1">
         <div class="col-md-3">
             Ref No:
-            <input type="text" asp-for="master.ScnRefNo" class="form-control" />
+            <input type="text" asp-for="master.PdnRefNo" class="form-control" />
         </div>
         <div class="col-md-3">
             Transaction Date:
-            <input type="date" asp-for="master.ScnDate" class="form-control" />
+            <input type="date" asp-for="master.PdnDate" class="form-control" />
         </div>
         <div class="col-md-3">
-            Sale Type:
-            <select asp-for="master.ScnSaleType" class="form-control">
-                <option value="OrderSale">Order Sale</option>
-                <option value="DirectSale">Direct Sale</option>
+            Purchase Type:
+            <select asp-for="master.PdnPurchaseType" class="form-control">
+                <option value="Order">Order</option>
+                <option value="Direct">Direct</option>
+                <option value="Contract">Contract</option>
             </select>
         </div><div class="col-md-3">
-            Sale TR No:
-            <input type="text" asp-for="master.ScnSaleTrNo" class="form-control" />
+            Purchase TR No:
+            <input type="text" asp-for="master.PdnPurchaseTrNo" class="form-control" />
 
         </div>
     </div>
     <div class="row">
         <div class="col-md-3">
-            Invoice No:
-            <input type="text" asp-for="master.ScnInvoiceNo" class="form-control" />
+            Bill No:
+            <input type="text" asp-for="master.PdnBillNo" class="form-control" />
         </div>
         <div class="col-md-3">
-            Sale Number:
-            <input type="text" asp-for="master.ScnSaleCode" class="form-control" />
+            Purchase Number:
+            <input type="text" asp-for="master.PdnPurchaseCode" class="form-control" />
         </div> <div class="col-md-3">
-            Sale Date:
-            <input type="date" asp-for="master.ScnSaleDate" class="form-control" />
+            Purchase Date:
+            <input type="date" asp-for="master.PdnPurchaseDate" class="form-control" />
         </div>
         <div class="col-md-3">
-            Customer:
+            Supplier:
             <select asp-for="master.AccId" class="form-control">
                 <option>Select</option>
-                @foreach (var j in Model.lstCustomer)
+                @foreach (var j in Model.lstSupplier)
                 {
-                    <option value=@j.CusId>@j.CusName</option>
+                    <option value=@j.SupId>@j.SupName</option>
                 }
             </select>
-           
+
         </div>
     </div>
     <div class="row">
 
         <div class="col-md-3">
             Gate Pass No:
-            <input type="text" asp-for="master.ScnGpno" class="form-control" />
+            <input type="text" asp-for="master.PdnGpno" class="form-control" />
         </div> <div class="col-md-3">
             Gate Pass Date:
-            <input type="date" asp-for="master.ScnGpdate" class="form-control" />
+            <input type="date" asp-for="master.PdnGpdate" class="form-control" />
         </div>
         <div class="col-md-3">
             Site:
@@ -96,7 +97,7 @@
         </div>
         <div class="col-md-3">
             Condition:
-            <select asp-for="master.ScnCondition" class="form-control" required="required">
+            <select asp-for="master.PdnCondition" class="form-control" required="required">
                 <option value="Excellent">Excellent</option>
                 <option value="Good">Good</option>
             </select>
@@ -121,7 +122,7 @@
         </div>
         <div class="col-md-3">
             Remarks:
-            <input type="text" asp-for="master.ScnRemarks" class="form-control" />
+            <input type="text" asp-for="master.PdnRemarks" class="form-control" />
         </div>
     </div>
     <br>
@@ -133,7 +134,7 @@
                     <tr>
                         <th style="width:230px;">Item</th>
                         <th style="width:70px;">UOM</th>
-                        <th style="width:120px;">Sale Qty</th>
+                        <th style="width:120px;">PO Qty</th>
                         <th style="width:120px;">Rcvd Qty</th>
                         <th style="width:120px;">Rec Qty</th>
                         <th style="width:120px;">Bal Qty</th>
@@ -148,27 +149,27 @@
                 <tbody>
                     @for (int i = 0; i < index; i++)
                     {
-                    <tr>
-                        <td>
-                            <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
-                                <option value="-1">Select</option>@foreach (var j in Model.lstItem)
-                                {
-                                    <option value=@j.ItmId>@j.ItmName</option>}
-                            </select>
-                        </td>
-                        <td><input type="text" asp-for="detail.cndef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnSaleQuantity" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnReceivedQuantity" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnRecQuantity" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.cndef[i].BalAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                        <tr>
+                            <td>
+                                <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                    {
+                                        <option value=@j.ItmId>@j.ItmName</option>}
+                                </select>
+                            </td>
+                            <td><input type="text" asp-for="detail.dndef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnPoquantity" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnDeliveredQuantity" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnDelQuantity" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.dndef[i].BalAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
 
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnExciseTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnDiscountAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                        <td><input type="number" step="any" asp-for="detail.detail[i].ScnNetAmount" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                        <td><input type="text" asp-for="detail.detail[i].ScnSubRemarks" class="form-control" style="width:230px;" /></td>
-                    </tr>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnExciseTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnDiscountAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PdnNetAmount" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="detail.detail[i].PdnSubRemarks" class="form-control" style="width:230px;" /></td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -185,7 +186,7 @@
         <div class="col-md-2">
             Exise Tax
             <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control-footer" />
-        </div>  
+        </div>
         <div class="col-md-2">
             Disc. Amount
             <input type="text" asp-for="DiscountAmount" readonly="readonly" class="form-control-footer" />

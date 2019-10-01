@@ -39,7 +39,7 @@ namespace Taxtation.App_Code
                 string subString = max.Substring(3, 8);
                 if (!string.IsNullOrEmpty(max))
                 {
-                    temp = "PM-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                    temp = "CN-" + (Convert.ToInt32(subString) + 1).ToString("D8");
                 }
             }
             catch (Exception ex)
@@ -50,6 +50,25 @@ namespace Taxtation.App_Code
             return temp;
         }
 
+        public string DebitNote(string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtdebitNoteMaster.Where(x => x.UserName == userName).OrderByDescending(x => x.PdnRefNo).FirstOrDefault().PdnRefNo;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "DN-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "DN-00000001";
+            }
+
+            return temp;
+        }
 
         public string SaleOrder(string userName)
         {
