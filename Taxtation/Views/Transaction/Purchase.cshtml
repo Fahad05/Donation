@@ -182,11 +182,11 @@
                                 </td>
                                 <td><input type="text" asp-for="detail.pdef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
                                 <td><input type="number" step="any" asp-for="detail.pdef[i].lastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
                                 <td><input type="number" step="any" asp-for="detail.pdef[i].subAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                                 <td>
-                                    <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
+                                    <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" style="width:230px;">
                                         <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
                                         {
                                             <option value=@j.TaxId>@j.TaxName</option>}
@@ -195,12 +195,12 @@
                                 <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
                                 <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                                 <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                                <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                                <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
                                 <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                                 <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                                 <td>
-                                    <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
+                                    <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:230px;">
                                         <option value="-1">Select</option> @foreach (var j in Model.lstTax)
                                         {
                                             <option value=@j.TaxId>@j.TaxName</option>}
@@ -281,27 +281,29 @@
             }
         }
 
-        function changeQuantityAndRate(QtyRate) {
+        function changeQuantityAndRate(QtyRate, Recur) {
             debugger;
             var rowNo = QtyRate.dataset.rowno;
             var ExciseSlab = $('#detail_detail_' + rowNo + '__ExciseId').val();
             var TaxSlab = $('#detail_detail_' + rowNo + '__TaxId').val();
             if (ExciseSlab != '-1') {
-                $.ajax({
-                    type: 'GET',
-                    url: '/Transaction/changeTax',
-                    data: { id: ExciseSlab },
-                    dataType: 'json',
-                    contentType: "application/json; charset=utf-8",
-                    success: function (result) {
-                        $('#detail_detail_' + rowNo + '__PurExPer').val(result.taxPercent);
-                        var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
-                        $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
-                        changeQuantityAndRate(QtyRate);
-                    },
-                    error: function () {
-                    }
-                })
+                if (Recur == true) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Transaction/changeTax',
+                        data: { id: ExciseSlab },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#detail_detail_' + rowNo + '__PurExPer').val(result.taxPercent);
+                            var subAmount = $('#detail_pdef_' + rowNo + '__subAmount').val();
+                            $('#detail_detail_' + rowNo + '__PurExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                            changeQuantityAndRate(QtyRate, false);
+                        },
+                        error: function () {
+                        }
+                    })
+                }
             }
             else {
                 $('#detail_detail_' + rowNo + '__PurExPer').val('');
@@ -309,20 +311,23 @@
             }
 
             if (TaxSlab != '-1') {
-                $.ajax({
-                    type: 'GET',
-                    url: '/Transaction/changeTax',
-                    data: { id: TaxSlab },
-                    dataType: 'json',
-                    contentType: "application/json; charset=utf-8",
-                    success: function (result) {
-                        $('#detail_detail_' + rowNo + '__PurTaxPer').val(result.taxPercent);
-                        var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
-                        $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
-                    },
-                    error: function () {
-                    }
-                })
+                if (Recur == true) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Transaction/changeTax',
+                        data: { id: TaxSlab },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#detail_detail_' + rowNo + '__PurTaxPer').val(result.taxPercent);
+                            var AmtAfterDisc = $('#detail_pdef_' + rowNo + '__AmtAfterDiscount').val();
+                            $('#detail_detail_' + rowNo + '__PurTaxAmt').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                            changeQuantityAndRate(QtyRate, false);
+                        },
+                        error: function () {
+                        }
+                    })
+                }
             }
             else {
                 $('#detail_detail_' + rowNo + '__PurTaxPer').val('');
@@ -396,6 +401,7 @@
             var subAmountTotal = 0;
             var ExciseTotal = 0;
             var TaxTotal = 0;
+            var TotalDiscount = 0;
             for (var i = 0; i < rows; i++) {
                 var NetAmount = $('#detail_detail_' + i + '__PurNetAmt').val();
                 NetAmount = (NetAmount == '') ? 0 : NetAmount;
@@ -405,16 +411,20 @@
                 TaxAmount = (TaxAmount == '') ? 0 : TaxAmount;
                 var Amount = $('#detail_pdef_' + i + '__subAmount').val();
                 Amount = (Amount == '') ? 0 : Amount;
+                var Discount = $('#detail_detail_' + i + '__PurDiscountAmt').val();
+                Discount = (Discount == '') ? 0 : Discount;
                 if (NetAmount != '') {
                     $('#detail_detail_' + i + '__PurGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
                     subAmountTotal += parseFloat(Amount);
                     ExciseTotal += parseFloat(ExciseAmount);
                     TaxTotal += parseFloat(TaxAmount);
+                    TotalDiscount += parseFloat(Discount);
                 }
             }
             $('#SubTotal').val(subAmountTotal);
             $('#ExciseTax').val(ExciseTotal);
             $('#VAT').val(TaxTotal);
+            $('#TotalAmount').val(parseFloat(subAmountTotal + ExciseTotal + TaxTotal - TotalDiscount));
         }
 
         function AddRow() {

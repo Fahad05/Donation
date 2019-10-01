@@ -186,11 +186,11 @@
                             <td><input type="text" asp-for="Detail.sale[i].BarCode" readonly="readonly" class="form-control" style="width:70px;" /></td>
                             <td><input type="text" asp-for="Detail.sale[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
                             <td><input type="number" step="any" asp-for="Detail.sale[i].LastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalQty" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalRate" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalQty" data-rowNo=@i onchange="changeQuantityAndRate(this, true)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalRate" data-rowNo=@i onchange="changeQuantityAndRate(this, true)" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="Detail.sale[i].Amount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td>
-                                <select asp-for="Detail.saleDetail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this)" style="width:230px;">
+                                <select asp-for="Detail.saleDetail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this, true)" style="width:230px;">
                                     <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
                                     {
                                         <option value=@j.TaxId>@j.TaxName</option>}
@@ -199,12 +199,12 @@
                             <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExcisePer" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><select asp-for="Detail.saleDetail[i].SalDisType" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscPer" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:120px;" /></td>
+                            <td><select asp-for="Detail.saleDetail[i].SalDisType" data-rowNo=@i onchange="changeQuantityAndRate(this, true)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                            <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscPer" data-rowNo=@i onchange="changeQuantityAndRate(this, true)" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="Detail.saleDetail[i].SalDiscAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="Detail.sale[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td>
-                                <select asp-for="Detail.saleDetail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this)" class="form-control" style="width:230px;">
+                                <select asp-for="Detail.saleDetail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this, true)" class="form-control" style="width:230px;">
                                     <option value="-1">Select</option> @foreach (var j in Model.lstTax)
                                     {
                                         <option value=@j.TaxId>@j.TaxName</option>}
@@ -225,31 +225,31 @@
     <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
         <div class="col-md-2">
             Sub Total
-            <input type="text" asp-for="SubTotal" class="form-control-footer" />
+            <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-1">
             Exise Tax
-            <input type="text" asp-for="ExciseTax" class="form-control-footer" />
+            <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-1">
             Vat
-            <input type="text" asp-for="VAT" class="form-control-footer" />
+            <input type="text" asp-for="VAT" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-2">
             Total
-            <input type="text" asp-for="TotalAmount" class="form-control-footer" />
+            <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-2">
             Advance
-            <input type="text" asp-for="Advance" class="form-control-footer" />
+            <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-2">
             Paid
-            <input type="text" asp-for="Paid" class="form-control-footer" />
+            <input type="text" asp-for="Paid" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-2">
             Balance
-            <input type="text" asp-for="TotalBalance" class="form-control-footer" />
+            <input type="text" asp-for="TotalBalance" readonly="readonly" class="form-control-footer" />
         </div>
     </div>
 </form>
@@ -284,28 +284,30 @@
             }
         }
 
-        function changeQuantityAndRate(QtyRate) {
+        function changeQuantityAndRate(QtyRate, Recur) {
             debugger;
             var rowNo = QtyRate.dataset.rowno;
             
             var ExciseSlab = $('#Detail_saleDetail_' + rowNo + '__ExciseId').val();
             var TaxSlab = $('#Detail_saleDetail_' + rowNo + '__TaxId').val();
             if (ExciseSlab != '-1') {
-                $.ajax({
-                    type: 'GET',
-                    url: '/Transaction/changeTax',
-                    data: { id: ExciseSlab },
-                    dataType: 'json',
-                    contentType: "application/json; charset=utf-8",
-                    success: function (result) {
-                        $('#Detail_saleDetail_' + rowNo + '__SalExcisePer').val(result.taxPercent);
-                        var subAmount = $('#Detail_sale_' + rowNo + '__Amount').val();
-                        $('#Detail_saleDetail_' + rowNo + '__SalExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
-                        changeQuantityAndRate(QtyRate);
-                    },
-                    error: function () {
-                    }
-                })
+                if (Recur == true) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Transaction/changeTax',
+                        data: { id: ExciseSlab },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#Detail_saleDetail_' + rowNo + '__SalExcisePer').val(result.taxPercent);
+                            var subAmount = $('#Detail_sale_' + rowNo + '__Amount').val();
+                            $('#Detail_saleDetail_' + rowNo + '__SalExAmt').val((parseFloat(subAmount) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                            changeQuantityAndRate(QtyRate, false);
+                        },
+                        error: function () {
+                        }
+                    })
+                }
             }
             else {
                 $('#Detail_saleDetail_' + rowNo + '__SalExcisePer').val('');
@@ -313,21 +315,23 @@
             }
 
             if (TaxSlab != '-1') {
-                $.ajax({
-                    type: 'GET',
-                    url: '/Transaction/changeTax',
-                    data: { id: TaxSlab },
-                    dataType: 'json',
-                    contentType: "application/json; charset=utf-8",
-                    success: function (result) {
-                        $('#Detail_saleDetail_' + rowNo + '__SalVatper').val(result.taxPercent);
-                        var AmtAfterDisc = $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val();
-                        $('#Detail_saleDetail_' + rowNo + '__SalTaxAmount').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
-                        changeQuantityAndRate(QtyRate);
-                    },
-                    error: function () {
-                    }
-                })
+                if (Recur == true) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Transaction/changeTax',
+                        data: { id: TaxSlab },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#Detail_saleDetail_' + rowNo + '__SalVatper').val(result.taxPercent);
+                            var AmtAfterDisc = $('#Detail_sale_' + rowNo + '__AmtAfterDiscount').val();
+                            $('#Detail_saleDetail_' + rowNo + '__SalTaxAmount').val((parseFloat(AmtAfterDisc) * parseFloat(result.taxPercent) / parseFloat(100)).toFixed(2));
+                            changeQuantityAndRate(QtyRate, false);
+                        },
+                        error: function () {
+                        }
+                    })
+                }
             }
             else {
                 $('#Detail_saleDetail_' + rowNo + '__SalVatper').val('');
@@ -401,6 +405,7 @@
             var subAmountTotal = 0;
             var ExciseTotal = 0;
             var TaxTotal = 0;
+            var TotalDiscount = 0;
             for (var i = 0; i < rows; i++) {
                 var NetAmount = $('#Detail_saleDetail_' + i + '__SalNetAmt').val();
                 NetAmount = (NetAmount == '') ? 0 : NetAmount;
@@ -410,17 +415,21 @@
                 TaxAmount = (TaxAmount == '') ? 0 : TaxAmount;
                 var Amount = $('#Detail_sale_' + i + '__Amount').val();
                 Amount = (Amount == '') ? 0 : Amount;
+                var Discount = $('#Detail_saleDetail_' + i + '__SalDiscAmt').val();
+                Discount = (Discount == '') ? 0 : Discount;
                 if (NetAmount != '') {
                     $('#Detail_saleDetail_' + i + '__SalGrossAmt').val((parseFloat(NetAmount) * parseFloat(ExRate)).toFixed(2));
                     subAmountTotal += parseFloat(Amount);
                     ExciseTotal += parseFloat(ExciseAmount);
                     TaxTotal += parseFloat(TaxAmount);
+                    TotalDiscount += parseFloat(Discount);
                 }
 
             }
             $('#SubTotal').val(subAmountTotal);
             $('#ExciseTax').val(ExciseTotal);
             $('#VAT').val(TaxTotal);
+            $('#TotalAmount').val(parseFloat(subAmountTotal + ExciseTotal + TaxTotal - TotalDiscount));
         }
 
         function AddRow() {
