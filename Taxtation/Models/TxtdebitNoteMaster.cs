@@ -30,17 +30,17 @@ namespace Taxtation.Models
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
         public double? ApprovedLevel { get; set; }
-        public string SitId { get; set; }
         public double? PdnSubAmtTotalMain { get; set; }
         public double? PdnTotalDiscMain { get; set; }
         public double? PdnTotalTaxMain { get; set; }
         public double? PdnTotalPaid { get; set; }
         public double? PdnTotalBalance { get; set; }
         public double? PdnTotalAmountMain { get; set; }
-        public string AccId { get; set; }
         public string PdnBillNo { get; set; }
         public double? PdnTotalExciseTaxMain { get; set; }
         public string PdnPurchaseTrNo { get; set; }
         public DateTime? PdnPurchaseDate { get; set; }
+        public int? AccId { get; set; }
+        public int? SitId { get; set; }
     }
 }

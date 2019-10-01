@@ -9,7 +9,7 @@
                 from store in stores.DefaultIfEmpty()
                 join site in Model.lstSite on mas.SitId equals site.SitId into sites
                 from site in sites.DefaultIfEmpty()
-                select new { mas, det, site, supplier, store };
+                select new { mas, det, supplier, store, site };
 }
 
 <div class="MainDiv">
@@ -19,7 +19,7 @@
     <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("DebitNote","Transaction")'></div>
     <br />
     <div style="float:left;">
-        <a asp-action="DebiNote" asp-controller="Transaction" class="form-control-btn" style="width:120px;">Add New</a>
+        <a asp-action="DebitNote" asp-controller="Transaction" class="form-control-btn" style="width:120px;">Add New</a>
     </div>
     <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllDebitNote", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
     <div style="float:right;">
@@ -46,7 +46,7 @@
             @foreach (var j in query)
             {
                 <tr>
-                    <td>@Html.ActionLink("Edit", "Sale", "Transaction", new { id = j.mas.PdnId })</td>
+                    <td>@Html.ActionLink("Edit", "DebitNote", "Transaction", new { id = j.mas.PdnId })</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.PdnId)</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.PdnDate)</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.PdnBillNo)</td>

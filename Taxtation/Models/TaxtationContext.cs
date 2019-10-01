@@ -795,8 +795,6 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.PdnId).ValueGeneratedOnAdd();
 
-                entity.Property(e => e.AccId).HasMaxLength(50);
-
                 entity.Property(e => e.EditBy).HasMaxLength(50);
 
                 entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
@@ -848,8 +846,6 @@ namespace Taxtation.Models
                 entity.Property(e => e.PdnTotalBalance).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.PdnTotalPaid).HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.SitId).HasMaxLength(50);
             });
 
             modelBuilder.Entity<TxtjournalMaster>(entity =>
