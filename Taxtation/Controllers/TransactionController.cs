@@ -483,6 +483,24 @@ namespace Taxtation.Controllers
         #region Credit Note
 
         [HttpGet]
+        public async Task<IActionResult> showCreditNote()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TXTCreditNoteDetailView creditnote = new TXTCreditNoteDetailView();
+            creditnote.lstCustomer = db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
+            creditnote.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            creditnote.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            creditnote.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
+            creditnote.lstMaster = db.TxtcreditNoteMaster.Where(x => x.UserName == user.UserName).ToList();
+            creditnote.detail.detail = db.TxtcreditNoteDetail.Where(x => x.UserName == user.UserName).ToList();
+            return View(creditnote);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> CreditNote(string id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -536,6 +554,24 @@ namespace Taxtation.Controllers
         #endregion
 
         #region Debit Note
+
+        [HttpGet]
+        public async Task<IActionResult> showDebitNote()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TXTDebitNoteDetailView debitnote = new TXTDebitNoteDetailView();
+            debitnote.lstSupplier = db.TxssupplierDetail.Where(x => x.UserName == user.UserName).ToList();
+            debitnote.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            debitnote.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
+            debitnote.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
+            debitnote.lstMaster = db.TxtdebitNoteMaster.Where(x => x.UserName == user.UserName).ToList();
+            debitnote.detail.detail = db.TxtdebitNoteDetail.Where(x => x.UserName == user.UserName).ToList();
+            return View(debitnote);
+        }
 
         [HttpGet]
         public async Task<IActionResult> DebitNote(string id)
