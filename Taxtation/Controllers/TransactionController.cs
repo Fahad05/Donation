@@ -59,7 +59,7 @@ namespace Taxtation.Controllers
         public async Task<IActionResult> showPurchase()
         {
             var user = await _userManager.GetUserAsync(User);
-           
+
             if (User == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -96,7 +96,7 @@ namespace Taxtation.Controllers
             obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
             obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
-           
+
             if (id == null)
             {
                 ViewData["_Save"] = "True";
@@ -116,14 +116,14 @@ namespace Taxtation.Controllers
                 {
                     PDEF pDEF = new PDEF();
                     TXSItemUOMDetail item = new TXSItemUOMDetail();
-                    int itmid = (int) obj.detail.detail[i].ItmId;
+                    int itmid = (int)obj.detail.detail[i].ItmId;
                     if (itmid != -1)
                     {
                         item = changeItems(itmid, user.Id, user.UserName);
                         pDEF.UOM = item.Txuom.Uomname;
                         pDEF.lastPrice = item.Txsitem.ItmSp;
                     }
-                    
+
                     pDEF.subAmount = obj.detail.detail[i].PurQty * obj.detail.detail[i].PurRate;
                     pDEF.AmtAfterExcise = pDEF.subAmount + obj.detail.detail[i].PurExAmt;
                     pDEF.AmtAfterDiscount = pDEF.subAmount + obj.detail.detail[i].PurExAmt - obj.detail.detail[i].PurDiscountAmt;
@@ -189,7 +189,7 @@ namespace Taxtation.Controllers
                         count++;
                     }
                 }
-                if(count > 0)
+                if (count > 0)
                 {
                     TxtpurchaseMaster master = new TxtpurchaseMaster();
                     master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).FirstOrDefault();
@@ -380,17 +380,17 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            if(Save!=null)
+            if (Save != null)
             {
                 int count = 0;
                 for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                 {
-                    if(obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                    if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
                     {
                         count++;
                     }
                 }
-                if(count>0)
+                if (count > 0)
                 {
                     obj.master.Id = user.Id;
                     obj.master.UserName = user.UserName;
@@ -414,7 +414,7 @@ namespace Taxtation.Controllers
                     }
                 }
             }
-            if(Update!=null)
+            if (Update != null)
             {
                 int count = 0;
                 for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
@@ -424,7 +424,7 @@ namespace Taxtation.Controllers
                         count++;
                     }
                 }
-                if(count > 0)
+                if (count > 0)
                 {
                     TxtsaleMaster master = new TxtsaleMaster();
                     master = db.TxtsaleMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).FirstOrDefault();
@@ -624,6 +624,63 @@ namespace Taxtation.Controllers
             return View(lstdebitNote);
         }
 
+        public async Task<IActionResult> DebitNote(TXTDebitNoteDetailView obj, string Save, string Update)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (Save != null)
+            {
+                var count = 0;
+                for (int i = 0; i < obj.detail.detail.Count; i++)
+                {
+                    if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PdnDeliveredQuantity > 0)
+                    {
+                        count++;
+                    }
+                }
+                if (count > 0)
+                {
+                    obj.master.Id = user.Id;
+                    obj.master.UserName = user.UserName;
+                    obj.master.EnterBy = user.UserName;
+                    obj.master.EnterDate = System.DateTime.Now;
+                    db.TxtdebitNoteMaster.Add(obj.master);
+                    db.SaveChanges();
+                }
+
+                for (int i = 0; i < obj.detail.detail.Count; i++)
+                {
+                    if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PdnDeliveredQuantity > 0)
+                    {
+                        obj.detail.detail[i].PdnId = obj.master.PdnId;
+                        obj.detail.detail[i].Id = user.Id;
+                        obj.detail.detail[i].UserName = user.UserName;
+                        db.TxtdebitNoteDetail.Add(obj.detail.detail[i]);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            if (Update != null)
+            {
+                var count = 0;
+                for (int i = 0; i < obj.detail.detail.Count; i++)
+                {
+                    if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PdnDeliveredQuantity > 0)
+                    {
+                        count++;
+                    }
+                }
+                if(count > 0)
+                {
+                    TxtdebitNoteMaster DNM = new TxtdebitNoteMaster();
+                    //DNM = 
+                }
+            }
+            return View();
+        }
         #endregion
 
         #region Journal Detail
