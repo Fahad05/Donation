@@ -1348,7 +1348,7 @@ a {
 
 .w3-button:hover {
     color: #fff !important;
-    background-color: #9AB5CA /*#87CEEB*/ !important
+    background-color: #9AB5CA /* #9AB5CA #87CEEB*/ !important;
 }
 
 .w3-transparent, .w3-hover-none:hover {
@@ -1743,6 +1743,10 @@ a {
     padding: 20px;
     border-radius: 5px;
 }
+    .ImgStyleMain:hover {
+        width: 80px;
+        padding: 15px;
+    }
 .MainDiv {
     width: 100%;
     margin-left: 0px;
