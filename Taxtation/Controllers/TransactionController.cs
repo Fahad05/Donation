@@ -676,7 +676,57 @@ namespace Taxtation.Controllers
                 if(count > 0)
                 {
                     TxtdebitNoteMaster DNM = new TxtdebitNoteMaster();
-                    //DNM = 
+                    DNM = db.TxtdebitNoteMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PdnId == obj.master.PdnId).FirstOrDefault();
+                    DNM.PdnCode = obj.master.PdnCode;
+                    DNM.PdnDate = obj.master.PdnDate;
+                    DNM.PdnGpno = obj.master.PdnGpno;
+                    DNM.PdnGpdate = obj.master.PdnGpdate;
+                    DNM.PdnCondition = obj.master.PdnCondition;
+                    DNM.PdnLocType = obj.master.PdnLocType;
+                    DNM.StrId = obj.master.StrId;
+                    DNM.WrhId = obj.master.WrhId;
+                    DNM.ShtId = obj.master.ShtId;
+                    DNM.PdnPurchaseType = obj.master.PdnPurchaseType;
+                    DNM.PdnPurchaseCode = obj.master.PdnPurchaseCode;
+                    DNM.PdnRefNo = obj.master.PdnRefNo;
+                    DNM.PdnRemarks = obj.master.PdnRemarks;
+                    DNM.GrpId = obj.master.GrpId;
+                    DNM.ComId = obj.master.ComId;
+                    DNM.EditBy = user.UserName;
+                    DNM.EditDate = System.DateTime.Now;
+                    DNM.PdnSubAmtTotalMain = obj.master.PdnSubAmtTotalMain;
+                    DNM.PdnTotalDiscMain = obj.master.PdnTotalDiscMain;
+                    DNM.PdnTotalTaxMain = obj.master.PdnTotalTaxMain;
+                    DNM.PdnTotalPaid = obj.master.PdnTotalPaid;
+                    DNM.PdnTotalBalance = obj.master.PdnTotalBalance;
+                    DNM.PdnTotalAmountMain = obj.master.PdnTotalAmountMain;
+                    DNM.PdnBillNo = obj.master.PdnBillNo;
+                    DNM.PdnTotalExciseTaxMain = obj.master.PdnTotalExciseTaxMain;
+                    DNM.PdnPurchaseTrNo = obj.master.PdnPurchaseTrNo;
+                    DNM.PdnPurchaseDate = obj.master.PdnPurchaseDate;
+                    DNM.AccId = obj.master.AccId;
+                    DNM.SitId = obj.master.SitId;
+                    db.SaveChanges();
+
+                    List<TxtdebitNoteDetail> lstDebitNote = new List<TxtdebitNoteDetail>();
+                    lstDebitNote = db.TxtdebitNoteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PdnId == obj.master.PdnId).OrderBy(x => x.PdnSerialNo).ToList();
+                    for (int i = 0; i < lstDebitNote.Count; i++)
+                    {
+                        db.TxtdebitNoteDetail.Remove(lstDebitNote[i]);
+                        db.SaveChanges();
+                    }
+
+                    for (int i = 0; i < obj.detail.detail.Count; i++)
+                    {
+                        if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PdnDeliveredQuantity > 0)
+                        {
+                            obj.detail.detail[i].PdnId = obj.master.PdnId;
+                            obj.detail.detail[i].Id = user.Id;
+                            obj.detail.detail[i].UserName = user.UserName;
+                            db.TxtdebitNoteDetail.Add(obj.detail.detail[i]);
+                            db.SaveChanges();
+                        }
+                    }
                 }
             }
             return View();

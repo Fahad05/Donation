@@ -222,16 +222,16 @@
                     dataType: 'json',
                     contentType: "application/json; charset=utf-8",
                     success: function (result) {
-                        $('#detail_pdef_' + trNo + '__UOM').val(result.itmUom);
-                        $('#detail_pdef_' + trNo + '__lastPrice').val(result.itmSp);
+                        $('#detail_dndef_' + trNo + '__UOM').val(result.itmUom);
+                        $('#detail_detail_' + trNo + '__PdnPoquantity').val(result.itmSp);
                     },
                     error: function () {
                     }
                 })
             }
             else {
-                $('#detail_pdef_' + trNo + '__UOM').val('');
-                $('#detail_pdef_' + trNo + '__lastPrice').val('');
+                $('#detail_dndef_' + trNo + '__UOM').val('');
+                $('#detail_detail_' + trNo + '__PdnPoquantity').val('');
             }
         }
 

@@ -49,7 +49,7 @@
             </select>
         </div><div class="col-md-3">
     Term:
-    <select asp-for="master.PurType" class="form-control">
+    <select asp-for="master.PurPayTerm" class="form-control">
         <option value="CREDIT">CREDIT</option>
         <option value="CASH">CASH</option>
         <option value="BANK">BANK</option>
@@ -434,6 +434,42 @@
             $('#myTable').append('<tr><td><select class="form-control" onchange="InventoryChange(this)" id="ddobj_' + rowCount + '__InvCode" name="ddobj[' + rowCount + '].InvCode">' + dropDown + '</select></td><td><input type="text" id="ddobj_' + rowCount + '__RcpWaste" name="ddobj[' + rowCount + '].RcpWaste" onblur="wastechange(this)"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpOutput" name="ddobj[' + rowCount + '].RcpOutput"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpMix" name="ddobj[' + rowCount + '].RcpMix"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpSubRemarks" name="ddobj[' + rowCount + '].RcpSubRemarks"  class="form-control" /></td></tr>')
             $('#ddobj_' + rowCount + '__InvCode').attr('Selected', true).val("-1");
         }
+
+        $(document).ready(function () {
+            $('#Save').on('click', function (event) {
+                var count = 0;
+                var rowCount = $('#myTable tbody tr').length;
+                var TRTotalAmount = $('#TotalAmount').val();
+                if (parseFloat(TRTotalAmount) < 0) {
+                    alert('Cannot Save Negative Transaction!');
+                    event.preventDefault();
+                }
+                if ($('#master_PurPayTerm').val() == 'CREDIT' && $('#master_BnkId').val() == '-1') {
+                    alert('Please Select Cash / Bank!');
+                    event.preventDefault();
+                }
+                if ($('#master_PurPayTerm').val() == 'CREDIT' && parseFloat($('#Advance').val()) != 0 && $('#master_BnkId').val() == '-1') {
+                    alert('Please Select Cash / Bank!');
+                    event.preventDefault();
+                }
+                if (parseFloat($('#master_PurExRate').val()) == 0) {
+                    alert('Please Enter Valid Exchange Rate!');
+                    event.preventDefault();
+                }
+                for (var i = 0; i < rowCount; i++) {
+                    if ($('#detail_detail_' + i + '__PurQty').val() != '' &&
+                        $('#detail_detail_' + i + '__PurRate').val() != '') {
+                        count++;
+                    }
+                }
+                if (parseFloat(count) == 0) {
+                    alert('Please Select Item or Enter Quantity or Rate!');
+                    event.preventDefault();
+                }
+            })
+        })
+
+
 
     </script>
 
