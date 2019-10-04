@@ -1030,6 +1030,25 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCOA");
         }
 
+        public IActionResult PrintAllCOA()
+        {
+            //var user = await _userManager.GetUserAsync(User);
+            //if (User == null)
+            //{
+            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            //}
+            List<Txscoadetail> lstCoa= new List<Txscoadetail>();
+            lstCoa = db.Txscoadetail.ToList();
+
+            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return new ViewAsPdf("ReportCOA", lstCoa)
+            {
+                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
+                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
+            };
+
+        }
+
         #endregion
 
 

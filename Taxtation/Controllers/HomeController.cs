@@ -57,6 +57,16 @@ namespace Taxtation.Controllers
             return View();
         }
 
+        public IActionResult Ledger()
+        {
+            return View();
+        }
+
+        public IActionResult Inventory()
+        {
+            return View();
+        }
+
         public JsonResult CurrencyChart()
         {
             List<TxscurrencyDetail> lstCurrency = new List<TxscurrencyDetail>();

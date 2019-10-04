@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Taxtation.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div style="margin-left:40%;margin-top:20px;">
+        <img src="~/images/inventory.gif" />
+    </div>
+    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:180px;">
+        <ul class="nav navbar-nav">
+            <li>
+                <a asp-action="showInventory" asp-controller="Transaction" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/inventory.png" class="ImgStyleMain" style="background-color:#E1BE5C;" /><br /> INVENTORY DETAIL</a>
+            </li>
+        </ul>
+    </div>
+}
+

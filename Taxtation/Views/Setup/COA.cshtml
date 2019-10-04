@@ -1,5 +1,6 @@
 ﻿@model Taxtation.ViewModel.TXSCOADetailView
-
+<h4>Accounts Detail</h4>
+<hr />
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -17,7 +18,7 @@
                         {
                             <div>
                                 Account Nature:
-                                <select asp-for="coa.AccAccountNature" class="form-control" onchange="accountNatureChangeFunction()" style="width:75%;">
+                                <select asp-for="coa.AccAccountNature" class="form-control" onchange="accountNatureChangeFunction()" >
                                     <option value="ASSET">ASSET</option>
                                     <option value="LIABILITY">LIABILITY</option>
                                     <option value="EQUITY">EQUITY</option>
@@ -27,7 +28,7 @@
                             </div>
                             <div>
                                 Account Sub Nature:
-                                <select asp-for="coa.AccAccountSubNature" class="form-control" style="width:75%;">
+                                <select asp-for="coa.AccAccountSubNature" class="form-control" >
                                     <option value="NORMAL">NORMAL</option>
                                     <option value="CASH ACCOUNT">CASH ACCOUNT</option>
                                     <option value="BANK ACCOUNT">BANK ACCOUNT</option>
@@ -36,14 +37,14 @@
                             </div>
                             <div>
                                 Account Type:
-                                <select asp-for="coa.AccAccountType" class="form-control" style="width:75%;">
+                                <select asp-for="coa.AccAccountType" class="form-control" >
                                     <option value="TRANSACTION">TRANSACTION</option>
                                     <option value="CONTROL">CONTROL</option>
                                 </select>
                             </div>
                             <div>
                                 Parent Account:
-                                <select asp-for="coa.AccParentAccount" class="form-control" onchange="parentAccountChangeFunction()" style="width:75%;">
+                                <select asp-for="coa.AccParentAccount" class="form-control" onchange="parentAccountChangeFunction()" >
                                     <option value="-1">Select Parent Account</option>
                                     <option value="1">Root</option>
                                     @foreach (var j in Model.lstCoa)
@@ -82,23 +83,21 @@
                                 <input type="text" id="ParentAccountCode" value=@ViewData["_ParentAccountCode"].ToString() hidden="hidden" />
                                 <input type="text" id="COAUpdate" value="0" name="BankCash" class="Cash" hidden="hidden" />
                             </div>
+                            <br />
                             <div>
                                 @if (ViewData["_Save"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Save" id="Save" value="Save" class="btn btn-primary button button4">Save</button>
+                                    <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
                                 }
                                 @if (ViewData["_Update"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Update" id="Update" value="Update" class="btn btn-primary button button4">Update</button>
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
                                 }
+                                <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
+                                    Hide
+                                </button>
                             </div>
                         }
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" id="btnHideModal" data-dismiss="modal" class="btn btn-primary button button4">
-                            Hide
-                        </button>
                     </div>
 
                 </div>

@@ -1,473 +1,473 @@
 ﻿@model IEnumerable<Taxtation.Models.Txscoadetail>
 
 @{
-            ViewData["Title"] = "GLSCoaDetail";
-            Layout = "~/Views/Shared/_Layout.cshtml";
-        }
-
-<h2>Chart of Account</h2>
-
-<p>
-    <button id="btnAddRow" class="form-control">Add New</button>
-</p>
-<div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("COA","Setup")'></div>
-<input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
-<div style="overflow-x:auto;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table" id="myTable">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccCode)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccName)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAbbr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccDesc)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccHierarchyCode)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccGrpCode)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccComCode)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccBsuCode)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccParentAccount)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAccountType)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAccountNature)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAccountSubNature)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccTaxAccount)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAllowBudgeting)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAllowPosting)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccReconcile)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccThirdParty)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccEffectPeriodStart)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccEffectPeriodEnd)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccActive)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.EditOutSide)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.EnterBy)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.EnterDate)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.EditBy)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.EditDate)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.OpeningBalance)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ClosingBalance)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.OpeningBalanceCr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ClosingBalanceCr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TransactionDr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TransactionCr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccLevel)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TopeningBalance)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TclosingBalance)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TopeningBalanceCr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TclosingBalanceCr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TtransactionDr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TtransactionCr)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Pl)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Bs)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Cf)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Ce)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Cf1)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Cf2)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Ce1)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Ce2)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccLevelNo)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccNameLevelWise)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccAccountTypeShort)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.AccOpeningBalance)
-                            </th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-    {
-                            <tr>
-                                <td>
-                                    <a id="btnEdit" class="btnEdits" data-url='@Url.Action("COA","Setup", new { id=item.Coaid })'>Edit</a>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccCode)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccName)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAbbr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccDesc)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccHierarchyCode)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccGrpCode)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccComCode)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccBsuCode)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccParentAccount)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAccountType)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAccountNature)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAccountSubNature)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccTaxAccount)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAllowBudgeting)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAllowPosting)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccReconcile)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccThirdParty)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccEffectPeriodStart)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccEffectPeriodEnd)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccActive)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.EditOutSide)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.EnterBy)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.EnterDate)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.EditBy)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.EditDate)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.OpeningBalance)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ClosingBalance)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.OpeningBalanceCr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ClosingBalanceCr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TransactionDr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TransactionCr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccLevel)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TopeningBalance)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TclosingBalance)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TopeningBalanceCr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TclosingBalanceCr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TtransactionDr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TtransactionCr)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Pl)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Bs)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cf)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Ce)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cf1)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cf2)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Ce1)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Ce2)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccLevelNo)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccNameLevelWise)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccAccountTypeShort)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.AccOpeningBalance)
-                                </td>
-
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    ViewData["Title"] = "GLSCoaDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="MainDiv">
+    <div>
+        <h2>Chart of Account</h2>
     </div>
+    <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("COA","Setup")'></div>
+    <br />
+    <div style="float:left;">
+        <button id="btnAddRow" style="width:120px;" class="form-control-btn">Add New</button>
+    </div>
+    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllCOA", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="float:right;">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+    </div>
+    </div>
+<div class="GridStyle">
+    <table class="table table-striped" id="myTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAbbr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccDesc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccHierarchyCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccGrpCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccComCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccBsuCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccParentAccount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAccountType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAccountNature)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAccountSubNature)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccTaxAccount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAllowBudgeting)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAllowPosting)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccReconcile)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccThirdParty)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccEffectPeriodStart)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccEffectPeriodEnd)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccActive)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EditOutSide)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EnterBy)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EnterDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EditBy)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EditDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OpeningBalance)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClosingBalance)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OpeningBalanceCr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClosingBalanceCr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TransactionDr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TransactionCr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccLevel)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TopeningBalance)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TclosingBalance)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TopeningBalanceCr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TclosingBalanceCr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TtransactionDr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TtransactionCr)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Bs)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cf)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ce)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cf1)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cf2)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ce1)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ce2)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccLevelNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccNameLevelWise)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccAccountTypeShort)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AccOpeningBalance)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("COA","Setup", new { id=item.Coaid })'>Edit</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAbbr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccDesc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccHierarchyCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccGrpCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccComCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccBsuCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccParentAccount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAccountType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAccountNature)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAccountSubNature)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccTaxAccount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAllowBudgeting)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAllowPosting)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccReconcile)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccThirdParty)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccEffectPeriodStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccEffectPeriodEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccActive)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditOutSide)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EnterBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EnterDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OpeningBalance)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClosingBalance)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OpeningBalanceCr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClosingBalanceCr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionDr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionCr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccLevel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TopeningBalance)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TclosingBalance)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TopeningBalanceCr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TclosingBalanceCr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TtransactionDr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TtransactionCr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pl)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Bs)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cf)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ce)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cf1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cf2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ce1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ce2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccLevelNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccNameLevelWise)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccAccountTypeShort)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AccOpeningBalance)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-
-@section Scripts{
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#btnAddRow").click(function () {
-            debugger;
-            var url = $('#myModal').data('url');
-                $.get(url, function (data) {
-                    $('#myModal').html(data);
-                    $('#myModal').modal('show');
+     
+    @section Scripts{
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#btnAddRow").click(function () {
+                    debugger;
+                    var url = $('#myModal').data('url');
+                    $.get(url, function (data) {
+                        $('#myModal').html(data);
+                        $('#myModal').modal('show');
+                    });
+                });
             });
-        });
-    });
 
-        $(document).ready(function () {
-            $(".btnEdits").click(function (event) {
-            debugger;
-            var url = event.target.dataset.url;
-                //var url = event.data('url');
-                $.get(url, function (data) {
-                    $('#myModal').html(data);
-                    $('#myModal').modal('show');
+            $(document).ready(function () {
+                $(".btnEdits").click(function (event) {
+                    debugger;
+                    var url = event.target.dataset.url;
+                    //var url = event.data('url');
+                    $.get(url, function (data) {
+                        $('#myModal').html(data);
+                        $('#myModal').modal('show');
+                    });
+                });
             });
-        });
-    });
 
-    </script>
+        </script>
 
-    <script type="text/javascript">
-        function myFunction() {
-        debugger;
-        var input, filter, table, tr, td, i, txtValue, j;
-        input = document.getElementById("myInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("myTable");
-        tr = table.getElementsByTagName("tr");
-        var tds = $('#myTable').children('tbody').children('tr').children('td').length;
-        tds = tds / tr.length;
-        for (i = 1; i < tr.length; i++) {
-            for (j = 0; j < tds; j++) {
-                td = tr[i].getElementsByTagName("td")[j];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                        break;
-                    } else {
-                        tr[i].style.display = "none";
+        <script type="text/javascript">
+            function myFunction() {
+                debugger;
+                var input, filter, table, tr, td, i, txtValue, j;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("myTable");
+                tr = table.getElementsByTagName("tr");
+                var tds = $('#myTable').children('tbody').children('tr').children('td').length;
+                tds = tds / tr.length;
+                for (i = 1; i < tr.length; i++) {
+                    for (j = 0; j < tds; j++) {
+                        td = tr[i].getElementsByTagName("td")[j];
+                        if (td) {
+                            txtValue = td.textContent || td.innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                                break;
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
 
-    function accountNatureChangeFunction() {
-        var nature = document.getElementById("AccAccountNature").value;
+            function accountNatureChangeFunction() {
+                var nature = document.getElementById("AccAccountNature").value;
 
-        var subNature = "";
-        if (nature == 'ASSET') {
-            subNature = "<option value='NORMAL'>NORMAL</option>";
-            subNature += "<option value='CASH ACCOUNT'>CASH ACCOUNT</option>";
-            subNature += "<option value='BANK ACCOUNT'>BANK ACCOUNT</option>";
-            subNature += "<option value='CUSTOMER'>CUSTOMER</option>";
-            subNature += "<option value='VAT'>VAT</option>";
-        }
-        else if (nature == 'LIABILITY') {
-            subNature = "<option value='NORMAL'>NORMAL</option>";
-            subNature += "<option value='SUPPLIER'>SUPPLIER</option>";
-            subNature += "<option value='AGENT'>AGENT</option>";
-            subNature += "<option value='CONTRACTOR'>CONTRACTOR</option>";
-            subNature += "<option value='VAT'>VAT</option>";
-        }
-        else {
-            subNature = "<option value='NORMAL'>NORMAL</option>";
-        }
-
-
-            $('#AccAccountSubNature option').remove();
-            $('#AccAccountSubNature').append(subNature);
-
-        var accNature = document.getElementById("AccAccountNature").value;
-        var trCode = document.getElementById("AccCode").value;
-        var parentHtml = "";
-        parentHtml = "<option value='1'>Root</option>";
-            $.ajax({
-            type: 'GET',
-                url: '/Setup/getParentAccountDetail',
-                data: { AccountNature: accNature, AccCode: trCode },
-                dataType: 'json',
-                contentType: "application/json; charset=utf-8",
-                success: function (result) {
-                console.log(result);
-                for (var i = 0; i < result.length; i++) {
-                    console.log(i);
-                    parentHtml += "<option value='" + result[i].accCode + "'>" + result[i].accAccountNature + " - " + result[i].accAccountSubNature + " - " + result[i].accName + "</option>";
+                var subNature = "";
+                if (nature == 'ASSET') {
+                    subNature = "<option value='NORMAL'>NORMAL</option>";
+                    subNature += "<option value='CASH ACCOUNT'>CASH ACCOUNT</option>";
+                    subNature += "<option value='BANK ACCOUNT'>BANK ACCOUNT</option>";
+                    subNature += "<option value='CUSTOMER'>CUSTOMER</option>";
+                    subNature += "<option value='VAT'>VAT</option>";
+                }
+                else if (nature == 'LIABILITY') {
+                    subNature = "<option value='NORMAL'>NORMAL</option>";
+                    subNature += "<option value='SUPPLIER'>SUPPLIER</option>";
+                    subNature += "<option value='AGENT'>AGENT</option>";
+                    subNature += "<option value='CONTRACTOR'>CONTRACTOR</option>";
+                    subNature += "<option value='VAT'>VAT</option>";
+                }
+                else {
+                    subNature = "<option value='NORMAL'>NORMAL</option>";
                 }
 
-                    $('#AccParentAccount option').remove();
-                    $('#AccParentAccount').append(parentHtml);
 
-            },
-                error: function () { }
+                $('#AccAccountSubNature option').remove();
+                $('#AccAccountSubNature').append(subNature);
 
-        });
-
-    }
-
-    function parentAccountChangeFunction() {
-        debugger;
-
-        var parentAccount = document.getElementById("AccParentAccount").value;
-        if (parentAccount != "-1") {
+                var accNature = document.getElementById("AccAccountNature").value;
+                var trCode = document.getElementById("AccCode").value;
+                var parentHtml = "";
+                parentHtml = "<option value='1'>Root</option>";
                 $.ajax({
-                type: 'GET',
-                    url: '/Setup/getParentAccountCodeDetail',
-                    data: { AccCode: parentAccount, len: parentAccount.length },
+                    type: 'GET',
+                    url: '/Setup/getParentAccountDetail',
+                    data: { AccountNature: accNature, AccCode: trCode },
                     dataType: 'json',
                     contentType: "application/json; charset=utf-8",
                     success: function (result) {
-                        $('#AccCode').val(parentAccount + "." + result);
-                },
-                    error: function () {
-                    alert('Error');
+                        console.log(result);
+                        for (var i = 0; i < result.length; i++) {
+                            console.log(i);
+                            parentHtml += "<option value='" + result[i].accCode + "'>" + result[i].accAccountNature + " - " + result[i].accAccountSubNature + " - " + result[i].accName + "</option>";
+                        }
 
-                }
-            })
+                        $('#AccParentAccount option').remove();
+                        $('#AccParentAccount').append(parentHtml);
+
+                    },
+                    error: function () { }
+
+                });
+
             }
-        else { $('#AccCode').val(""); }
-    }
 
-    </script>
-}
+            function parentAccountChangeFunction() {
+                debugger;
+
+                var parentAccount = document.getElementById("AccParentAccount").value;
+                if (parentAccount != "-1") {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Setup/getParentAccountCodeDetail',
+                        data: { AccCode: parentAccount, len: parentAccount.length },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#AccCode').val(parentAccount + "." + result);
+                        },
+                        error: function () {
+                            alert('Error');
+
+                        }
+                    })
+                }
+                else { $('#AccCode').val(""); }
+            }
+
+        </script>
+    }
