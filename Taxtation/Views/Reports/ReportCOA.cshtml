@@ -12,6 +12,20 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-row-group
+        }
+
+        tr {
+            page-break-inside: avoid
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,7 +34,7 @@
         <div style="width:100%;border-top:1px solid black"></div>
         <br />
         <table class="table table-bordered">
-            <thead>
+            <thead >
                 <tr style="background-color:#F1F1F1">
                     <th>Code</th>
                     <th>Name</th>
