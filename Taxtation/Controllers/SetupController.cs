@@ -413,23 +413,36 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TxstaxDetail obj = new TxstaxDetail();
-                obj.TaxActive = (obj.TaxActive == null) ? true : false;
+                TXSTaxDetailView obj = new TXSTaxDetailView();
+                obj.tax.Id = user.Id;
+                obj.tax.UserName = user.UserName;
+                obj.tax.TaxActive = (obj.tax.TaxActive == null) ? true : false;
+                obj.tax.TxsDefault = (obj.tax.TxsDefault == null) ? true : false;
+                obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
                 return PartialView(obj);
             }
             else
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TxstaxDetail obj = new TxstaxDetail();
-                obj = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == Convert.ToInt32(id)).FirstOrDefault();
-                obj.TaxActive = (obj.TaxActive == true) ? true : false;
+                TXSTaxDetailView obj = new TXSTaxDetailView();
+                obj.tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.tax.TaxActive = (obj.tax.TaxActive == true) ? true : false;
+                obj.tax.TxsDefault = (obj.tax.TxsDefault == true) ? true : false;
+                if (obj.tax.TaxType == "SALE")
+                {
+                    obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "LIABILITY" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+                }
+                if (obj.tax.TaxType == "PURCHASE")
+                {
+                    obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+                }
                 return PartialView(obj);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Tax(TxstaxDetail obj, string Save, string Update, string TaxActive)
+        public async Task<IActionResult> Tax(TXSTaxDetailView obj, string Save, string Update, string TaxActive, string TxsDefault)
         {
             var user = await _userManager.GetUserAsync(User);
             if (User == null)
@@ -438,26 +451,29 @@ namespace Taxtation.Controllers
             }
             if (Save != null)
             {
-                obj.Id = user.Id;
-                obj.UserName = user.UserName;
-                obj.TaxActive = (obj.TaxActive == true) ? true : false;
-                obj.EnterBy = user.UserName;
-                obj.EnterDate = System.DateTime.Now;
-                db.TxstaxDetail.Add(obj);
+                obj.tax.Id = user.Id;
+                obj.tax.UserName = user.UserName;
+                obj.tax.TaxActive = (obj.tax.TaxActive == true) ? true : false;
+                obj.tax.TxsDefault = (obj.tax.TxsDefault == true) ? true : false;
+                obj.tax.EnterBy = user.UserName;
+                obj.tax.EnterDate = System.DateTime.Now;
+                db.TxstaxDetail.Add(obj.tax);
                 db.SaveChanges();
             }
             if (Update != null)
             {
                 TxstaxDetail obj1 = new TxstaxDetail();
-                obj1 = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.TaxId).FirstOrDefault();
+                obj1 = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.tax.TaxId).FirstOrDefault();
                 if (obj1 != null)
                 {
-                    obj1.TaxName = obj.TaxName;
-                    obj1.TaxType = obj.TaxType;
-                    obj1.TaxAbbr = obj.TaxAbbr;
-                    obj1.TaxPercent = obj.TaxPercent;
-                    obj1.TaxDesc = obj.TaxDesc;
-                    obj1.TaxActive = (obj.TaxActive == true) ? true : false;
+                    obj1.TaxName = obj.tax.TaxName;
+                    obj1.TaxType = obj.tax.TaxType;
+                    obj1.TaxAbbr = obj.tax.TaxAbbr;
+                    obj1.TaxPercent = obj.tax.TaxPercent;
+                    obj1.TaxDesc = obj.tax.TaxDesc;
+                    obj1.Coaid = obj.tax.Coaid;
+                    obj1.TaxActive = (obj.tax.TaxActive == true) ? true : false;
+                    obj1.TxsDefault = (obj.tax.TxsDefault == true) ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
@@ -692,6 +708,10 @@ namespace Taxtation.Controllers
                 obj.lstParent = db.TxsitemDetail.Where(x => x.ItmType != "ITEM").ToList();
                 obj.lstStore = db.TxsstoreDetail.ToList();
                 obj.lstUOM = db.Txsuomdetail.ToList();
+                obj.lstAssetAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstInventoryAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstExpenseAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "EXPENSE").ToList();
+                obj.lstRevenueAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "REVENUE").ToList();
                 return PartialView(obj);
             }
             else
@@ -703,6 +723,10 @@ namespace Taxtation.Controllers
                 obj.lstParent = db.TxsitemDetail.Where(x => x.ItmId != Convert.ToInt32(id) && x.ItmType != "ITEM").ToList();
                 obj.lstStore = db.TxsstoreDetail.ToList();
                 obj.lstUOM = db.Txsuomdetail.ToList();
+                obj.lstAssetAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstInventoryAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstExpenseAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "EXPENSE").ToList();
+                obj.lstRevenueAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "REVENUE").ToList();
                 obj.master.ItmActive = (obj.master.ItmActive == true) ? true : false;
                 obj.master.ItmIsSale = (obj.master.ItmIsSale == true) ? true : false;
                 obj.master.ItmIsPurchase = (obj.master.ItmIsPurchase == true) ? true : false;
@@ -754,6 +778,10 @@ namespace Taxtation.Controllers
                     obj1.ItmOpQty = obj.master.ItmOpQty;
                     obj1.ItmOpStore = obj.master.ItmOpStore;
                     obj1.ItmActive = (ItmActive == "true") ? true : false;
+                    obj1.ItmExpenseAccount = obj.master.ItmExpenseAccount;
+                    obj1.ItmRevenueAccount = obj.master.ItmRevenueAccount;
+                    obj1.ItmCogsaccount = obj.master.ItmCogsaccount;
+                    obj1.ItmAssetAccount = obj.master.ItmAssetAccount;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
@@ -978,6 +1006,22 @@ namespace Taxtation.Controllers
 
         #endregion
 
+
+
+        [HttpGet]
+        public List<Txscoadetail> lstCOAAccount(string id, string userName, string type)
+        {
+            List<Txscoadetail> lst = new List<Txscoadetail>();
+            if (type == "SALE")
+            {
+                lst = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "LIABILITY" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+            }
+            if (type == "PURCHASE")
+            {
+                lst = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+            }
+            return lst;
+        }
 
 
         [HttpGet]
