@@ -443,7 +443,18 @@ a {
     z-index: 1;
     overflow: auto
 }
-
+@media screen and (max-width:400px) {
+    .w3-sidebar {
+        height: 100%;
+        width: 200px;
+        background-color: #fff;
+        margin-left: -15px;
+        margin-top: -50px;
+        position: fixed !important;
+        z-index: 1;
+        overflow: auto
+    }
+}
 .w3-bar-block .w3-dropdown-hover, .w3-bar-block .w3-dropdown-click {
     width: 100%
 }
