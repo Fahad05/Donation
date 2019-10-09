@@ -145,38 +145,108 @@ namespace Taxtation.Controllers
             }
             if (Save != null)
             {
-                int count = 0;
+
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = System.DateTime.Now;
+                db.TxtpurchaseMaster.Add(obj.master);
+                db.SaveChanges();
+                string InventoryAccType = ""; int k = 0;
                 for (int i = 0; i < obj.detail.detail.Count; i++)
                 {
-                    var j = Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]);
-                    if (obj.detail.detail[i].ItmId != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
+                    if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
                     {
-                        count++;
-                    }
-                }
-                if (count > 0)
-                {
-                    obj.master.Id = user.Id;
-                    obj.master.UserName = user.UserName;
-                    obj.master.EnterBy = user.UserName;
-                    obj.master.EnterDate = System.DateTime.Now;
-                    db.TxtpurchaseMaster.Add(obj.master);
-                    db.SaveChanges();
+                        obj.detail.detail[i].Id = user.Id;
+                        obj.detail.detail[i].UserName = user.UserName;
+                        obj.detail.detail[i].PurSerialNo = i;
+                        obj.detail.detail[i].PurId = obj.master.PurId;
+                        db.TxtpurchaseDetail.Add(obj.detail.detail[i]);
+                        db.SaveChanges();
 
-                    for (int i = 0; i < obj.detail.detail.Count; i++)
-                    {
-                        if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
+                        obj.inventory.Id = user.Id;
+                        obj.inventory.UserName = user.UserName;
+                        obj.inventory.ItmId = obj.detail.detail[i].ItmId;
+                        obj.inventory.InsSerialNo = i;
+                        obj.inventory.InsNo = obj.master.PurPoref;
+                        obj.inventory.InsDate = obj.master.PurDate;
+                        obj.inventory.InsRefNo = obj.master.PurPoref;
+                        obj.inventory.InsRemarks = obj.master.PurRemarks;
+                        obj.inventory.InsSubRemarks = obj.detail.detail[i].PurRemarks;
+                        obj.inventory.InsQuantityIn = obj.detail.detail[i].PurQty;
+                        obj.inventory.InsQuantityOut = 0;
+                        obj.inventory.InsWeightIn = 0;
+                        obj.inventory.InsWeightOut = 0;
+                        obj.inventory.StrId = obj.master.StrId;
+                        obj.inventory.TxsId = obj.detail.detail[i].TaxId;
+                        obj.inventory.QprTaxPercent = obj.detail.detail[i].PurTaxPer;
+                        obj.inventory.QprAmount = obj.detail.detail[i].PurNetAmt;
+                        obj.inventory.CurId = obj.master.CurId;
+                        obj.inventory.QprExchangeRate = obj.master.PurExRate;
+                        obj.inventory.QprAmountConverted = obj.detail.detail[i].PurGrossAmt;
+                        obj.inventory.InsEntryType = "Direct Purchase Order Detail";
+                        obj.inventory.InsPostStatus = "UN-POST";
+                        db.TxtinventoryStockDetail.Add(obj.inventory);
+                        db.SaveChanges();
+
+                        InventoryAccType = "";
+                        TxsitemDetail item = new TxsitemDetail();
+                        item = db.TxsitemDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ItmId==obj.detail.detail[i].ItmId).FirstOrDefault();
+                        if(item != null)
                         {
-                            obj.detail.detail[i].Id = user.Id;
-                            obj.detail.detail[i].UserName = user.UserName;
-                            obj.detail.detail[i].PurSerialNo = i;
-                            obj.detail.detail[i].PurId = obj.master.PurId;
-                            db.TxtpurchaseDetail.Add(obj.detail.detail[i]);
-                            db.SaveChanges();
-                        }
-                    }
+                            if(item.ItmAssetAccount!=null)
+                            {
+                                InventoryAccType = item.ItmAssetAccount;
+                            }
+                            else if(item.ItmExpenseAccount!=null && item.ItmIsService==false)
+                            {
+                                InventoryAccType = item.ItmExpenseAccount;
+                            }
+                            else if (item.ItmCogsaccount != null && item.ItmIsService == true)
+                            {
+                                InventoryAccType = item.ItmCogsaccount;
+                            }
 
+                            if(InventoryAccType!="")
+                            {
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), InventoryAccType, "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id,user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, InventoryAccType, obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurAmount - obj.detail.detail[i].PurDiscountAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurAmount - obj.detail.detail[i].PurDiscountAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+
+                                if(obj.detail.detail[i].PurTaxAmt !=null)
+                                {
+                                    TxstaxDetail tax = new TxstaxDetail();
+                                    tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.detail.detail[i].TaxId).FirstOrDefault();
+                                    if(tax != null)
+                                    {
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, tax.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurTaxAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                    }
+                                }
+
+                                if(obj.detail.detail[i].PurExAmt!=null)
+                                {
+                                    TxstaxDetail excise = new TxstaxDetail();
+                                    excise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.detail.detail[i].ExciseId).FirstOrDefault();
+                                    if(excise != null)
+                                    {
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, excise.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurTaxAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                    }
+                                }
+
+                            }
+
+
+                        }
+                        
+
+
+                    }
                 }
+
+
             }
             if (Update != null)
             {
@@ -633,23 +703,14 @@ namespace Taxtation.Controllers
             }
             if (Save != null)
             {
-                var count = 0;
-                for (int i = 0; i < obj.detail.detail.Count; i++)
-                {
-                    if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PdnDeliveredQuantity > 0)
-                    {
-                        count++;
-                    }
-                }
-                if (count > 0)
-                {
-                    obj.master.Id = user.Id;
-                    obj.master.UserName = user.UserName;
-                    obj.master.EnterBy = user.UserName;
-                    obj.master.EnterDate = System.DateTime.Now;
-                    db.TxtdebitNoteMaster.Add(obj.master);
-                    db.SaveChanges();
-                }
+
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = System.DateTime.Now;
+                db.TxtdebitNoteMaster.Add(obj.master);
+                db.SaveChanges();
+
 
                 for (int i = 0; i < obj.detail.detail.Count; i++)
                 {
@@ -660,6 +721,8 @@ namespace Taxtation.Controllers
                         obj.detail.detail[i].UserName = user.UserName;
                         db.TxtdebitNoteDetail.Add(obj.detail.detail[i]);
                         db.SaveChanges();
+
+
                     }
                 }
             }
@@ -673,7 +736,7 @@ namespace Taxtation.Controllers
                         count++;
                     }
                 }
-                if(count > 0)
+                if (count > 0)
                 {
                     TxtdebitNoteMaster DNM = new TxtdebitNoteMaster();
                     DNM = db.TxtdebitNoteMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PdnId == obj.master.PdnId).FirstOrDefault();

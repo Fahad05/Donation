@@ -14,103 +14,143 @@
                     </div>
                     <div class="modal-body">
                         @using (Html.BeginForm("Item", "Setup", FormMethod.Post))
-    {
-                    <div>
-                        <input type="text" asp-for="master.ItmId" class="form-control" hidden="hidden" />
-                    </div>
-                    <div>
-                        Parent ID:
-                        <select asp-for="master.ItmPid" class="form-control" required="required">
-                            <option value="-1">Select</option>
-                            @foreach (var j in Model.lstParent)
-        {
-                    <option value=@j.ItmId>@j.ItmName</option>
-}
-                        </select>
-                    </div>
-                    <div>
-                        Name:
-                        <input type="text" asp-for="master.ItmName" class="form-control" required="required" />
-                        @Html.CheckBox("ItmActive", Model.master.ItmActive.Value)Active
-                    </div>
-                    <div>
-                        Type:
-                        <select asp-for="master.ItmType" class="form-control" required="required">
-                            <option value="">Select</option>
-                            <option value="CATEGORY">CATEGORY</option>
-                            <option value="ITEM">ITEM</option>
-                        </select>
-                    </div>
+                        {
+                            <div>
+                                <input type="text" asp-for="master.ItmId" class="form-control" hidden="hidden" />
+                            </div>
+                            <div>
+                                Parent ID<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmPid" class="form-control" required="required">
+                                    <option value="-1">Select</option>
+                                    @foreach (var j in Model.lstParent)
+                                    {
+                                        <option value=@j.ItmId>@j.ItmName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Name<span style="color:red;">*</span>:
+                                <input type="text" asp-for="master.ItmName" class="form-control" required="required" />
+                                @Html.CheckBox("ItmActive", Model.master.ItmActive.Value)Active
+                            </div>
+                            <div>
+                                Type<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmType" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    <option value="CATEGORY">CATEGORY</option>
+                                    <option value="ITEM">ITEM</option>
+                                </select>
+                            </div>
 
-                    <div>
-                        Bar Code:
-                        <input type="text" asp-for="master.ItmBcode" class="form-control" required="required" />
-                    </div>
-                    <div>
-                        Unit of Measurement:
-                        <select asp-for="master.ItmUom" class="form-control" required="required">
-                            <option>Select</option>
-                            @foreach (var j in Model.lstUOM)
-        {
-                    <option value=@j.Uomid>@j.Uomname</option>
-}
-                        </select>
-                    </div>
-                    <div>
-                        @Html.CheckBox("ItmIsSale", Model.master.ItmIsSale.Value)Is Sale
-                        @Html.CheckBox("ItmIsPurchase", Model.master.ItmIsPurchase.Value)Is Purchase
-                        @Html.CheckBox("ItmIsService", Model.master.ItmIsService.Value)Is Service
-                    </div>
-                    <div>
-                        Min Level:
-                        <input type="number" asp-for="master.ItmMinLevel" class="form-control" required="required" />
-                    </div>
-                    <div>
-                        Max Level:
-                        <input type="number" asp-for="master.ItmMaxLevel" class="form-control" required="required" />
-                    </div>
-                    <div>
-                        Re Level:
-                        <input type="number" asp-for="master.ItmReLevel" class="form-control" required="required" />
-                    </div>
+                            <div>
+                                Bar Code<span style="color:red;">*</span>:
+                                <input type="text" asp-for="master.ItmBcode" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Unit of Measurement<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmUom" class="form-control" required="required">
+                                    <option>Select</option>
+                                    @foreach (var j in Model.lstUOM)
+                                    {
+                                        <option value=@j.Uomid>@j.Uomname</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                @Html.CheckBox("ItmIsSale", Model.master.ItmIsSale.Value)Is Sale
+                                @Html.CheckBox("ItmIsPurchase", Model.master.ItmIsPurchase.Value)Is Purchase
+                                @Html.CheckBox("ItmIsService", Model.master.ItmIsService.Value)Is Service
+                            </div>
+                            <div>
+                                Min Level<span style="color:red;">*</span>:
+                                <input type="number" asp-for="master.ItmMinLevel" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Max Level<span style="color:red;">*</span>:
+                                <input type="number" asp-for="master.ItmMaxLevel" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Re Level<span style="color:red;">*</span>:
+                                <input type="number" asp-for="master.ItmReLevel" class="form-control" required="required" />
+                            </div>
 
-                    <div>
-                        CP:
-                        <input type="number" asp-for="master.ItmCp" class="form-control" required="required" />
-                    </div>
-                    <div>
-                        SP:
-                        <input type="number" asp-for="master.ItmSp" class="form-control" required="required" />
-                    </div>
-                    <div>
-                        Opening Quantity:
-                        <input type="number" asp-for="master.ItmOpQty" class="form-control" required="required" />
-                    </div>
-                    <div>
-                        Store:
-                        <select asp-for="master.ItmOpStore" class="form-control" required="required">
-                            <option value="">Select</option>
-                            @foreach (var j in Model.lstStore)
-        {
-                    <option value=@j.StrId>@j.StrName</option>
-}
-                        </select>
-                    </div>
-                    <br />
-                    <div>
-                        @if (ViewData["_Save"].ToString() == "True")
-    {
-                    <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
-}
-                        @if (ViewData["_Update"].ToString() == "True")
-    {
-                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
-}
-                        <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
-                            Hide
-                        </button>
-                    </div>
-}
+                            <div>
+                                CP<span style="color:red;">*</span>:
+                                <input type="number" asp-for="master.ItmCp" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                SP<span style="color:red;">*</span>:
+                                <input type="number" asp-for="master.ItmSp" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Inventory Account<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmExpenseAccount" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstInventoryAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Revenue Account<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmRevenueAccount" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstRevenueAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Asset Account<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmAssetAccount" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstAssetAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Services Account<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmCogsaccount" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstExpenseAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Opening Quantity<span style="color:red;">*</span>:
+                                <input type="number" asp-for="master.ItmOpQty" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Store<span style="color:red;">*</span>:
+                                <select asp-for="master.ItmOpStore" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstStore)
+                                    {
+                                        <option value=@j.StrId>@j.StrName</option>
+                                    }
+                                </select>
+                            </div>
+                            <br />
+                            <div>
+                                @if (ViewData["_Save"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                                }
+                                @if (ViewData["_Update"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                                }
+                                <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
+                                    Hide
+                                </button>
+                            </div>
+                        }
                     </div>
 
 
@@ -136,6 +176,10 @@
                 $('#master_ItmCp').removeAttr("required"); $('#master_ItmCp').attr('disabled', 'disabled');
                 $('#master_ItmSp').removeAttr("required"); $('#master_ItmSp').attr('disabled', 'disabled');
                 $('#master_ItmOpQty').removeAttr("required"); $('#master_ItmOpQty').attr('disabled', 'disabled');
+                $('#master_ItmExpenseAccount').removeAttr("required"); $('#master_ItmExpenseAccount').attr('disabled', 'disabled');
+                $('#master_ItmRevenueAccount').removeAttr("required"); $('#master_ItmRevenueAccount').attr('disabled', 'disabled');
+                $('#master_ItmAssetAccount').removeAttr("required"); $('#master_ItmAssetAccount').attr('disabled', 'disabled');
+                $('#master_ItmCogsaccount').removeAttr("required"); $('#master_ItmCogsaccount').attr('disabled', 'disabled');
                 $('#master_ItmOpStore').removeAttr("required"); $('#master_ItmOpStore').attr('disabled', 'disabled');
                 $('#ItmIsSale').attr('disabled', 'disabled');
                 $('#ItmIsPurchase').attr('disabled', 'disabled');
@@ -143,13 +187,17 @@
 
             }
             else {
-                $('#master_ItmBcode').removeAttr("disabled"); $('#master_ItmBcode').attr('required', 'required'); 
+                $('#master_ItmBcode').removeAttr("disabled"); $('#master_ItmBcode').attr('required', 'required');
                 $('#master_ItmUom').removeAttr("disabled"); $('#master_ItmUom').attr('required', 'required');
                 $('#master_ItmMinLevel').removeAttr("disabled"); $('#master_ItmMinLevel').attr('required', 'required');
                 $('#master_ItmMaxLevel').removeAttr("disabled"); $('#master_ItmMaxLevel').attr('required', 'required');
                 $('#master_ItmReLevel').removeAttr("disabled"); $('#master_ItmReLevel').attr('required', 'required');
                 $('#master_ItmCp').removeAttr("disabled"); $('#master_ItmCp').attr('required', 'required');
                 $('#master_ItmSp').removeAttr("disabled"); $('#master_ItmSp').attr('required', 'required');
+                $('#master_ItmExpenseAccount').removeAttr("disabled"); $('#master_ItmExpenseAccount').attr('required', 'required');
+                $('#master_ItmRevenueAccount').removeAttr("disabled"); $('#master_ItmRevenueAccount').attr('required', 'required');
+                $('#master_ItmAssetAccount').removeAttr("disabled"); $('#master_ItmAssetAccount').attr('required', 'required');
+                $('#master_ItmCogsaccount').removeAttr("disabled"); $('#master_ItmCogsaccount').attr('required', 'required');
                 $('#master_ItmOpQty').removeAttr("disabled"); $('#master_ItmOpQty').attr('required', 'required');
                 $('#master_ItmOpStore').removeAttr("disabled"); $('#master_ItmOpStore').attr('required', 'required');
                 $('#ItmIsSale').removeAttr("disabled");
@@ -160,7 +208,7 @@
         })
     })
 
-    
+
         if ($('#master_ItmType').val() == 'CATEGORY') {
             $('#master_ItmBcode').removeAttr("required"); $('#master_ItmBcode').attr('disabled', 'disabled');
             $('#master_ItmUom').removeAttr("required"); $('#master_ItmUom').attr('disabled', 'disabled');
@@ -169,6 +217,10 @@
             $('#master_ItmReLevel').removeAttr("required"); $('#master_ItmReLevel').attr('disabled', 'disabled');
             $('#master_ItmCp').removeAttr("required"); $('#master_ItmCp').attr('disabled', 'disabled');
             $('#master_ItmSp').removeAttr("required"); $('#master_ItmSp').attr('disabled', 'disabled');
+            $('#master_ItmExpenseAccount').removeAttr("required"); $('#master_ItmExpenseAccount').attr('disabled', 'disabled');
+            $('#master_ItmRevenueAccount').removeAttr("required"); $('#master_ItmRevenueAccount').attr('disabled', 'disabled');
+            $('#master_ItmAssetAccount').removeAttr("required"); $('#master_ItmAssetAccount').attr('disabled', 'disabled');
+            $('#master_ItmCogsaccount').removeAttr("required"); $('#master_ItmCogsaccount').attr('disabled', 'disabled');
             $('#master_ItmOpQty').removeAttr("required"); $('#master_ItmOpQty').attr('disabled', 'disabled');
             $('#master_ItmOpStore').removeAttr("required"); $('#master_ItmOpStore').attr('disabled', 'disabled');
             $('#ItmIsSale').attr('disabled', 'disabled');
@@ -184,6 +236,10 @@
             $('#master_ItmReLevel').removeAttr("disabled"); $('#master_ItmReLevel').attr('required', 'required');
             $('#master_ItmCp').removeAttr("disabled"); $('#master_ItmCp').attr('required', 'required');
             $('#master_ItmSp').removeAttr("disabled"); $('#master_ItmSp').attr('required', 'required');
+            $('#master_ItmExpenseAccount').removeAttr("disabled"); $('#master_ItmExpenseAccount').attr('required', 'required');
+            $('#master_ItmRevenueAccount').removeAttr("disabled"); $('#master_ItmRevenueAccount').attr('required', 'required');
+            $('#master_ItmAssetAccount').removeAttr("disabled"); $('#master_ItmAssetAccount').attr('required', 'required');
+            $('#master_ItmCogsaccount').removeAttr("disabled"); $('#master_ItmCogsaccount').attr('required', 'required');
             $('#master_ItmOpQty').removeAttr("disabled"); $('#master_ItmOpQty').attr('required', 'required');
             $('#master_ItmOpStore').removeAttr("disabled"); $('#master_ItmOpStore').attr('required', 'required');
             $('#ItmIsSale').removeAttr("disabled");

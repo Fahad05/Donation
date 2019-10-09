@@ -447,15 +447,25 @@ namespace Taxtation.Models
                     .IsRequired()
                     .HasMaxLength(450);
 
+                entity.Property(e => e.ItmAssetAccount).HasMaxLength(50);
+
                 entity.Property(e => e.ItmBcode)
                     .HasColumnName("ItmBCode")
                     .HasMaxLength(256);
 
+                entity.Property(e => e.ItmCogsaccount)
+                    .HasColumnName("ItmCOGSAccount")
+                    .HasMaxLength(50);
+
                 entity.Property(e => e.ItmCp).HasColumnName("ItmCP");
+
+                entity.Property(e => e.ItmExpenseAccount).HasMaxLength(50);
 
                 entity.Property(e => e.ItmName).HasMaxLength(256);
 
                 entity.Property(e => e.ItmPid).HasColumnName("ItmPID");
+
+                entity.Property(e => e.ItmRevenueAccount).HasMaxLength(50);
 
                 entity.Property(e => e.ItmSp).HasColumnName("ItmSP");
 
@@ -615,6 +625,8 @@ namespace Taxtation.Models
                 entity.Property(e => e.UserName).HasMaxLength(256);
 
                 entity.Property(e => e.TaxId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Coaid).HasColumnName("COAId");
 
                 entity.Property(e => e.EditBy).HasMaxLength(256);
 

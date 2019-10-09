@@ -21,6 +21,7 @@ namespace Taxtation.ViewModel
         public List<TxstaxDetail> lstTax { get; set; }
         public List<TxstaxDetail> lstExcise { get; set; }
         public Txtledger ledger { get; set; }
+        public TxtinventoryStockDetail inventory { get; set; }
         public double? SubTotal { get; set; }
         public double? ExciseTax { get; set; }
         public double? VAT { get; set; }
@@ -44,6 +45,7 @@ namespace Taxtation.ViewModel
             lstTax = new List<TxstaxDetail>();
             lstExcise = new List<TxstaxDetail>();
             ledger = new Txtledger();
+            inventory = new TxtinventoryStockDetail();
             SubTotal = new double();
             ExciseTax = new double();
             VAT = new double();

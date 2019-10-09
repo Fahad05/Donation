@@ -110,5 +110,53 @@ namespace Taxtation.App_Code
         //{
         //    return db.GltreceiptMaster.Where(x => x.TrtypeAccount == accCode).FirstOrDefault();
         //}
+
+
+
+        #region Insert
+
+        public void insertLedgerDetail(string id, string userName, string Trno, DateTime? Trdate, DateTime? Trgldate, string Trtype,
+            string TrpostStatus, double TrserialNo, string TraccCode, string TrrefAccCode, string TrdocReference,
+            double? Trdebit, double? Trcredit, double? TrexchangeRate, double? TramountConverted, int? TrcurId, int? TrtxsId,
+            double? TrtaxPercent, double? TrtaxAmount, string TrchequeNo, DateTime? TrchequeDate, string TrrefNo, string Trremarks, string TrentryType,
+            string EnterBy, DateTime? EnterDate, string EntryFrom, int? SitId)
+        {
+            Txtledger obj = new Txtledger();
+            obj.Id = id;
+            obj.UserName = userName;
+            obj.Trno = Trno;
+            obj.Trdate = Trdate;
+            obj.Trgldate = Trgldate;
+            obj.Trtype = Trtype;
+            obj.TrpostStatus = TrpostStatus;
+            obj.TrserialNo = TrserialNo;
+            obj.TraccCode = TraccCode;
+            obj.TrrefAccCode = TrrefAccCode;
+            obj.TrdocReference = TrdocReference;
+            obj.Trdebit = Trdebit;
+            obj.Trcredit = Trcredit;
+            obj.TrexchangeRate = TrexchangeRate;
+            obj.TramountConverted = TramountConverted;
+            obj.TrcurId = TrcurId;
+            obj.TrtxsId = TrtxsId;
+            obj.TrtaxPercent = TrtaxPercent;
+            obj.TrtaxAmount = TrtaxAmount;
+            obj.TrchequeNo = TrchequeNo;
+            obj.TrchequeDate = TrchequeDate;
+            obj.TrrefNo = TrrefNo;
+            obj.Trremarks = Trremarks;
+            obj.TrentryType = TrentryType;
+            obj.EnterBy = EnterBy;
+            obj.EnterDate = EnterDate;
+            obj.EntryFrom = EntryFrom;
+            obj.SitId = SitId;
+            db.Txtledger.Add(obj);
+            db.SaveChanges();
+        }
+
+        #endregion
+
+
+
     }
 }
