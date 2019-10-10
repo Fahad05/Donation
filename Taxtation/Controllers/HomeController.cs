@@ -62,6 +62,11 @@ namespace Taxtation.Controllers
             return View();
         }
 
+        public IActionResult Reports()
+        {
+            return View();
+        }
+
         public IActionResult Inventory()
         {
             return View();
