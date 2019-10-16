@@ -154,6 +154,38 @@ namespace Taxtation.App_Code
             db.SaveChanges();
         }
 
+
+        public void insertInventoryStockDetail(string id, string userName, int? ItmId, double? InsSerialNo, string InsNo, DateTime? InsDate, string InsRefNo, string InsRemarks, string InsSubRemarks, double? InsQuantityIn, double? InsQuantityOut, double? InsWeightIn, double? InsWeightOut, int? StrId, int? TxsId, double? QprTaxPercent, double? QprAmount, int? CurId, double? QprExchangeRate, double? QprAmountConverted, string InsEntryType, string InsPostStatus)
+        {
+            TxtinventoryStockDetail inv = new TxtinventoryStockDetail();
+            inv.Id = id;
+            inv.UserName = userName;
+            inv.ItmId = ItmId;
+            inv.InsSerialNo = InsSerialNo;
+            inv.InsNo = InsNo;
+            inv.InsDate = InsDate;
+            inv.InsRefNo = InsRefNo;
+            inv.InsRemarks = InsRemarks;
+            inv.InsSubRemarks = InsSubRemarks;
+            inv.InsQuantityIn = InsQuantityIn;
+            inv.InsQuantityOut = InsQuantityOut;
+            inv.InsWeightIn = InsWeightIn;
+            inv.InsWeightOut = InsWeightOut;
+            inv.StrId = StrId;
+            inv.TxsId = TxsId;
+            inv.QprTaxPercent = QprTaxPercent;
+            inv.QprAmount = QprAmount;
+            inv.CurId = CurId;
+            inv.QprExchangeRate = QprExchangeRate;
+            inv.QprAmountConverted = QprAmountConverted;
+            inv.InsEntryType = InsEntryType;
+            inv.InsPostStatus = InsPostStatus;
+            db.TxtinventoryStockDetail.Add(inv);
+            db.SaveChanges();
+        }
+
+
+
         #endregion
 
 

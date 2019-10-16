@@ -22,10 +22,16 @@
                 <a asp-action="showPurchase" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
             </div>
         </div>
-       
+
     </div>
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.Id" hidden="hidden" class="form-control" />
+        </div>
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.UserName" hidden="hidden" class="form-control" />
+        </div>
+        <div class="col-lg-4">
             <input type="text" asp-for="master.PurId" hidden="hidden" class="form-control" />
         </div>
     </div>
@@ -36,39 +42,39 @@
         </div>
         <div class="col-md-3">
             Transaction Date:
-            <input type="date" asp-for="master.PurDate" class="form-control" />
+            <input type="date" asp-for="master.PurDate" class="form-control" required />
         </div>
         <div class="col-md-3">
             Cash/Bank:
-            <select asp-for="master.BnkId" class="form-control">
-                <option>Select</option>
-                @foreach (var j in Model.lstBank)
+            <select asp-for="master.Coaid" class="form-control" required>
+                <option value="">Select</option>
+                @foreach (var j in Model.lstAccount)
                 {
-                    <option value=@j.BnkId>@j.BnkName</option>
+                    <option value=@j.Coaid>@j.AccName</option>
                 }
             </select>
         </div><div class="col-md-3">
-    Term:
-    <select asp-for="master.PurPayTerm" class="form-control">
-        <option value="CREDIT">CREDIT</option>
-        <option value="CASH">CASH</option>
-        <option value="BANK">BANK</option>
-    </select>
-</div>
+            Term:
+            <select asp-for="master.PurPayTerm" class="form-control" required="required">
+                <option value="CREDIT">CREDIT</option>
+                <option value="CASH">CASH</option>
+                <option value="BANK">BANK</option>
+            </select>
+        </div>
     </div>
     <div class="row">
 
 
         <div class="col-md-3">
             Cheque/Ref No:
-            <input type="text" asp-for="master.PurChqNo" class="form-control" />
+            <input type="text" asp-for="master.PurChqNo" class="form-control"/>
         </div>
         <div class="col-md-3">
             Cheque Date:
             <input type="date" asp-for="master.PurChqDate" class="form-control" />
         </div> <div class="col-md-3">
             Purchase Type:
-            <select asp-for="master.PurType" class="form-control">
+            <select asp-for="master.PurType" class="form-control" required="required">
                 <option value="LOCAL">LOCAL</option>
                 <option value="IMPORT">IMPORT</option>
                 <option value="EXEMPT">EXEMPT</option>
@@ -76,188 +82,189 @@
         </div>
         <div class="col-md-3">
             Item Type:
-            <select asp-for="master.PurItmType" class="form-control">
+            <select asp-for="master.PurItmType" class="form-control" required="required">
                 <option value="LOCAL">LOCAL</option>
                 <option value="IMPORT">IMPORTED</option>
             </select>
         </div>
     </div>
-        <div class="row">
-           
-            <div class="col-md-3">
-                Exchange Rate:
-                <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" value="1" class="form-control" />
-            </div> <div class="col-md-3">
-                Site:
-                <select asp-for="master.SitId" class="form-control" required="required">
-                    <option>Select</option>
-                    @foreach (var j in Model.lstSite)
-                    {
-                        <option value=@j.SitId>@j.SitName</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-3">
-                Store Name:
-                <select asp-for="master.StrId" class="form-control" required="required">
-                    <option>Select</option>
-                    @foreach (var j in Model.lstStore)
-                    {
-                        <option value=@j.StrId>@j.StrName</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-3">
-                Supplier Name:
-                <select asp-for="master.SupId" class="form-control" required="required">
-                    <option>Select</option>
-                    @foreach (var j in Model.lstSupplier)
-                    {
-                        <option value=@j.SupId>@j.SupName</option>
-                    }
-                </select>
+    <div class="row">
+
+        <div class="col-md-3">
+            Exchange Rate:
+            <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" value="1" class="form-control" required="required" />
+        </div> <div class="col-md-3">
+            Site:
+            <select asp-for="master.SitId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstSite)
+                {
+                    <option value=@j.SitId>@j.SitName</option>
+                }
+            </select>
         </div>
-        <div class="row">
-           
-           
-            </div>
+        <div class="col-md-3">
+            Store Name:
+            <select asp-for="master.StrId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstStore)
+                {
+                    <option value=@j.StrId>@j.StrName</option>
+                }
+            </select>
         </div>
-        <div class="row">
+        <div class="col-md-3">
+            Supplier Name:
+            <select asp-for="master.SupId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstSupplier)
+                {
+                    <option value=@j.SupId>@j.SupName</option>
+                }
+            </select>
+        </div>
+
+    </div>
+    <div class="row">
 
 
-            <div class="col-md-3">
-                Currency:
-                <select asp-for="master.CurId" class="form-control" required="required">
-                    <option>Select</option>
-                    @foreach (var j in Model.lstCurrency)
-                    {
-                        <option value=@j.CurId>@j.CurName</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-3">
-                Remarks:
-                <input type="text" asp-for="master.PurRemarks" class="form-control" />
-            </div>
+        <div class="col-md-3">
+            Currency:
+            <select asp-for="master.CurId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstCurrency)
+                {
+                    <option value=@j.CurId>@j.CurName</option>
+                }
+            </select>
         </div>
+        <div class="col-md-3">
+            Remarks:
+            <input type="text" asp-for="master.PurRemarks" class="form-control" />
+        </div>
+    </div>
     <br>
 
-        <div class="row">
-            <div class="col-lg-12" style="overflow-x:scroll;">
-                <table id="myTable" class="table table-striped table-bordered">
-                    <thead >
+    <div class="row">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:230px;">Item</th>
+                        <th style="width:70px;">UOM</th>
+                        <th style="width:120px;">Last Price</th>
+                        <th style="width:120px;">Quantity</th>
+                        <th style="width:120px;">Price</th>
+                        <th style="width:120px;">Sub. Amount</th>
+                        <th style="width:230px;">Excise Slab</th>
+                        <th style="width:120px;">Excise Percent</th>
+                        <th style="width:120px;">Excise Amount</th>
+                        <th style="width:120px;">Amt. After Excise</th>
+                        <th style="width:120px;">Disc. Type</th>
+                        <th style="width:120px;">Disc.</th>
+                        <th style="width:120px;">Disc. Amount</th>
+                        <th style="width:120px;">Amt. After Disc.</th>
+                        <th style="width:230px;">VAT Slab</th>
+                        <th style="width:120px;">VAT Percent</th>
+                        <th style="width:120px;">VAT Amount</th>
+                        <th style="width:120px;">Net Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index; i++)
+                    {
                         <tr>
-                            <th style="width:230px;">Item</th>
-                            <th style="width:70px;">UOM</th>
-                            <th style="width:120px;">Last Price</th>
-                            <th style="width:120px;">Quantity</th>
-                            <th style="width:120px;">Price</th>
-                            <th style="width:120px;">Sub. Amount</th>
-                            <th style="width:230px;">Excise Slab</th>
-                            <th style="width:120px;">Excise Percent</th>
-                            <th style="width:120px;">Excise Amount</th>
-                            <th style="width:120px;">Amt. After Excise</th>
-                            <th style="width:120px;">Disc. Type</th>
-                            <th style="width:120px;">Disc.</th>
-                            <th style="width:120px;">Disc. Amount</th>
-                            <th style="width:120px;">Amt. After Disc.</th>
-                            <th style="width:230px;">VAT Slab</th>
-                            <th style="width:120px;">VAT Percent</th>
-                            <th style="width:120px;">VAT Amount</th>
-                            <th style="width:120px;">Net Amount</th>
-                            <th style="width:120px;">Exc. Amount</th>
-                            <th style="width:230px;">Remarks</th>
+                            <td>
+                                <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                    {
+                                        <option value=@j.ItmId>@j.ItmName</option>}
+                                </select>
+                            </td>
+                            <td><input type="text" asp-for="detail.pdef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].lastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].subAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option> @foreach (var j in Model.lstTax)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @for (int i = 0; i < index; i++)
-                        {
-                            <tr>
-                                <td>
-                                    <select asp-for="detail.detail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
-                                        <option value="-1">Select</option>@foreach (var j in Model.lstItem)
-                                        {
-                                            <option value=@j.ItmId>@j.ItmName</option>}
-                                    </select>
-                                </td>
-                                <td><input type="text" asp-for="detail.pdef[i].UOM" readonly="readonly" class="form-control" style="width:70px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.pdef[i].lastPrice" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurQty" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurRate" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.pdef[i].subAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td>
-                                    <select asp-for="detail.detail[i].ExciseId" class="form-control" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" style="width:230px;">
-                                        <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
-                                        {
-                                            <option value=@j.TaxId>@j.TaxName</option>}
-                                    </select>
-                                </td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td>
-                                    <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:230px;">
-                                        <option value="-1">Select</option> @foreach (var j in Model.lstTax)
-                                        {
-                                            <option value=@j.TaxId>@j.TaxName</option>}
-                                    </select>
-                                </td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="number" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                                <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
+    </div>
     <br />
-    
+
     <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
-                 
-                      <div class="col-md-2">
-                          Sub Total
-                          <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control-footer" />
-                      </div>
-                      <div class="col-md-1">
-                          Exise Tax
-                          <input type="text" asp-for="ExciseTax" readonly="readonly"  class="form-control-footer" />
-                      </div>
-                      <div class="col-md-1">
-                          Vat
-                          <input type="text" asp-for="VAT" readonly="readonly" class="form-control-footer" />
-                      </div>
-                      <div class="col-md-2">
-                          Total
-                          <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control-footer" />
-                      </div>
-                      <div class="col-md-2">
-                          Advance
-                          <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
-                      </div>
-                      <div class="col-md-2">
-                          Paid
-                          <input type="text" asp-for="Paid" readonly="readonly" class="form-control-footer" />
-                      </div>
-                      <div class="col-md-2">
-                          Balance
-                          <input type="text" asp-for="TotalBalance" readonly="readonly" class="form-control-footer" />
-                      </div>
-                 
-   
-</div>
+
+        <div class="col-md-2">
+            Sub Total
+            <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-1">
+            Exise Tax
+            <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-1">
+            Vat
+            <input type="text" asp-for="VAT" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Total
+            <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Advance
+            <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Paid
+            <input type="text" asp-for="Paid" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Balance
+            <input type="text" asp-for="TotalBalance" readonly="readonly" class="form-control-footer" />
+        </div>
+
+
+    </div>
 </form>
 
 
 @section Scripts{
-
     <script type="text/javascript">
+
+        $(window).load(function () {
+            ExchangeRate();
+        });
+
         function changeItem(item) {
             var trNo = item.dataset.rowno;
             if (item.value != '-1') {
@@ -425,6 +432,29 @@
             $('#ExciseTax').val(ExciseTotal);
             $('#VAT').val(TaxTotal);
             $('#TotalAmount').val(parseFloat(subAmountTotal + ExciseTotal + TaxTotal - TotalDiscount));
+            
+            debugger;
+            $.ajax({
+                type: 'GET',
+                url: '/Transaction/purchaseTotalAmount',
+                data: { RefCode: $('#master_PurPoref').val() },
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result != undefined) { $('#Paid').val(result); } else { $('#Paid').val('0');}
+                    if ($('#master_PurPayTerm').val() == "CREDIT") {
+                        $('#TotalBalance').val((parseFloat($('#TotalAmount').val()) - parseFloat($('#Advance').val()) - parseFloat($('#Paid').val())));
+                        alert($('#TotalAmount').val());
+                    }
+                    else {
+                        $('#Paid').val($('#TotalAmount').val());
+                        $('#TotalBalance').val('0');
+                    }
+                },
+                error: function () {
+                }
+            })
+
         }
 
         function AddRow() {
@@ -458,7 +488,8 @@
                 }
                 for (var i = 0; i < rowCount; i++) {
                     if ($('#detail_detail_' + i + '__PurQty').val() != '' &&
-                        $('#detail_detail_' + i + '__PurRate').val() != '') {
+                        $('#detail_detail_' + i + '__PurRate').val() != '' &&
+                        $('#detail_detail_' + i + '__ItmId').val() != '-1') {
                         count++;
                     }
                 }
@@ -469,7 +500,88 @@
             })
         })
 
+        $(document).ready(function () {
+            $('#Update').on('click', function (event) {
+                var count = 0;
+                var rowCount = $('#myTable tbody tr').length;
+                var TRTotalAmount = $('#TotalAmount').val();
+                if (parseFloat(TRTotalAmount) < 0) {
+                    alert('Cannot Save Negative Transaction!');
+                    event.preventDefault();
+                }
+                if ($('#master_PurPayTerm').val() == 'CREDIT' && $('#master_BnkId').val() == '-1') {
+                    alert('Please Select Cash / Bank!');
+                    event.preventDefault();
+                }
+                if ($('#master_PurPayTerm').val() == 'CREDIT' && parseFloat($('#Advance').val()) != 0 && $('#master_BnkId').val() == '-1') {
+                    alert('Please Select Cash / Bank!');
+                    event.preventDefault();
+                }
+                if (parseFloat($('#master_PurExRate').val()) == 0) {
+                    alert('Please Enter Valid Exchange Rate!');
+                    event.preventDefault();
+                }
+                for (var i = 0; i < rowCount; i++) {
+                    if ($('#detail_detail_' + i + '__PurQty').val() != '' &&
+                        $('#detail_detail_' + i + '__PurRate').val() != '' &&
+                        $('#detail_detail_' + i + '__ItmId').val()!='-1') {
+                        count++;
+                    }
+                }
+                if (parseFloat(count) == 0) {
+                    alert('Please Select Item or Enter Quantity or Rate!');
+                    event.preventDefault();
+                }
+            })
+        })
 
+        $(document).ready(function () {
+            $('#master_PurPayTerm').change(function () {
+                var term = $('#master_PurPayTerm').val();
+                var Account = "<option>Select</option>";
+                $.ajax({
+                    type: 'GET',
+                    url: '/Transaction/changeTerm',
+                    data: { Term: term },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        for (var i = 0; i < result.length; i++) {
+                            Account += "<option value='" + result[i].coaid + "'>" + result[i].accName + "</option>";
+                        }
+                        $('#master_Coaid option').remove();
+                        $('#master_Coaid').append(Account);
+                    },
+                    error: function () {
+                    }
+                })
+                debugger;
+                if (term == 'CREDIT') {
+                    $('#Advance').removeAttr("readonly");
+                    if (parseFloat($('#Advance').val()) > (parseFloat($('#TotalAmount').val() - parseFloat($('#Paid').val())))) {
+                        $('#Advance').val('0');
+                    }
+                    //ExchangeRate();
+                }
+                else {
+                    $('#Advance').val('0');
+                    if (parseFloat($('#Advance').val()) > (parseFloat($('#TotalAmount').val() - parseFloat($('#Paid').val())))) {
+                        $('#Advance').val('0');
+                    }
+                    //ExchangeRate();
+                    $('#Advance').attr('readonly', 'readonly');
+                    $('#master_PurChqNo').val('');
+                    $('#master_PurChqDate').val('');
+                }
+            })
+        })
+
+        $(document).ready(function () {
+            $('#Advance').change(function () {
+                if ($('#Advance').val() > (parseFloat($('#TotalAmount').val()) - parseFloat($('#Paid').val()))) { $('#Advance').val('0') }
+                ExchangeRate();
+            })
+        })
 
     </script>
 
