@@ -16,9 +16,10 @@
                     <div class="modal-body">
                         @using (Html.BeginForm("COA", "Setup", FormMethod.Post))
                         {
+
                             <div>
-                                Account Nature:
-                                <select asp-for="coa.AccAccountNature" class="form-control" onchange="accountNatureChangeFunction()" >
+                                Account Nature<span class="mandatory">*</span>:
+                                <select asp-for="coa.AccAccountNature" class="form-control" onchange="accountNatureChangeFunction()" required>
                                     <option value="ASSET">ASSET</option>
                                     <option value="LIABILITY">LIABILITY</option>
                                     <option value="EQUITY">EQUITY</option>
@@ -27,8 +28,8 @@
                                 </select>
                             </div>
                             <div>
-                                Account Sub Nature:
-                                <select asp-for="coa.AccAccountSubNature" class="form-control" >
+                                Account Sub Nature<span class="mandatory">*</span>:
+                                <select asp-for="coa.AccAccountSubNature" class="form-control" required>
                                     <option value="NORMAL">NORMAL</option>
                                     <option value="CASH ACCOUNT">CASH ACCOUNT</option>
                                     <option value="BANK ACCOUNT">BANK ACCOUNT</option>
@@ -36,16 +37,16 @@
                                 </select>
                             </div>
                             <div>
-                                Account Type:
-                                <select asp-for="coa.AccAccountType" class="form-control" >
+                                Account Type<span class="mandatory">*</span>:
+                                <select asp-for="coa.AccAccountType" class="form-control" required>
                                     <option value="TRANSACTION">TRANSACTION</option>
                                     <option value="CONTROL">CONTROL</option>
                                 </select>
                             </div>
                             <div>
-                                Parent Account:
-                                <select asp-for="coa.AccParentAccount" class="form-control" onchange="parentAccountChangeFunction()" >
-                                    <option value="-1">Select Parent Account</option>
+                                Parent Account<span class="mandatory">*</span>:
+                                <select asp-for="coa.AccParentAccount" class="form-control" onchange="parentAccountChangeFunction()" required>
+                                    <option value="">Select Parent Account</option>
                                     <option value="1">Root</option>
                                     @foreach (var j in Model.lstCoa)
                                     {
@@ -56,10 +57,12 @@
                             <div>
                                 Code:
                                 @Html.TextBoxFor(model => model.coa.AccCode, new { @class = "form-control", @readonly = "readonly" })
+
+                            </div> <div style="float:right;">
                                 @Html.CheckBox("AccActive", Model.coa.AccActive.Value)Active
                             </div>
                             <div>
-                                Name:
+                                Name<span class="mandatory">*</span>:
                                 @Html.TextBoxFor(model => model.coa.AccName, new { @class = "form-control", @required = "required" })
                             </div>
 

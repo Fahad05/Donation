@@ -20,13 +20,14 @@
                             <div>
                                 @Html.TextBoxFor(model => model.SitId, new { @class = "form-control", @Hidden = "Hidden" })
                             </div>
+                            <div style="float:right;"> @Html.CheckBox("SitActive", Model.SitActive.Value)Active</div>
                             <div>
-                                Name:
+                                Name<span class="mandatory">*</span>:
                                 @Html.TextBoxFor(model => model.SitName, new { @class = "form-control", @required = true })
-                                @Html.CheckBox("SitActive", Model.SitActive.Value)Active
+                               
                             </div>
                             <div>
-                                Abbriviation:
+                                Abbriviation<span class="mandatory">*</span>:
                                 @Html.TextBoxFor(model => model.SitAbbr, new { @class = "form-control", @required = true })
                             </div>
                             <div>

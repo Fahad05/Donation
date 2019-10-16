@@ -19,7 +19,7 @@
                                 <input type="text" asp-for="master.ItmId" class="form-control" hidden="hidden" />
                             </div>
                             <div>
-                                Parent ID<span style="color:red;">*</span>:
+                                Parent ID<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmPid" class="form-control" required="required">
                                     <option value="-1">Select</option>
                                     @foreach (var j in Model.lstParent)
@@ -28,13 +28,16 @@
                                     }
                                 </select>
                             </div>
-                            <div>
-                                Name<span style="color:red;">*</span>:
-                                <input type="text" asp-for="master.ItmName" class="form-control" required="required" />
+                            <div style="float:right">
                                 @Html.CheckBox("ItmActive", Model.master.ItmActive.Value)Active
                             </div>
                             <div>
-                                Type<span style="color:red;">*</span>:
+                                Name<span class="mandatory">*</span>:
+                                <input type="text" asp-for="master.ItmName" class="form-control" required="required" />
+
+                            </div>
+                            <div>
+                                Type<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmType" class="form-control" required="required">
                                     <option value="">Select</option>
                                     <option value="CATEGORY">CATEGORY</option>
@@ -43,11 +46,11 @@
                             </div>
 
                             <div>
-                                Bar Code<span style="color:red;">*</span>:
+                                Bar Code<span class="mandatory">*</span>:
                                 <input type="text" asp-for="master.ItmBcode" class="form-control" required="required" />
                             </div>
                             <div>
-                                Unit of Measurement<span style="color:red;">*</span>:
+                                Unit of Measurement<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmUom" class="form-control" required="required">
                                     <option>Select</option>
                                     @foreach (var j in Model.lstUOM)
@@ -56,34 +59,34 @@
                                     }
                                 </select>
                             </div>
-                            <div>
+                            <div style="float:right">
                                 @Html.CheckBox("ItmIsSale", Model.master.ItmIsSale.Value)Is Sale
                                 @Html.CheckBox("ItmIsPurchase", Model.master.ItmIsPurchase.Value)Is Purchase
                                 @Html.CheckBox("ItmIsService", Model.master.ItmIsService.Value)Is Service
                             </div>
                             <div>
-                                Min Level<span style="color:red;">*</span>:
-                                <input type="number" asp-for="master.ItmMinLevel" class="form-control" required="required" />
+                                Min Level:
+                                <input type="number" asp-for="master.ItmMinLevel" class="form-control"  />
                             </div>
                             <div>
-                                Max Level<span style="color:red;">*</span>:
-                                <input type="number" asp-for="master.ItmMaxLevel" class="form-control" required="required" />
+                                Max Level:
+                                <input type="number" asp-for="master.ItmMaxLevel" class="form-control"  />
                             </div>
                             <div>
-                                Re Level<span style="color:red;">*</span>:
-                                <input type="number" asp-for="master.ItmReLevel" class="form-control" required="required" />
+                                Re Level:
+                                <input type="number" asp-for="master.ItmReLevel" class="form-control"  />
                             </div>
 
                             <div>
-                                CP<span style="color:red;">*</span>:
+                                Cost Price<span class="mandatory">*</span>:
                                 <input type="number" asp-for="master.ItmCp" class="form-control" required="required" />
                             </div>
                             <div>
-                                SP<span style="color:red;">*</span>:
+                                Sales Price<span class="mandatory">*</span>:
                                 <input type="number" asp-for="master.ItmSp" class="form-control" required="required" />
                             </div>
                             <div>
-                                Inventory Account<span style="color:red;">*</span>:
+                                Inventory Account<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmExpenseAccount" class="form-control" required="required">
                                     <option value="">Select</option>
                                     @foreach (var j in Model.lstInventoryAccount)
@@ -93,7 +96,7 @@
                                 </select>
                             </div>
                             <div>
-                                Revenue Account<span style="color:red;">*</span>:
+                                Revenue Account<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmRevenueAccount" class="form-control" required="required">
                                     <option value="">Select</option>
                                     @foreach (var j in Model.lstRevenueAccount)
@@ -103,7 +106,7 @@
                                 </select>
                             </div>
                             <div>
-                                Asset Account<span style="color:red;">*</span>:
+                                Asset Account<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmAssetAccount" class="form-control" required="required">
                                     <option value="">Select</option>
                                     @foreach (var j in Model.lstAssetAccount)
@@ -113,7 +116,7 @@
                                 </select>
                             </div>
                             <div>
-                                Services Account<span style="color:red;">*</span>:
+                                Services Account<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmCogsaccount" class="form-control" required="required">
                                     <option value="">Select</option>
                                     @foreach (var j in Model.lstExpenseAccount)
@@ -123,11 +126,11 @@
                                 </select>
                             </div>
                             <div>
-                                Opening Quantity<span style="color:red;">*</span>:
+                                Opening Quantity<span class="mandatory">*</span>:
                                 <input type="number" asp-for="master.ItmOpQty" class="form-control" required="required" />
                             </div>
                             <div>
-                                Store<span style="color:red;">*</span>:
+                                Store<span class="mandatory">*</span>:
                                 <select asp-for="master.ItmOpStore" class="form-control" required="required">
                                     <option value="">Select</option>
                                     @foreach (var j in Model.lstStore)

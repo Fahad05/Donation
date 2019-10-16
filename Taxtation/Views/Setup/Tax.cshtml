@@ -24,32 +24,36 @@
                             <div>
                                 <input type="text" asp-for="tax.TaxId" class="form-control" hidden="hidden" />
                             </div>
-                            <div>
-                                Name:
-                                <input type="text" asp-for="tax.TaxName" class="form-control" required="required" />
+                            <div style="float:right;">
                                 @Html.CheckBox("TaxActive", Model.tax.TaxActive.Value)Active
                             </div>
                             <div>
+                                Name<span class="mandatory">*</span>:
+                                <input type="text" asp-for="tax.TaxName" class="form-control" required="required" />
+                               
+                            </div>
+                            <div>
+                                Type<span class="mandatory">*</span>:
                                 <select asp-for="tax.TaxType" class="form-control" required="required"><option value="SALE">SALE</option><option value="PURCHASE">PURCHASE</option></select>
                             </div>
                             <div>
                                 Abbriviation:
-                                <input type="text" asp-for="tax.TaxAbbr" class="form-control" required="required" />
+                                <input type="text" asp-for="tax.TaxAbbr" class="form-control" />
                             </div>
                             <div>
-                                Tax Percent:
-                                <input type="number" asp-for="tax.TaxPercent" class="form-control" required="required" />
+                                Tax Percent<span class="mandatory">*</span>:
+                                <input type="number" asp-for="tax.TaxPercent" class="form-control" required/>
                             </div>
 
                             <div>
                                 Description:
                                 <input type="text" asp-for="tax.TaxDesc" class="form-control" />
                             </div>
-                            <div>
+                            <div style="float:right;">
                                 @Html.CheckBox("TxsDefault", Model.tax.TxsDefault.Value)Default
                             </div>
                             <div>
-                                COA Tax Account:
+                                COA Tax Account<span class="mandatory">*</span>:
                                 <select asp-for="tax.Coaid" required="required" class="form-control">
                                     <option>Select</option>
                                     @foreach (var j in Model.lstAccount)

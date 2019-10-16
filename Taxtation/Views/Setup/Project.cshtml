@@ -20,13 +20,16 @@
                             <div>
                                 @Html.TextBoxFor(model => model.ProId, new { @class = "form-control", @Hidden = "Hidden" })
                             </div>
-                            <div>
-                                Name:
-                                @Html.TextBoxFor(model => model.ProName, new { @class = "form-control", @required = true })
+                            <div style="float:right">
                                 @Html.CheckBox("ProActive", Model.ProActive.Value)Active
                             </div>
                             <div>
-                                Abbriviation:
+                                Name<span class="mandatory">*</span>:
+                                @Html.TextBoxFor(model => model.ProName, new { @class = "form-control", @required = true })
+                             
+                            </div>
+                            <div>
+                                Abbriviation <span class="mandatory">*</span>:
                                 @Html.TextBoxFor(model => model.ProAbbr, new { @class = "form-control", @required = true })
                             </div>
                             <div>
