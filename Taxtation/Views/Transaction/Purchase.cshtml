@@ -197,11 +197,11 @@
                             </td>
                             <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td>
                                 <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:230px;">
                                     <option value="-1">Select</option> @foreach (var j in Model.lstTax)
@@ -209,10 +209,10 @@
                                         <option value=@j.TaxId>@j.TaxName</option>}
                                 </select>
                             </td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
                         </tr>
                     }
@@ -242,7 +242,7 @@
         </div>
         <div class="col-md-2">
             Advance
-            <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
+            <input type="text" asp-for="Advance"  class="form-control-footer" />
         </div>
         <div class="col-md-2">
             Paid
@@ -432,8 +432,15 @@
             $('#ExciseTax').val(ExciseTotal);
             $('#VAT').val(TaxTotal);
             $('#TotalAmount').val(parseFloat(subAmountTotal + ExciseTotal + TaxTotal - TotalDiscount));
-            
+            if ($('#master_PurPayTerm').val() == "CREDIT") {
+                $('#TotalBalance').val($('#TotalAmount').val());
+                $('#Paid').val('0');
+            } else {
+                $('#Paid').val($('#TotalAmount').val());
+                $('#TotalBalance').val('0');
+            }
             debugger;
+            
             $.ajax({
                 type: 'GET',
                 url: '/Transaction/purchaseTotalAmount',
@@ -442,18 +449,20 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
                     if (result != undefined) { $('#Paid').val(result); } else { $('#Paid').val('0');}
-                    if ($('#master_PurPayTerm').val() == "CREDIT") {
-                        $('#TotalBalance').val((parseFloat($('#TotalAmount').val()) - parseFloat($('#Advance').val()) - parseFloat($('#Paid').val())));
-                        alert($('#TotalAmount').val());
-                    }
-                    else {
-                        $('#Paid').val($('#TotalAmount').val());
-                        $('#TotalBalance').val('0');
-                    }
+                    
                 },
                 error: function () {
                 }
             })
+            var TAmount = $('#TotalAmount').val(); var TAdvance = $('#Advance').val(); var TPaid = $('#Paid').val();
+            if ($('#master_PurPayTerm').val() == "CREDIT") {
+                $('#TotalBalance').val((parseFloat(TAmount) - parseFloat(TAdvance) - parseFloat(TPaid)));
+            }
+            else {
+                $('#TotalBalance').val('0');
+                $('#Paid').val(TAmount);
+
+            }
 
         }
 
@@ -561,14 +570,14 @@
                     if (parseFloat($('#Advance').val()) > (parseFloat($('#TotalAmount').val() - parseFloat($('#Paid').val())))) {
                         $('#Advance').val('0');
                     }
-                    //ExchangeRate();
+                    ExchangeRate();
                 }
                 else {
                     $('#Advance').val('0');
                     if (parseFloat($('#Advance').val()) > (parseFloat($('#TotalAmount').val() - parseFloat($('#Paid').val())))) {
                         $('#Advance').val('0');
                     }
-                    //ExchangeRate();
+                    ExchangeRate();
                     $('#Advance').attr('readonly', 'readonly');
                     $('#master_PurChqNo').val('');
                     $('#master_PurChqDate').val('');
