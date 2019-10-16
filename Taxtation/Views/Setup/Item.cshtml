@@ -1,5 +1,5 @@
 ﻿@model Taxtation.ViewModel.TXSItemDetailView
-
+<div style="height:25px;"></div>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -78,12 +78,12 @@
                             </div>
 
                             <div>
-                                Cost Price<span class="mandatory">*</span>:
-                                <input type="number" asp-for="master.ItmCp" class="form-control" required="required" />
+                                Cost Price:
+                                <input type="number" asp-for="master.ItmCp" class="form-control" />
                             </div>
                             <div>
-                                Sales Price<span class="mandatory">*</span>:
-                                <input type="number" asp-for="master.ItmSp" class="form-control" required="required" />
+                                Sales Price:
+                                <input type="number" asp-for="master.ItmSp" class="form-control" />
                             </div>
                             <div>
                                 Inventory Account<span class="mandatory">*</span>:
@@ -126,8 +126,8 @@
                                 </select>
                             </div>
                             <div>
-                                Opening Quantity<span class="mandatory">*</span>:
-                                <input type="number" asp-for="master.ItmOpQty" class="form-control" required="required" />
+                                Opening Quantity:
+                                <input type="number" asp-for="master.ItmOpQty" class="form-control" />
                             </div>
                             <div>
                                 Store<span class="mandatory">*</span>:
