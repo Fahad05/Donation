@@ -521,8 +521,8 @@ namespace Taxtation.Controllers
             {
                 obj.tax.Id = user.Id;
                 obj.tax.UserName = user.UserName;
-                obj.tax.TaxActive = (obj.tax.TaxActive == true) ? true : false;
-                obj.tax.TxsDefault = (obj.tax.TxsDefault == true) ? true : false;
+                obj.tax.TaxActive = (TaxActive == "true") ? true : false;
+                obj.tax.TxsDefault = (TaxActive == "true") ? true : false;
                 obj.tax.EnterBy = user.UserName;
                 obj.tax.EnterDate = System.DateTime.Now;
                 db.TxstaxDetail.Add(obj.tax);
@@ -540,8 +540,8 @@ namespace Taxtation.Controllers
                     obj1.TaxPercent = obj.tax.TaxPercent;
                     obj1.TaxDesc = obj.tax.TaxDesc;
                     obj1.Coaid = obj.tax.Coaid;
-                    obj1.TaxActive = (obj.tax.TaxActive == true) ? true : false;
-                    obj1.TxsDefault = (obj.tax.TxsDefault == true) ? true : false;
+                    obj1.TaxActive = (TaxActive == "true") ? true : false;
+                    obj1.TxsDefault = (TaxActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
