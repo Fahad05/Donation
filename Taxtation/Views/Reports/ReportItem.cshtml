@@ -1,4 +1,4 @@
-﻿@model List<TxstaxDetail>
+﻿@model List<TxsitemDetail>
 @{
     Layout = null;
 }
@@ -6,17 +6,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Report:Tax Detail</title>
+    <title>Report:Item Detail</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-row-group
+        }
+
+        tr {
+            page-break-inside: avoid
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <p style="float:right">@Html.Label(DateTime.Today.ToString("dd-MM-yyyy"))</p>
-        <h2>TAX DETAIL</h2>
+        <h2>ITEMS DETAIL</h2>
         <div style="width:100%;border-top:1px solid black"></div>
         <br />
         <table class="table table-bordered">
@@ -24,8 +37,8 @@
                 <tr style="background-color:#F1F1F1">
                     <th>Code</th>
                     <th>Name</th>
-                    <th>Abbrevition</th>
-                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Re-Order Level</th>
                     <th>Active</th>
                     <th>Enter by</th>
                     <th>Enter Date</th>
@@ -40,12 +53,12 @@
                 {
                     <tr>
                         <td>
-                            @item.TaxId
+                            @item.ItmId
                         </td>
-                        <td>@item.TaxName</td>
-                        <td>@item.TaxAbbr</td>
-                        <td>@item.TaxDesc</td>
-                        <td>@item.TaxActive</td>
+                        <td>@item.ItmName</td>
+                        <td>@item.ItmType</td>
+                        <td>@item.ItmReLevel</td>
+                        <td>@item.ItmActive</td>
                         <td>@item.EnterBy</td>
                         <td> @item.EnterDate</td>
                         <td>@item.EditBy</td>

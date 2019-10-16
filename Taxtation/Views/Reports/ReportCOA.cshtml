@@ -1,4 +1,4 @@
-﻿@model List<TxsitemDetail>
+﻿@model List<Txscoadetail>
 @{
     Layout = null;
 }
@@ -6,26 +6,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Report:Item Detail</title>
+    <title>Report:Accounts Detail</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-row-group
+        }
+
+        tr {
+            page-break-inside: avoid
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
         <p style="float:right">@Html.Label(DateTime.Today.ToString("dd-MM-yyyy"))</p>
-        <h2>ITEMS DETAIL</h2>
+        <h2>ACCOUNTS DETAIL</h2>
         <div style="width:100%;border-top:1px solid black"></div>
         <br />
         <table class="table table-bordered">
-            <thead>
+            <thead >
                 <tr style="background-color:#F1F1F1">
                     <th>Code</th>
                     <th>Name</th>
-                    <th>Type</th>
-                    <th>Re-Order Level</th>
+                    <th>Abbrevition</th>
                     <th>Active</th>
                     <th>Enter by</th>
                     <th>Enter Date</th>
@@ -40,12 +53,11 @@
                 {
                     <tr>
                         <td>
-                            @item.ItmId
+                            @item.Id
                         </td>
-                        <td>@item.ItmName</td>
-                        <td>@item.ItmType</td>
-                        <td>@item.ItmReLevel</td>
-                        <td>@item.ItmActive</td>
+                        <td>@item.AccName</td>
+                        <td>@item.AccAbbr</td>
+                        <td>@item.AccActive</td>
                         <td>@item.EnterBy</td>
                         <td> @item.EnterDate</td>
                         <td>@item.EditBy</td>

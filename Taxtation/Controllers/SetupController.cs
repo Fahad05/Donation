@@ -135,24 +135,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCurrency");
         }
 
-        public IActionResult PrintAllCurrency()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxscurrencyDetail> lstCurrency = new List<TxscurrencyDetail>();
-            lstCurrency = db.TxscurrencyDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportCurrency", lstCurrency)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+      
         #endregion
 
         #region Store
@@ -233,24 +216,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showStore");
         }
 
-        public IActionResult PrintAllStore()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxsstoreDetail> lstStore = new List<TxsstoreDetail>();
-            lstStore = db.TxsstoreDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportStore", lstStore)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
         #endregion
 
         #region Site
@@ -330,24 +296,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showSite");
         }
-        public IActionResult PrintAllSites()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxssiteDetail> lstSite = new List<TxssiteDetail>();
-            lstSite = db.TxssiteDetail.ToList();
-        
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportSites", lstSite)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches ="--footer-center \"  Page: [page]/[toPage]\"" +" --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-        
-        }
+     
 
         #endregion
 
@@ -434,24 +383,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showBank");
         }
 
-        public IActionResult PrintAllBank()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxsbankDetail> lstBank = new List<TxsbankDetail>();
-            lstBank = db.TxsbankDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportBank", lstBank)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
         #endregion
 
         #region Tax
@@ -549,24 +481,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showTax");
         }
-        public IActionResult PrintAllTax()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxstaxDetail> lstTax = new List<TxstaxDetail>();
-            lstTax = db.TxstaxDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportTax", lstTax)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
         #endregion
 
         #region Customer
@@ -660,25 +575,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showCustomer");
         }
-        public IActionResult PrintAllCustomer()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxscustomerDetail> lstCustomer = new List<TxscustomerDetail>();
-            lstCustomer = db.TxscustomerDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportCustomer", lstCustomer)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
-
+      
         #endregion
 
         #region Supplier
@@ -773,24 +670,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showSupplier");
         }
 
-        public IActionResult PrintAllSupplier()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxssupplierDetail> lstSupplier = new List<TxssupplierDetail>();
-            lstSupplier = db.TxssupplierDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportSupplier", lstSupplier)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+      
         #endregion
 
         #region Item
@@ -910,24 +790,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showItem");
         }
 
-        public IActionResult PrintAllItem()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxsitemDetail> lstItem = new List<TxsitemDetail>();
-            lstItem = db.TxsitemDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportItem", lstItem)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+      
         #endregion
 
 
@@ -1058,24 +921,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCOA");
         }
 
-        public IActionResult PrintAllCOA()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<Txscoadetail> lstCoa= new List<Txscoadetail>();
-            lstCoa = db.Txscoadetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportCOA", lstCoa)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
 
         #endregion
 

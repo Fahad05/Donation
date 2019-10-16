@@ -23,7 +23,7 @@
     <div style="float:left;">
         <a asp-action="Purchase" asp-controller="Transaction" class="form-control-btn" style="width:120px;">Add New</a>
     </div>
-    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllPurchase", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllPurchase", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
     <div style="float:right;">
         <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
     </div>

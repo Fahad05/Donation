@@ -1,4 +1,4 @@
-﻿@model List<TxscustomerDetail>
+﻿@model List<TxstaxDetail>
 @{
     Layout = null;
 }
@@ -6,17 +6,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Report:Customer Detail</title>
+    <title>Report:Tax Detail</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-row-group
+        }
+
+        tr {
+            page-break-inside: avoid
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <p style="float:right">@Html.Label(DateTime.Today.ToString("dd-MM-yyyy"))</p>
-        <h2>CUSTOMER DETAIL</h2>
+        <h2>TAX DETAIL</h2>
         <div style="width:100%;border-top:1px solid black"></div>
         <br />
         <table class="table table-bordered">
@@ -40,12 +53,12 @@
                 {
                     <tr>
                         <td>
-                            @item.CusId
+                            @item.TaxId
                         </td>
-                        <td>@item.CusName</td>
-                        <td>@item.CusAbbr</td>
-                        <td>@item.CusDesc</td>
-                        <td>@item.CusActive</td>
+                        <td>@item.TaxName</td>
+                        <td>@item.TaxAbbr</td>
+                        <td>@item.TaxDesc</td>
+                        <td>@item.TaxActive</td>
                         <td>@item.EnterBy</td>
                         <td> @item.EnterDate</td>
                         <td>@item.EditBy</td>
