@@ -115,7 +115,6 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-
                 obj.master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == Convert.ToInt32(id)).FirstOrDefault();
                 if (obj.master.PurPayTerm == "CREDIT") { obj.lstAccount = db.Txscoadetail.Where(x => x.UserName == user.UserName && (x.AccAccountSubNature.Contains("CASH") || x.AccAccountSubNature.Contains("BANK ACCOUNT")) && x.AccActive == true).ToList(); }
                 else { obj.lstAccount = db.Txscoadetail.Where(x => x.UserName == user.UserName && x.AccAccountSubNature.Contains(obj.master.PurPayTerm) && x.AccActive == true).ToList(); }
@@ -136,7 +135,7 @@ namespace Taxtation.Controllers
                     pDEF.AmtAfterExcise = pDEF.subAmount + obj.detail.detail[i].PurExAmt;
                     pDEF.AmtAfterDiscount = pDEF.subAmount + obj.detail.detail[i].PurExAmt - obj.detail.detail[i].PurDiscountAmt;
                     obj.detail.pdef.Add(pDEF);
-                    obj.detail.detail[i].PurGrossAmt = obj.detail.detail[i].PurNetAmt * obj.master.PurExRate;
+                    //obj.detail.detail[i].PurGrossAmt = obj.detail.detail[i].PurNetAmt * obj.master.PurExRate;
                 }
             }
             return View(obj);
@@ -144,7 +143,7 @@ namespace Taxtation.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Purchase(TXTPurchaseDetailView obj, string Save, string Update)
+        public async Task<IActionResult> Purchase(TXTPurchaseDetailView obj, string Save, string Update, string Delete)
         {
             if (ModelState.IsValid)
             {
@@ -197,9 +196,9 @@ namespace Taxtation.Controllers
                                 if (InventoryAccType != "")
                                 {
                                     k = k + 1;
-                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), InventoryAccType, "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), InventoryAccType, "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "CHILD");
                                     k = k + 1;
-                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, InventoryAccType, obj.master.SupId.ToString(), "-1", obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, 0, obj.master.PurExRate, obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, InventoryAccType, obj.master.SupId.ToString(), "-1", obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, 0, obj.master.PurExRate, obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
 
                                     if (obj.detail.detail[i].PurTaxAmt != null)
                                     {
@@ -210,7 +209,7 @@ namespace Taxtation.Controllers
                                             if (tax.Coaid != null)
                                             {
                                                 k = k + 1;
-                                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, tax.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurTaxAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, tax.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurTaxAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                             }
                                         }
                                     }
@@ -224,7 +223,7 @@ namespace Taxtation.Controllers
                                             if (excise.Coaid != null)
                                             {
                                                 k = k + 1;
-                                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, excise.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurExAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, excise.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurExAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurExAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                             }
                                         }
                                     }
@@ -232,9 +231,9 @@ namespace Taxtation.Controllers
                                     if (obj.master.PurPayTerm == "CASH" || obj.master.PurPayTerm == "BANK")
                                     {
                                         k = k + 1;
-                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "CHILD");
                                         k = k + 1;
-                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.detail.detail[i].PurGrossAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.detail.detail[i].PurGrossAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                     }
                                 }
                             }
@@ -244,17 +243,17 @@ namespace Taxtation.Controllers
                                 if (obj.TotalAmount != 0)
                                 {
                                     k = k + 1;
-                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.TotalAmount, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.TotalAmount, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "TOTAL");
                                 }
                             }
                             else if (obj.master.PurPayTerm == "CREDIT" && obj.Advance != 0 && obj.master.Coaid != null)
                             {
                                 k = k + 1;
-                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "CHILD");
                                 k = k + 1;
-                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.Advance, 0, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.Advance, 0, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                 k = k + 1;
-                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "TOTAL");
                             }
                         }
                     }
@@ -263,161 +262,181 @@ namespace Taxtation.Controllers
                 }
                 if (Update != null)
                 {
-                    int count = 0;
+                    TxtpurchaseMaster master = new TxtpurchaseMaster();
+                    master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).FirstOrDefault();
+                    master.PurDcref = obj.master.PurDcref;
+                    master.PurDate = obj.master.PurDate;
+                    master.PurSupDate = obj.master.PurSupDate;
+                    master.PurType = obj.master.PurType;
+                    master.SupId = obj.master.SupId;
+                    master.PurPayTerm = obj.master.PurPayTerm;
+                    master.Coaid = obj.master.Coaid;
+                    master.PurChqNo = obj.master.PurChqNo;
+                    master.PurChqDate = obj.master.PurChqDate;
+                    master.PurScope = obj.master.PurScope;
+                    master.PurPrices = obj.master.PurPrices;
+                    master.PurRemarks = obj.master.PurRemarks;
+                    master.PurActive = obj.master.PurActive;
+                    master.PurPomapCode = obj.master.PurPomapCode;
+                    master.CurId = obj.master.CurId;
+                    master.StrId = obj.master.StrId;
+                    master.PurExRate = obj.master.PurExRate;
+                    master.PurItmType = obj.master.PurItmType;
+                    master.SitId = obj.master.SitId;
+                    master.EditBy = user.UserName;
+                    master.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
+
+                    List<TxtpurchaseDetail> lstPurchase = new List<TxtpurchaseDetail>();
+                    lstPurchase = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).ToList();
+                    for (int i = 0; i < lstPurchase.Count; i++)
+                    {
+                        db.TxtpurchaseDetail.Remove(lstPurchase[i]);
+                        db.SaveChanges();
+                    }
+
+                    List<Txtledger> lstLedger = new List<Txtledger>();
+                    lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.PurPoref).ToList();
+                    for (int i = 0; i < lstLedger.Count; i++)
+                    {
+                        db.Txtledger.Remove(lstLedger[i]);
+                        db.SaveChanges();
+                    }
+
+                    List<TxtinventoryStockDetail> lstInventoryStock = new List<TxtinventoryStockDetail>();
+                    lstInventoryStock = db.TxtinventoryStockDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.InsNo == obj.master.PurPoref).ToList();
+                    for (int i = 0; i < lstInventoryStock.Count; i++)
+                    {
+                        db.TxtinventoryStockDetail.Remove(lstInventoryStock[i]);
+                        db.SaveChanges();
+                    }
+                    string InventoryAccType = ""; int k = 0;
                     for (int i = 0; i < obj.detail.detail.Count; i++)
                     {
-                        var j = Convert.ToInt32(Request.Form["detail_detail_" + i + "__ItmId"]);
-                        if (obj.detail.detail[i].ItmId != Convert.ToInt32("-1") && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
+                        if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
                         {
-                            count++;
-                        }
-                    }
-                    if (count > 0)
-                    {
-                        TxtpurchaseMaster master = new TxtpurchaseMaster();
-                        master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).FirstOrDefault();
-                        master.PurDcref = obj.master.PurDcref;
-                        master.PurDate = obj.master.PurDate;
-                        master.PurSupDate = obj.master.PurSupDate;
-                        master.PurType = obj.master.PurType;
-                        master.SupId = obj.master.SupId;
-                        master.PurPayTerm = obj.master.PurPayTerm;
-                        master.Coaid = obj.master.Coaid;
-                        master.PurChqNo = obj.master.PurChqNo;
-                        master.PurChqDate = obj.master.PurChqDate;
-                        master.PurScope = obj.master.PurScope;
-                        master.PurPrices = obj.master.PurPrices;
-                        master.PurRemarks = obj.master.PurRemarks;
-                        master.PurActive = obj.master.PurActive;
-                        master.PurPomapCode = obj.master.PurPomapCode;
-                        master.CurId = obj.master.CurId;
-                        master.StrId = obj.master.StrId;
-                        master.PurExRate = obj.master.PurExRate;
-                        master.PurItmType = obj.master.PurItmType;
-                        master.SitId = obj.master.SitId;
-                        master.EditBy = user.UserName;
-                        master.EditDate = System.DateTime.Now;
-                        db.SaveChanges();
-
-                        List<TxtpurchaseDetail> lstPurchase = new List<TxtpurchaseDetail>();
-                        lstPurchase = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).ToList();
-                        for (int i = 0; i < lstPurchase.Count; i++)
-                        {
-                            db.TxtpurchaseDetail.Remove(lstPurchase[i]);
+                            obj.detail.detail[i].Id = user.Id;
+                            obj.detail.detail[i].UserName = user.UserName;
+                            obj.detail.detail[i].PurSerialNo = i;
+                            obj.detail.detail[i].PurId = obj.master.PurId;
+                            db.TxtpurchaseDetail.Add(obj.detail.detail[i]);
                             db.SaveChanges();
-                        }
 
-                        List<Txtledger> lstLedger = new List<Txtledger>();
-                        lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.PurPoref).ToList();
-                        for (int i = 0; i < lstLedger.Count; i++)
-                        {
-                            db.Txtledger.Remove(lstLedger[i]);
-                            db.SaveChanges();
-                        }
+                            tX.insertInventoryStockDetail(user.Id, user.UserName, obj.detail.detail[i].ItmId, i, obj.master.PurPoref, obj.master.PurDate, obj.master.PurPoref, obj.master.PurRemarks, obj.detail.detail[i].PurRemarks, obj.detail.detail[i].PurQty, 0, 0, 0, obj.master.StrId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurNetAmt, obj.master.CurId, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, "Direct Purchase Order Detail", "UN-POST");
 
-                        List<TxtinventoryStockDetail> lstInventoryStock = new List<TxtinventoryStockDetail>();
-                        lstInventoryStock = db.TxtinventoryStockDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.InsNo == obj.master.PurPoref).ToList();
-                        for (int i = 0; i < lstInventoryStock.Count; i++)
-                        {
-                            db.TxtinventoryStockDetail.Remove(lstInventoryStock[i]);
-                            db.SaveChanges();
-                        }
-                        string InventoryAccType = ""; int k = 0;
-                        for (int i = 0; i < obj.detail.detail.Count; i++)
-                        {
-                            if (obj.detail.detail[i].ItmId != -1 && obj.detail.detail[i].PurQty > 0 && obj.detail.detail[i].PurRate > 0)
+                            InventoryAccType = "";
+                            TxsitemDetail item = new TxsitemDetail();
+                            item = db.TxsitemDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ItmId == obj.detail.detail[i].ItmId).FirstOrDefault();
+                            if (item != null)
                             {
-                                obj.detail.detail[i].Id = user.Id;
-                                obj.detail.detail[i].UserName = user.UserName;
-                                obj.detail.detail[i].PurSerialNo = i;
-                                obj.detail.detail[i].PurId = obj.master.PurId;
-                                db.TxtpurchaseDetail.Add(obj.detail.detail[i]);
-                                db.SaveChanges();
-
-                                tX.insertInventoryStockDetail(user.Id, user.UserName, obj.detail.detail[i].ItmId, i, obj.master.PurPoref, obj.master.PurDate, obj.master.PurPoref, obj.master.PurRemarks, obj.detail.detail[i].PurRemarks, obj.detail.detail[i].PurQty, 0, 0, 0, obj.master.StrId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurNetAmt, obj.master.CurId, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, "Direct Purchase Order Detail", "UN-POST");
-
-                                InventoryAccType = "";
-                                TxsitemDetail item = new TxsitemDetail();
-                                item = db.TxsitemDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ItmId == obj.detail.detail[i].ItmId).FirstOrDefault();
-                                if (item != null)
+                                if (item.ItmAssetAccount != null)
                                 {
-                                    if (item.ItmAssetAccount != null)
-                                    {
-                                        InventoryAccType = item.ItmAssetAccount;
-                                    }
-                                    else if (item.ItmExpenseAccount != null && item.ItmIsService == false)
-                                    {
-                                        InventoryAccType = item.ItmExpenseAccount;
-                                    }
-                                    else if (item.ItmCogsaccount != null && item.ItmIsService == true)
-                                    {
-                                        InventoryAccType = item.ItmCogsaccount;
-                                    }
+                                    InventoryAccType = item.ItmAssetAccount;
+                                }
+                                else if (item.ItmExpenseAccount != null && item.ItmIsService == false)
+                                {
+                                    InventoryAccType = item.ItmExpenseAccount;
+                                }
+                                else if (item.ItmCogsaccount != null && item.ItmIsService == true)
+                                {
+                                    InventoryAccType = item.ItmCogsaccount;
+                                }
 
-                                    if (InventoryAccType != "")
-                                    {
-                                        k = k + 1;
-                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), InventoryAccType, "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                        k = k + 1;
-                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, InventoryAccType, obj.master.SupId.ToString(), "-1", obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, 0, obj.master.PurExRate, obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                if (InventoryAccType != "")
+                                {
+                                    k = k + 1;
+                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), InventoryAccType, "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "CHILD");
+                                    k = k + 1;
+                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, InventoryAccType, obj.master.SupId.ToString(), "-1", obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, 0, obj.master.PurExRate, obj.detail.pdef[i].subAmount - obj.detail.detail[i].PurDiscountAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
 
-                                        if (obj.detail.detail[i].PurTaxAmt != null)
+                                    if (obj.detail.detail[i].PurTaxAmt != null)
+                                    {
+                                        TxstaxDetail tax = new TxstaxDetail();
+                                        tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.detail.detail[i].TaxId).FirstOrDefault();
+                                        if (tax != null)
                                         {
-                                            TxstaxDetail tax = new TxstaxDetail();
-                                            tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.detail.detail[i].TaxId).FirstOrDefault();
-                                            if (tax != null)
+                                            if (tax.Coaid != null)
                                             {
-                                                if (tax.Coaid != null)
-                                                {
-                                                    k = k + 1;
-                                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, tax.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurTaxAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                                }
+                                                k = k + 1;
+                                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, tax.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurTaxAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                             }
                                         }
+                                    }
 
-                                        if (obj.detail.detail[i].PurExAmt != null)
+                                    if (obj.detail.detail[i].PurExAmt != null)
+                                    {
+                                        TxstaxDetail excise = new TxstaxDetail();
+                                        excise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.detail.detail[i].ExciseId).FirstOrDefault();
+                                        if (excise != null)
                                         {
-                                            TxstaxDetail excise = new TxstaxDetail();
-                                            excise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.detail.detail[i].ExciseId).FirstOrDefault();
-                                            if (excise != null)
+                                            if (excise.Coaid != null)
                                             {
-                                                if (excise.Coaid != null)
-                                                {
-                                                    k = k + 1;
-                                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, excise.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurExAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurTaxAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                                }
+                                                k = k + 1;
+                                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, excise.TaxId.ToString(), obj.master.SupId.ToString(), "-1", obj.detail.detail[i].PurExAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurExAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                             }
                                         }
-
-                                        if (obj.master.PurPayTerm == "CASH" || obj.master.PurPayTerm == "BANK")
-                                        {
-                                            k = k + 1;
-                                            tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                            k = k + 1;
-                                            tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.detail.detail[i].PurGrossAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                        }
                                     }
-                                }
-                                ///////////
-                                if (obj.master.PurPayTerm == "CASH" || obj.master.PurPayTerm == "BANK")
-                                {
-                                    if (obj.TotalAmount != 0)
+
+                                    if (obj.master.PurPayTerm == "CASH" || obj.master.PurPayTerm == "BANK")
                                     {
                                         k = k + 1;
-                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.TotalAmount, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.detail.detail[i].PurGrossAmt, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "CHILD");
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.detail.detail[i].PurGrossAmt, 0, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
                                     }
-                                }
-                                else if (obj.master.PurPayTerm == "CREDIT" && obj.Advance != 0 && obj.master.Coaid != null)
-                                {
-                                    k = k + 1;
-                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                    k = k + 1;
-                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.Advance, 0, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
-                                    k = k + 1;
-                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId);
                                 }
                             }
+                            ///////////
+                            if (obj.master.PurPayTerm == "CASH" || obj.master.PurPayTerm == "BANK")
+                            {
+                                if (obj.TotalAmount != 0)
+                                {
+                                    k = k + 1;
+                                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.TotalAmount, obj.master.PurExRate, obj.detail.detail[i].PurGrossAmt, obj.master.CurId, obj.detail.detail[i].TaxId, obj.detail.detail[i].PurTaxPer, obj.detail.detail[i].PurTaxAmt, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.detail.detail[i].PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "TOTAL");
+                                }
+                            }
+                            else if (obj.master.PurPayTerm == "CREDIT" && obj.Advance != 0 && obj.master.Coaid != null)
+                            {
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.SupId.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "CHILD");
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.SupId.ToString(), obj.master.Coaid.ToString(), "-1", obj.Advance, 0, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "PARENT");
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.PurPoref, obj.master.PurDate, obj.master.PurDate, obj.master.PurPayTerm, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Advance, obj.master.PurExRate, obj.Advance, obj.master.CurId, null, 0, 0, obj.master.PurChqNo, obj.master.PurChqDate, obj.master.PurPoref, obj.master.PurRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Purchase Order Detail", obj.master.SitId, "TOTAL");
+                            }
                         }
+                    }
+
+                }
+                if (Delete != null)
+                {
+                    TxtpurchaseMaster master = new TxtpurchaseMaster();
+                    master = db.TxtpurchaseMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).FirstOrDefault();
+                    db.TxtpurchaseMaster.Remove(master);
+                    db.SaveChanges();
+
+                    List<TxtpurchaseDetail> lstPurchase = new List<TxtpurchaseDetail>();
+                    lstPurchase = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurId == obj.master.PurId).ToList();
+                    for (int i = 0; i < lstPurchase.Count; i++)
+                    {
+                        db.TxtpurchaseDetail.Remove(lstPurchase[i]);
+                        db.SaveChanges();
+                    }
+
+                    List<Txtledger> lstLedger = new List<Txtledger>();
+                    lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.PurPoref).ToList();
+                    for (int i = 0; i < lstLedger.Count; i++)
+                    {
+                        db.Txtledger.Remove(lstLedger[i]);
+                        db.SaveChanges();
+                    }
+
+                    List<TxtinventoryStockDetail> lstInventoryStock = new List<TxtinventoryStockDetail>();
+                    lstInventoryStock = db.TxtinventoryStockDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.InsNo == obj.master.PurPoref).ToList();
+                    for (int i = 0; i < lstInventoryStock.Count; i++)
+                    {
+                        db.TxtinventoryStockDetail.Remove(lstInventoryStock[i]);
+                        db.SaveChanges();
                     }
                 }
             }
@@ -425,7 +444,7 @@ namespace Taxtation.Controllers
         }
 
 
-        
+
 
         #endregion
 
@@ -989,7 +1008,7 @@ namespace Taxtation.Controllers
         {
             string id = HttpContext.Session.GetString("UserId");
             string userName = HttpContext.Session.GetString("UserName");
-            return db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno == RefCode && x.TrentryType == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
+            return db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno == RefCode && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
         }
 
         public TXSItemUOMDetail changeItems(int id, string userid, string userName)
@@ -1014,7 +1033,7 @@ namespace Taxtation.Controllers
             string id = HttpContext.Session.GetString("UserId");
             string userName = HttpContext.Session.GetString("UserName");
             List<Txscoadetail> lstAccount = new List<Txscoadetail>();
-            if (Term == "CREDIT") { lstAccount = db.Txscoadetail.Where(x => x.Id==id && x.UserName == userName && (x.AccAccountSubNature.Contains("CASH") || x.AccAccountSubNature.Contains("BANK ACCOUNT")) && x.AccActive == true).ToList(); }
+            if (Term == "CREDIT") { lstAccount = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && (x.AccAccountSubNature.Contains("CASH") || x.AccAccountSubNature.Contains("BANK ACCOUNT")) && x.AccActive == true).ToList(); }
             else { lstAccount = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountSubNature.Contains(Term) && x.AccActive == true).ToList(); }
 
             return lstAccount;

@@ -15,8 +15,8 @@
             @if (ViewData["_Update"].ToString() == "True")
             {
                 <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
                 <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
-
             }
             <div style="float:right;padding-right:8.3%">
                 <a asp-action="showPurchase" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
@@ -92,7 +92,7 @@
 
         <div class="col-md-3">
             Exchange Rate:
-            <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" value="1" class="form-control" required="required" />
+            <input type="number" asp-for="master.PurExRate"  onchange="ExchangeRate()" class="form-control" required="required" />
         </div> <div class="col-md-3">
             Site:
             <select asp-for="master.SitId" class="form-control" required="required">
@@ -144,7 +144,12 @@
         </div>
     </div>
     <br>
-
+    <div class="row">
+        <div class="col-lg-3">
+            <button id="addNewRow" class="form-control" onclick="AddRow()">Add New Row</button>
+        </div>
+        <div class="col-lg-9"></div>
+    </div>
     <div class="row">
         <div class="col-lg-12" style="overflow-x:scroll;">
             <table id="myTable" class="table table-striped table-bordered">
@@ -197,11 +202,11 @@
                             </td>
                             <td><input type="number" step="any" asp-for="detail.detail[i].PurExPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="number" step="any" asp-for="detail.detail[i].PurExAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.pdef[i].AmtAfterExcise" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><select asp-for="detail.detail[i].PurDisType" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.detail[i].PurDiscountPer" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.detail[i].PurDiscountAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.pdef[i].AmtAfterDiscount" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td>
                                 <select asp-for="detail.detail[i].TaxId" data-rowNo=@i onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:230px;">
                                     <option value="-1">Select</option> @foreach (var j in Model.lstTax)
@@ -209,10 +214,10 @@
                                         <option value=@j.TaxId>@j.TaxName</option>}
                                 </select>
                             </td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
-                            <td><input type="number" value="0" step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.detail[i].PurTaxPer" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.detail[i].PurTaxAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.detail[i].PurNetAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number"  step="any" asp-for="detail.detail[i].PurGrossAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
                             <td><input type="text" asp-for="detail.detail[i].PurRemarks" class="form-control" style="width:230px;" /></td>
                         </tr>
                     }
@@ -242,7 +247,7 @@
         </div>
         <div class="col-md-2">
             Advance
-            <input type="text" asp-for="Advance"  class="form-control-footer" />
+            <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
         </div>
         <div class="col-md-2">
             Paid
@@ -289,7 +294,7 @@
         }
 
         function changeQuantityAndRate(QtyRate, Recur) {
-            debugger;
+
             var rowNo = QtyRate.dataset.rowno;
             var ExciseSlab = $('#detail_detail_' + rowNo + '__ExciseId').val();
             var TaxSlab = $('#detail_detail_' + rowNo + '__TaxId').val();
@@ -402,7 +407,7 @@
         }
 
         function ExchangeRate() {
-            debugger;
+            
             var ExRate = $('#master_PurExRate').val();
             var rows = $('#myTable tbody tr').length;
             var subAmountTotal = 0;
@@ -432,20 +437,13 @@
             $('#ExciseTax').val(ExciseTotal);
             $('#VAT').val(TaxTotal);
             $('#TotalAmount').val(parseFloat(subAmountTotal + ExciseTotal + TaxTotal - TotalDiscount));
-            if ($('#master_PurPayTerm').val() == "CREDIT") {
-                $('#TotalBalance').val($('#TotalAmount').val());
-                $('#Paid').val('0');
-            } else {
-                $('#Paid').val($('#TotalAmount').val());
-                $('#TotalBalance').val('0');
-            }
-            debugger;
             
             $.ajax({
                 type: 'GET',
                 url: '/Transaction/purchaseTotalAmount',
                 data: { RefCode: $('#master_PurPoref').val() },
                 dataType: 'json',
+                async: false,
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
                     if (result != undefined) { $('#Paid').val(result); } else { $('#Paid').val('0');}
@@ -454,6 +452,7 @@
                 error: function () {
                 }
             })
+
             var TAmount = $('#TotalAmount').val(); var TAdvance = $('#Advance').val(); var TPaid = $('#Paid').val();
             if ($('#master_PurPayTerm').val() == "CREDIT") {
                 $('#TotalBalance').val((parseFloat(TAmount) - parseFloat(TAdvance) - parseFloat(TPaid)));
@@ -461,17 +460,19 @@
             else {
                 $('#TotalBalance').val('0');
                 $('#Paid').val(TAmount);
-
             }
-
         }
 
         function AddRow() {
-            var rowCount = $('#myTable tr').length;
-            rowCount = rowCount - 1;
-            var dropDown = document.getElementById('detail_detail_0__ItmId').innerHTML;
-            $('#myTable').append('<tr><td><select class="form-control" onchange="InventoryChange(this)" id="ddobj_' + rowCount + '__InvCode" name="ddobj[' + rowCount + '].InvCode">' + dropDown + '</select></td><td><input type="text" id="ddobj_' + rowCount + '__RcpWaste" name="ddobj[' + rowCount + '].RcpWaste" onblur="wastechange(this)"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpOutput" name="ddobj[' + rowCount + '].RcpOutput"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpMix" name="ddobj[' + rowCount + '].RcpMix"  class="form-control" /></td><td><input type="text" id="ddobj_' + rowCount + '__RcpSubRemarks" name="ddobj[' + rowCount + '].RcpSubRemarks"  class="form-control" /></td></tr>')
-            $('#ddobj_' + rowCount + '__InvCode').attr('Selected', true).val("-1");
+            var rowCount = $('#myTable tbody tr').length;
+            var dropDownItm = document.getElementById('detail_detail_0__ItmId').innerHTML;
+            var dropDownExcise = document.getElementById('detail_detail_0__ExciseId').innerHTML;
+            var dropDownTax = document.getElementById('detail_detail_0__TaxId').innerHTML;
+            $('#myTable').append('<tr><td><select onchange="changeItem(this)" data-rowno="' + rowCount + '" class="form-control" style="width:230px;" id="detail_detail_' + rowCount + '__ItmId" name="detail.detail[' + rowCount + '].ItmId">' + dropDownItm + '</select ></td><td><input type="text" readonly="readonly" class="form-control" style="width:70px;" id="detail_pdef_' + rowCount + '__UOM" name="detail.pdef[' + rowCount + '].UOM" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field lastPrice must be a number." id="detail_pdef_' + rowCount + '__lastPrice" name="detail.pdef[' + rowCount + '].lastPrice" value=""></td><td><input type="number" step="any" data-rowno="' + rowCount + '" onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurQty must be a number." id="detail_detail_' + rowCount + '__PurQty" name="detail.detail[' + rowCount + '].PurQty" value=""></td><td><input type="number" step="any" data-rowno="' + rowCount + '" onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurRate must be a number." id="detail_detail_' + rowCount + '__PurRate" name="detail.detail[' + rowCount + '].PurRate" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field subAmount must be a number." id="detail_pdef_' + rowCount + '__subAmount" name="detail.pdef[' + rowCount + '].subAmount" value=""></td><td><select class="form-control" data-rowno="' + rowCount + '" onchange="changeQuantityAndRate(this,true)" style="width:230px;" id="detail_detail_' + rowCount + '__ExciseId" name="detail.detail[' + rowCount + '].ExciseId">' + dropDownExcise + '</select ></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurExPer must be a number." id="detail_detail_' + rowCount + '__PurExPer" name="detail.detail[' + rowCount + '].PurExPer" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurExAmt must be a number." id="detail_detail_' + rowCount + '__PurExAmt" name="detail.detail[' + rowCount + '].PurExAmt" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field AmtAfterExcise must be a number." id="detail_pdef_' + rowCount + '__AmtAfterExcise" name="detail.pdef[' + rowCount + '].AmtAfterExcise" value=""></td><td><select data-rowno="' + rowCount + '" onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" id="detail_detail_' + rowCount + '__PurDisType" name="detail.detail[' + rowCount + '].PurDisType"><option value="PERCENT">PERCENT</option><option value="AMOUNT">AMOUNT</option></select></td><td><input type="number" step="any" data-rowno="' + rowCount + '" onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurDiscountPer must be a number." id="detail_detail_' + rowCount + '__PurDiscountPer" name="detail.detail[' + rowCount + '].PurDiscountPer" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurDiscountAmt must be a number." id="detail_detail_' + rowCount + '__PurDiscountAmt" name="detail.detail[' + rowCount + '].PurDiscountAmt" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field AmtAfterDiscount must be a number." id="detail_pdef_' + rowCount + '__AmtAfterDiscount" name="detail.pdef[' + rowCount + '].AmtAfterDiscount" value=""></td><td><select data-rowno="' + rowCount + '" onchange="changeQuantityAndRate(this,true)" class="form-control" style="width:230px;" id="detail_detail_' + rowCount + '__TaxId" name="detail.detail[' + rowCount + '].TaxId">' + dropDownTax + '</select ></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurTaxPer must be a number." id="detail_detail_' + rowCount + '__PurTaxPer" name="detail.detail[' + rowCount + '].PurTaxPer" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurTaxAmt must be a number." id="detail_detail_' + rowCount + '__PurTaxAmt" name="detail.detail[' + rowCount + '].PurTaxAmt" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurNetAmt must be a number." id="detail_detail_' + rowCount + '__PurNetAmt" name="detail.detail[' + rowCount + '].PurNetAmt" value=""></td><td><input type="number" step="any" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PurGrossAmt must be a number." id="detail_detail_' + rowCount + '__PurGrossAmt" name="detail.detail[' + rowCount + '].PurGrossAmt" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="detail_detail_' + rowCount + '__PurRemarks" name="detail.detail[' + rowCount + '].PurRemarks" value=""></td></td></tr>')
+            $('#detail_detail_' + rowCount + '__ItmId').attr('Selected', true).val("-1");
+            $('#detail_detail_' + rowCount + '__ExciseId').attr('Selected', true).val("-1");
+            $('#detail_detail_' + rowCount + '__TaxId').attr('Selected', true).val("-1");
+            event.preventDefault();
         }
 
         $(document).ready(function () {
@@ -547,7 +548,7 @@
         $(document).ready(function () {
             $('#master_PurPayTerm').change(function () {
                 var term = $('#master_PurPayTerm').val();
-                var Account = "<option>Select</option>";
+                var Account = "<option value=''>Select</option>";
                 $.ajax({
                     type: 'GET',
                     url: '/Transaction/changeTerm',
@@ -591,6 +592,9 @@
                 ExchangeRate();
             })
         })
+
+
+        if ($('#master_PurPayTerm').val() == 'CREDIT') { $('#Advance').removeAttr("readonly"); } else { $('#Advance').attr('readonly', 'readonly');}
 
     </script>
 

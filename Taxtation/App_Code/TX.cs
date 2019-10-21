@@ -119,7 +119,7 @@ namespace Taxtation.App_Code
             string TrpostStatus, double TrserialNo, string TraccCode, string TrrefAccCode, string TrdocReference,
             double? Trdebit, double? Trcredit, double? TrexchangeRate, double? TramountConverted, int? TrcurId, int? TrtxsId,
             double? TrtaxPercent, double? TrtaxAmount, string TrchequeNo, DateTime? TrchequeDate, string TrrefNo, string Trremarks, string TrentryType,
-            string EnterBy, DateTime? EnterDate, string EntryFrom, int? SitId)
+            string EnterBy, DateTime? EnterDate, string EntryFrom, int? SitId, string TrentryTypeDoc)
         {
             Txtledger obj = new Txtledger();
             obj.Id = id;
@@ -150,6 +150,7 @@ namespace Taxtation.App_Code
             obj.EnterDate = EnterDate;
             obj.EntryFrom = EntryFrom;
             obj.SitId = SitId;
+            obj.TrentryTypeDoc = TrentryTypeDoc;
             db.Txtledger.Add(obj);
             db.SaveChanges();
         }

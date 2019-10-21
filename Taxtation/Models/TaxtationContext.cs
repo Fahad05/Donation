@@ -1047,6 +1047,10 @@ namespace Taxtation.Models
                     .HasColumnName("TREntryType")
                     .HasMaxLength(50);
 
+                entity.Property(e => e.TrentryTypeDoc)
+                    .HasColumnName("TREntryTypeDoc")
+                    .HasMaxLength(50);
+
                 entity.Property(e => e.TrexchangeRate).HasColumnName("TRExchangeRate");
 
                 entity.Property(e => e.Trgldate)
@@ -1199,6 +1203,8 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.PurId).ValueGeneratedOnAdd();
 
+                entity.Property(e => e.Coaid).HasColumnName("COAId");
+
                 entity.Property(e => e.EditBy).HasMaxLength(256);
 
                 entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
@@ -1272,6 +1278,8 @@ namespace Taxtation.Models
                 entity.Property(e => e.UserName).HasMaxLength(256);
 
                 entity.Property(e => e.SalId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Coaid).HasColumnName("COAId");
 
                 entity.Property(e => e.EditBy).HasMaxLength(256);
 
