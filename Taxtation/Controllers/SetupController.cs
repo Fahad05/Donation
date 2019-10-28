@@ -496,6 +496,7 @@ namespace Taxtation.Controllers
             }
             List<TxscustomerDetail> lstCustomer = new List<TxscustomerDetail>();
             lstCustomer = db.TxscustomerDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            
             return View(lstCustomer);
         }
 
@@ -507,11 +508,13 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            TXSCustomerDetailView obj = new TXSCustomerDetailView();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "LIABILITY").ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TXSCustomerDetailView obj = new TXSCustomerDetailView();
+                
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master.CusActive = (obj.master.CusActive == null) ? true : false;
                 return PartialView(obj);
@@ -520,7 +523,6 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TXSCustomerDetailView obj = new TXSCustomerDetailView();
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master = db.TxscustomerDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CusId == Convert.ToInt32(id)).FirstOrDefault();
                 obj.lstCity = db.TxscityDetail.Where(x => x.CouCode == obj.master.CusCountry).ToList();
@@ -567,6 +569,7 @@ namespace Taxtation.Controllers
                     obj1.CusCountry = obj.master.CusCountry;
                     obj1.CusDesc = obj.master.CusDesc;
                     obj1.CusCrDays = obj.master.CusCrDays;
+                    obj1.CoaId = obj.master.CoaId;
                     obj1.CusActive = (CusActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
@@ -601,11 +604,13 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            TXSSupplierDetailView obj = new TXSSupplierDetailView();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountNature == "ASSET").ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TXSSupplierDetailView obj = new TXSSupplierDetailView();
+                
                 obj.master.SupActive = (obj.master.SupActive == null) ? true : false;
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 return PartialView(obj);
@@ -614,7 +619,6 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TXSSupplierDetailView obj = new TXSSupplierDetailView();
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master = db.TxssupplierDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SupId == Convert.ToInt32(id)).FirstOrDefault();
                 obj.master.SupActive = (obj.master.SupActive == true) ? true : false;
@@ -661,6 +665,7 @@ namespace Taxtation.Controllers
                     obj1.SupCountry = obj.master.SupCountry;
                     obj1.SupDesc = obj.master.SupDesc;
                     obj1.SupCrDays = obj.master.SupCrDays;
+                    obj1.CoaId = obj.master.CoaId;
                     obj1.SupActive = (SupActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;

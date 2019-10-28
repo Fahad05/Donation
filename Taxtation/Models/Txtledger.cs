@@ -41,5 +41,10 @@ namespace Taxtation.Models
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
         public string TrentryTypeDoc { get; set; }
+        public int? TrcustomerRef { get; set; }
+        public int? TrsupplierRef { get; set; }
+        public int? TrtaxRef { get; set; }
+        public DateTime? TrinvDate { get; set; }
+        public string TrinvNo { get; set; }
     }
 }

@@ -33,15 +33,15 @@
                             <div>
                                 Name<span class="mandatory">*</span>:
                                 <input type="text" asp-for="master.SupName" class="form-control" required="required" />
-                               
+
                             </div>
                             <div>
                                 Abbriviation:
-                                <input type="text" asp-for="master.SupAbbr" class="form-control"  />
+                                <input type="text" asp-for="master.SupAbbr" class="form-control" />
                             </div>
                             <div>
                                 Person:
-                                <input type="text" asp-for="master.SupPerson" class="form-control"  />
+                                <input type="text" asp-for="master.SupPerson" class="form-control" />
                             </div>
                             <div>
                                 Address:
@@ -49,16 +49,16 @@
                             </div>
                             <div>
                                 Phone No:
-                                <input type="text" asp-for="master.SupPhNo" class="form-control"  />
+                                <input type="text" asp-for="master.SupPhNo" class="form-control" />
                             </div>
                             <div>
                                 Fax:
-                                <input type="text" asp-for="master.SupFaxNo" class="form-control"  />
+                                <input type="text" asp-for="master.SupFaxNo" class="form-control" />
                             </div>
 
                             <div>
                                 Email:
-                                <input type="email" asp-for="master.SupEmail" class="form-control"  />
+                                <input type="email" asp-for="master.SupEmail" class="form-control" />
                             </div>
                             <div>
                                 NTN:
@@ -66,7 +66,7 @@
                             </div>
                             <div>
                                 STRN:
-                                <input type="number" asp-for="master.SupStrn" class="form-control"  />
+                                <input type="number" asp-for="master.SupStrn" class="form-control" />
                             </div>
                             <div>
                                 Country<span class="mandatory">*</span>:
@@ -80,7 +80,7 @@
                             </div>
                             <div>
                                 City<span class="mandatory">*</span>:
-                                <select asp-for="master.SupCity" class="form-control" >
+                                <select asp-for="master.SupCity" class="form-control">
                                     <option value="">Select</option>
                                     @foreach (var j in Model.lstCity)
                                     {
@@ -90,12 +90,23 @@
                             </div>
                             <div>
                                 Credit Days:
-                                <input type="number" asp-for="master.SupCrDays" class="form-control"  />
+                                <input type="number" asp-for="master.SupCrDays" class="form-control" />
                             </div>
                             <div>
                                 Description:
                                 <input type="text" asp-for="master.SupDesc" class="form-control" />
                             </div>
+                            <div>
+                                Credit<span class="mandatory">*</span>:
+                                <select asp-for="master.CoaId" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.Coaid>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            
                             <br />
                             <div>
                                 @if (ViewData["_Save"].ToString() == "True")

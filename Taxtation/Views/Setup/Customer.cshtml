@@ -34,11 +34,11 @@
                             <div>
                                 Name<span class="mandatory">*</span>:
                                 <input type="text" asp-for="master.CusName" class="form-control" required="required" />
-                              
+
                             </div>
                             <div>
                                 Abbriviation:
-                                <input type="text" asp-for="master.CusAbbr" class="form-control"  />
+                                <input type="text" asp-for="master.CusAbbr" class="form-control" />
                             </div>
                             <div>
                                 Person:
@@ -46,20 +46,20 @@
                             </div>
                             <div>
                                 Address:
-                                <input type="text" asp-for="master.CusAddress" class="form-control"  />
+                                <input type="text" asp-for="master.CusAddress" class="form-control" />
                             </div>
                             <div>
                                 Phone No:
-                                <input type="text" asp-for="master.CusPhNo" class="form-control"  />
+                                <input type="text" asp-for="master.CusPhNo" class="form-control" />
                             </div>
                             <div>
                                 Fax:
-                                <input type="text" asp-for="master.CusFaxNo" class="form-control"  />
+                                <input type="text" asp-for="master.CusFaxNo" class="form-control" />
                             </div>
 
                             <div>
                                 Email:
-                                <input type="email" asp-for="master.CusEmail" class="form-control"  />
+                                <input type="email" asp-for="master.CusEmail" class="form-control" />
                             </div>
                             <div>
                                 NTN:
@@ -67,7 +67,7 @@
                             </div>
                             <div>
                                 STRN:
-                                <input type="number" asp-for="master.CusStrn" class="form-control"  />
+                                <input type="number" asp-for="master.CusStrn" class="form-control" />
                             </div>
                             <div>
                                 Country<span class="mandatory">*</span>:
@@ -91,12 +91,23 @@
                             </div>
                             <div>
                                 Credit Days:
-                                <input type="number" asp-for="master.CusCrDays" class="form-control"  />
+                                <input type="number" asp-for="master.CusCrDays" class="form-control" />
                             </div>
                             <div>
                                 Description:
                                 <input type="text" asp-for="master.CusDesc" class="form-control" />
                             </div>
+                            <div>
+                                Credit<span class="mandatory">*</span>:
+                                <select asp-for="master.CoaId" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.Coaid>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            
                             <br />
                             <div>
                                 @if (ViewData["_Save"].ToString() == "True")
@@ -105,7 +116,7 @@
                                 }
                                 @if (ViewData["_Update"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Update" id="Update" value="Update"style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
                                 }
                                 <button type="button" id="btnHideModal" style="float:right;background-image:url(../images/button/Clear.png)" data-dismiss="modal" class="btnControlDML">
                                     Hide

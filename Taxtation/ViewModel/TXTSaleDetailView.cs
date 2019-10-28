@@ -20,6 +20,7 @@ namespace Taxtation.ViewModel
         public List<TxstaxDetail> lstTax { get; set; }
         public List<TxstaxDetail> lstExcise { get; set; }
         public List<TxsbankDetail> lstBank { get; set; }
+        public List<Txscoadetail> lstAccount { get; set; }
         public double? SubTotal { get; set; }
         public double? ExciseTax { get; set; }
         public double? VAT { get; set; }

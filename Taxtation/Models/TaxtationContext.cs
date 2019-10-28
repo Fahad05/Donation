@@ -400,6 +400,8 @@ namespace Taxtation.Models
                     .HasColumnName("CusNTN")
                     .HasMaxLength(256);
 
+                entity.Property(e => e.CusPayTerm).HasMaxLength(50);
+
                 entity.Property(e => e.CusPerson).HasMaxLength(256);
 
                 entity.Property(e => e.CusPhNo).HasMaxLength(256);
@@ -604,6 +606,8 @@ namespace Taxtation.Models
                 entity.Property(e => e.SupNtn)
                     .HasColumnName("SupNTN")
                     .HasMaxLength(256);
+
+                entity.Property(e => e.SupPayTerm).HasMaxLength(50);
 
                 entity.Property(e => e.SupPerson).HasMaxLength(256);
 
@@ -1033,6 +1037,8 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.TrcurId).HasColumnName("TRCurId");
 
+                entity.Property(e => e.TrcustomerRef).HasColumnName("TRCustomerRef");
+
                 entity.Property(e => e.Trdate)
                     .HasColumnName("TRDate")
                     .HasColumnType("smalldatetime");
@@ -1056,6 +1062,14 @@ namespace Taxtation.Models
                 entity.Property(e => e.Trgldate)
                     .HasColumnName("TRGLDate")
                     .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrinvDate)
+                    .HasColumnName("TRInvDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrinvNo)
+                    .HasColumnName("TRInvNo")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Trno)
                     .HasColumnName("TRNo")
@@ -1085,9 +1099,13 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.TrserialNo).HasColumnName("TRSerialNo");
 
+                entity.Property(e => e.TrsupplierRef).HasColumnName("TRSupplierRef");
+
                 entity.Property(e => e.TrtaxAmount).HasColumnName("TRTaxAmount");
 
                 entity.Property(e => e.TrtaxPercent).HasColumnName("TRTaxPercent");
+
+                entity.Property(e => e.TrtaxRef).HasColumnName("TRTaxRef");
 
                 entity.Property(e => e.TrtxsId).HasColumnName("TRTxsId");
 

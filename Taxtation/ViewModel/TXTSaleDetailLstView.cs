@@ -26,9 +26,9 @@ namespace Taxtation.ViewModel
         public string BarCode { get; set; }
         public string UOM { get; set; }
         public double? LastPrice { get; set; }
+        public double? StockQuantity { get; set; }
         public double? Amount { get; set; }
         public double? AmtAfterDiscount { get; set; }
         public double? AmtAfterExcise { get; set; }
-        public double? GrossAmount { get; set; }
     }
 }

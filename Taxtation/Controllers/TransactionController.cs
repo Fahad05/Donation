@@ -89,6 +89,8 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
             TXTPurchaseDetailView obj = new TXTPurchaseDetailView();
             obj.master.Id = user.Id;
             obj.master.UserName = user.UserName;
@@ -107,6 +109,7 @@ namespace Taxtation.Controllers
                 ViewData["_Update"] = "False";
                 obj.master.PurPoref = tX.PurchaseOrder(user.UserName);
                 obj.master.PurDate = System.DateTime.Now;
+                obj.master.PurExRate = 1;
                 obj.lstAccount = db.Txscoadetail.Where(x => x.UserName == user.UserName && (x.AccAccountSubNature.Contains("CASH") || x.AccAccountSubNature.Contains("BANK ACCOUNT")) && x.AccActive == true).ToList();
                 obj.detail.detail = null;
                 obj.detail.pdef = null;
@@ -152,6 +155,8 @@ namespace Taxtation.Controllers
                 {
                     throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
+                HttpContext.Session.SetString("UserId", user.Id);
+                HttpContext.Session.SetString("UserName", user.UserName);
                 if (Save != null)
                 {
 
@@ -459,6 +464,8 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
             TXTSaleDetailView sale = new TXTSaleDetailView();
             sale.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
             sale.lstCustomer = db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
@@ -481,12 +488,14 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
             TXTSaleDetailView obj = new TXTSaleDetailView();
             obj.lstBank = db.TxsbankDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstCustomer = db.TxscustomerDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstExcise = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "SALE" && x.TaxActive == true).ToList();
-            obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName).ToList();
+            obj.lstItem = db.TxsitemDetail.Where(x => x.UserName == user.UserName && x.ItmType == "ITEM").ToList();
             obj.lstSite = db.TxssiteDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstStore = db.TxsstoreDetail.Where(x => x.UserName == user.UserName).ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.UserName == user.UserName && x.TaxType == "PURCHASE" && x.TaxActive == true).ToList();
@@ -495,6 +504,9 @@ namespace Taxtation.Controllers
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
                 obj.master.SalSoRef = tX.SaleOrder(user.UserName);
+                obj.master.SalDate = System.DateTime.Now;
+                obj.master.SalExRate = 1;
+                obj.lstAccount = db.Txscoadetail.Where(x => x.UserName == user.UserName && (x.AccAccountSubNature.Contains("CASH") || x.AccAccountSubNature.Contains("BANK ACCOUNT")) && x.AccActive == true).ToList();
                 obj.Detail.saleDetail = null;
                 obj.Detail.sale = null;
             }
@@ -503,6 +515,8 @@ namespace Taxtation.Controllers
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
                 obj.master = db.TxtsaleMaster.Where(x => x.SalId == Convert.ToInt32(id) && x.UserName == user.UserName).FirstOrDefault();
+                if (obj.master.SalPayTerms == "CREDIT") { obj.lstAccount = db.Txscoadetail.Where(x => x.UserName == user.UserName && (x.AccAccountSubNature.Contains("CASH") || x.AccAccountSubNature.Contains("BANK ACCOUNT")) && x.AccActive == true).ToList(); }
+                else { obj.lstAccount = db.Txscoadetail.Where(x => x.UserName == user.UserName && x.AccAccountSubNature.Contains(obj.master.SalPayTerms) && x.AccActive == true).ToList(); }
                 obj.Detail.saleDetail = db.TxtsaleDetail.Where(x => x.UserName == user.UserName && x.SalId == Convert.ToInt32(id)).OrderBy(x => x.SalSerialNo).ToList();
                 for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                 {
@@ -515,6 +529,7 @@ namespace Taxtation.Controllers
                         sale.UOM = item.Txuom.Uomname;
                         sale.LastPrice = item.Txsitem.ItmSp;
                         sale.BarCode = item.Txsitem.ItmBcode;
+                        sale.StockQuantity = obj.Detail.saleDetail[i].SalQty;
                     }
 
                     sale.Amount = obj.Detail.saleDetail[i].SalQty * obj.Detail.saleDetail[i].SalRate;
@@ -529,106 +544,285 @@ namespace Taxtation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Sale(TXTSaleDetailView obj, string Save, string Update)
+        public async Task<IActionResult> Sale(TXTSaleDetailView obj, string Save, string Update, string Delete)
         {
             var user = await _userManager.GetUserAsync(User);
             if (User == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
             if (Save != null)
             {
-                int count = 0;
+
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = System.DateTime.Now;
+
+                db.TxtsaleMaster.Add(obj.master);
+                db.SaveChanges();
+
+                int TRCount = 1; int k = 0;
                 for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
                 {
+
+                    obj.Detail.sale[i].Amount = (obj.Detail.sale[i].Amount == null) ? 0 : obj.Detail.sale[i].Amount;
+                    obj.Detail.saleDetail[i].SalDiscAmt = (obj.Detail.saleDetail[i].SalDiscAmt == null) ? 0 : obj.Detail.saleDetail[i].SalDiscAmt;
+                    obj.Detail.saleDetail[i].SalTaxAmount = (obj.Detail.saleDetail[i].SalTaxAmount == null) ? 0 : obj.Detail.saleDetail[i].SalTaxAmount;
+                    obj.Detail.saleDetail[i].SalVatper = (obj.Detail.saleDetail[i].SalVatper == null) ? 0 : obj.Detail.saleDetail[i].SalVatper;
+
                     if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
                     {
-                        count++;
-                    }
-                }
-                if (count > 0)
-                {
-                    obj.master.Id = user.Id;
-                    obj.master.UserName = user.UserName;
-                    obj.master.EnterBy = user.UserName;
-                    obj.master.EnterDate = System.DateTime.Now;
+                        obj.Detail.saleDetail[i].Id = user.Id;
+                        obj.Detail.saleDetail[i].UserName = user.UserName;
+                        obj.Detail.saleDetail[i].SalId = obj.master.SalId;
 
-                    db.TxtsaleMaster.Add(obj.master);
-                    db.SaveChanges();
-
-                    for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
-                    {
-                        if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
-                        {
-                            obj.Detail.saleDetail[i].Id = user.Id;
-                            obj.Detail.saleDetail[i].UserName = user.UserName;
-                            obj.Detail.saleDetail[i].SalId = obj.master.SalId;
-
-                            db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
-                            db.SaveChanges();
-                        }
-                    }
-                }
-            }
-            if (Update != null)
-            {
-                int count = 0;
-                for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
-                {
-                    if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
-                    {
-                        count++;
-                    }
-                }
-                if (count > 0)
-                {
-                    TxtsaleMaster master = new TxtsaleMaster();
-                    master = db.TxtsaleMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).FirstOrDefault();
-                    master.SalLporef = obj.master.SalLporef;
-                    master.SalDate = obj.master.SalDate;
-                    master.SalSupplyDate = obj.master.SalSupplyDate;
-                    master.SalType = obj.master.SalType;
-                    master.CusId = obj.master.CusId;
-                    master.SalPayTerms = obj.master.SalPayTerms;
-                    master.Coaid = obj.master.Coaid;
-                    master.SalChqNo = obj.master.SalChqNo;
-                    master.SalChqDate = obj.master.SalChqDate;
-                    master.SalScope = obj.master.SalScope;
-                    master.SalPrices = obj.master.SalPrices;
-                    master.SalRemarks = obj.master.SalRemarks;
-                    master.SalActive = obj.master.SalActive;
-                    master.SalSalesMapCo = obj.master.SalSalesMapCo;
-                    master.CurId = obj.master.CurId;
-                    master.StrId = obj.master.StrId;
-                    master.SalExRate = obj.master.SalExRate;
-                    master.SalItemType = obj.master.SalItemType;
-                    master.SitId = obj.master.SitId;
-                    master.EditBy = user.UserName;
-                    master.EditDate = System.DateTime.Now;
-                    db.SaveChanges();
-
-                    List<TxtsaleDetail> lstSale = new List<TxtsaleDetail>();
-                    lstSale = db.TxtsaleDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).OrderBy(x => x.SalSerialNo).ToList();
-                    for (int i = 0; i < lstSale.Count; i++)
-                    {
-                        db.TxtsaleDetail.Remove(lstSale[i]);
+                        db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
                         db.SaveChanges();
                     }
 
-                    for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                    tX.insertInventoryStockDetail(user.Id, user.UserName, obj.Detail.saleDetail[i].ItmId, TRCount, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalSoRef, obj.master.SalRemarks, obj.Detail.saleDetail[i].SalSubRemarks, 0, obj.Detail.saleDetail[i].SalQty, 0, obj.Detail.saleDetail[i].SalRate, obj.master.StrId,obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalGrossAmt/obj.master.SalExRate,obj.master.CurId,obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, "Direct Sale Invoice Detail", "POST");
+
+                    TxsitemDetail item = new TxsitemDetail();
+                    item = db.TxsitemDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ItmId == obj.Detail.saleDetail[i].ItmId).FirstOrDefault();
+                    if(item!=null)
                     {
-                        if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                        if(item.ItmRevenueAccount != null)
                         {
-                            obj.Detail.saleDetail[i].Id = user.Id;
-                            obj.Detail.saleDetail[i].UserName = user.UserName;
-                            obj.Detail.saleDetail[i].SalId = obj.master.SalId;
-                            db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
-                            db.SaveChanges();
+                            k = k + 1;
+                            tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.CusId.ToString(), item.ItmRevenueAccount, "-1", obj.Detail.saleDetail[i].SalGrossAmt, 0, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "CHILD");
+                            k = k + 1;
+                            tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, item.ItmRevenueAccount, obj.master.CusId.ToString(), "-1", 0, obj.Detail.sale[i].Amount - obj.Detail.saleDetail[i].SalDiscAmt, obj.master.SalExRate, obj.Detail.sale[i].Amount - obj.Detail.saleDetail[i].SalDiscAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+
+                            if (obj.Detail.saleDetail[i].SalTaxAmount != 0 || obj.Detail.saleDetail[i].SalTaxAmount != null)
+                            {
+                                TxstaxDetail tax = new TxstaxDetail();
+                                tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.Detail.saleDetail[i].TaxId).FirstOrDefault();
+                                if (tax != null)
+                                {
+                                    if(tax.Coaid!=null)
+                                    {
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, tax.Coaid.ToString(), obj.master.CusId.ToString(), "-1", 0, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalExRate, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                                    }
+                                }
+                            }
+                            if(obj.Detail.saleDetail[i].SalExAmt!=0 || obj.Detail.saleDetail[i].SalExAmt!=null)
+                            {
+                                TxstaxDetail excise = new TxstaxDetail();
+                                excise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.Detail.saleDetail[i].ExciseId).FirstOrDefault();
+                                if(excise!=null)
+                                {
+                                    if(excise.Coaid!=null)
+                                    {
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, excise.Coaid.ToString(), obj.master.CusId.ToString(), "-1", 0, obj.Detail.saleDetail[i].SalExAmt, obj.master.SalExRate, obj.Detail.saleDetail[i].SalExAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                                    }
+                                }
+                            }
+                            if(obj.master.SalPayTerms == "CASH" || obj.master.SalPayTerms == "BANK")
+                            {
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.CusId.ToString(), "-1", obj.Detail.saleDetail[i].SalGrossAmt, 0, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "CHILD");
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.CusId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                            }
                         }
                     }
+                    TRCount++;
+                }
+
+                if (obj.master.SalPayTerms == "CASH" || obj.master.SalPayTerms == "BANK")
+                {
+                    if (obj.TotalAmount != 0 && obj.TotalAmount != null)
+                    {
+                        k = k + 1;
+                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", obj.TotalAmount, 0, obj.master.SalExRate, obj.TotalAmount, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "TOTAL");
+                    }
+                }
+                else if(obj.master.SalPayTerms=="CREDIT" || obj.Advance!=0 || obj.Advance!=null || obj.master.Coaid.ToString() != "")
+                {
+                    k = k + 1;
+                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.CusId.ToString(), "-1", obj.Advance, 0, obj.master.SalExRate, obj.Advance, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "CHILD");
+                    k = k + 1;
+                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.CusId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Advance, obj.master.SalExRate, obj.Advance, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                    k = k + 1;
+                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", 0, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", obj.Advance, 0, obj.master.SalExRate, obj.Advance, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "TOTAL");
+                }
+
+            }
+            if (Update != null)
+            {
+
+                TxtsaleMaster master = new TxtsaleMaster();
+                master = db.TxtsaleMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).FirstOrDefault();
+                master.SalLporef = obj.master.SalLporef;
+                master.SalDate = obj.master.SalDate;
+                master.SalSupplyDate = obj.master.SalSupplyDate;
+                master.SalType = obj.master.SalType;
+                master.CusId = obj.master.CusId;
+                master.SalPayTerms = obj.master.SalPayTerms;
+                master.Coaid = obj.master.Coaid;
+                master.SalChqNo = obj.master.SalChqNo;
+                master.SalChqDate = obj.master.SalChqDate;
+                master.SalScope = obj.master.SalScope;
+                master.SalPrices = obj.master.SalPrices;
+                master.SalRemarks = obj.master.SalRemarks;
+                master.SalActive = obj.master.SalActive;
+                master.SalSalesMapCo = obj.master.SalSalesMapCo;
+                master.CurId = obj.master.CurId;
+                master.StrId = obj.master.StrId;
+                master.SalExRate = obj.master.SalExRate;
+                master.SalItemType = obj.master.SalItemType;
+                master.SitId = obj.master.SitId;
+                master.EditBy = user.UserName;
+                master.EditDate = System.DateTime.Now;
+                db.SaveChanges();
+
+                List<TxtsaleDetail> lstSale = new List<TxtsaleDetail>();
+                lstSale = db.TxtsaleDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).OrderBy(x => x.SalSerialNo).ToList();
+                for (int i = 0; i < lstSale.Count; i++)
+                {
+                    db.TxtsaleDetail.Remove(lstSale[i]);
+                    db.SaveChanges();
+                }
+
+                List<Txtledger> lstLedger = new List<Txtledger>();
+                lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.SalSoRef).ToList();
+                for (int i = 0; i < lstLedger.Count; i++)
+                {
+                    db.Txtledger.Remove(lstLedger[i]);
+                    db.SaveChanges();
+                }
+
+                List<TxtinventoryStockDetail> lstInvStock = new List<TxtinventoryStockDetail>();
+                lstInvStock = db.TxtinventoryStockDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.InsNo == obj.master.SalSoRef).ToList();
+                for (int i = 0; i < lstInvStock.Count; i++)
+                {
+                    db.TxtinventoryStockDetail.Remove(lstInvStock[i]);
+                    db.SaveChanges();
+                }
+
+                int TRCount = 1; int k = 0;
+                for (int i = 0; i < obj.Detail.saleDetail.Count; i++)
+                {
+
+                    obj.Detail.sale[i].Amount = (obj.Detail.sale[i].Amount == null) ? 0 : obj.Detail.sale[i].Amount;
+                    obj.Detail.saleDetail[i].SalDiscAmt = (obj.Detail.saleDetail[i].SalDiscAmt == null) ? 0 : obj.Detail.saleDetail[i].SalDiscAmt;
+                    obj.Detail.saleDetail[i].SalTaxAmount = (obj.Detail.saleDetail[i].SalTaxAmount == null) ? 0 : obj.Detail.saleDetail[i].SalTaxAmount;
+                    obj.Detail.saleDetail[i].SalVatper = (obj.Detail.saleDetail[i].SalVatper == null) ? 0 : obj.Detail.saleDetail[i].SalVatper;
+
+                    if (obj.Detail.saleDetail[i].ItmId != -1 && obj.Detail.saleDetail[i].SalQty > 0 && obj.Detail.saleDetail[i].SalRate > 0)
+                    {
+                        obj.Detail.saleDetail[i].Id = user.Id;
+                        obj.Detail.saleDetail[i].UserName = user.UserName;
+                        obj.Detail.saleDetail[i].SalId = obj.master.SalId;
+                        db.TxtsaleDetail.Add(obj.Detail.saleDetail[i]);
+                        db.SaveChanges();
+                    }
+
+                    tX.insertInventoryStockDetail(user.Id, user.UserName, obj.Detail.saleDetail[i].ItmId, TRCount, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalSoRef, obj.master.SalRemarks, obj.Detail.saleDetail[i].SalSubRemarks, 0, obj.Detail.saleDetail[i].SalQty, 0, obj.Detail.saleDetail[i].SalRate, obj.master.StrId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalGrossAmt / obj.master.SalExRate, obj.master.CurId, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, "Direct Sale Invoice Detail", "POST");
+
+                    TxsitemDetail item = new TxsitemDetail();
+                    item = db.TxsitemDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ItmId == obj.Detail.saleDetail[i].ItmId).FirstOrDefault();
+                    if (item != null)
+                    {
+                        if (item.ItmRevenueAccount != null)
+                        {
+                            k = k + 1;
+                            tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.CusId.ToString(), item.ItmRevenueAccount, "-1", obj.Detail.saleDetail[i].SalGrossAmt, 0, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "CHILD");
+                            k = k + 1;
+                            tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, item.ItmRevenueAccount, obj.master.CusId.ToString(), "-1", 0, obj.Detail.sale[i].Amount - obj.Detail.saleDetail[i].SalDiscAmt, obj.master.SalExRate, obj.Detail.sale[i].Amount - obj.Detail.saleDetail[i].SalDiscAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+
+                            if (obj.Detail.saleDetail[i].SalTaxAmount != 0 || obj.Detail.saleDetail[i].SalTaxAmount != null)
+                            {
+                                TxstaxDetail tax = new TxstaxDetail();
+                                tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.Detail.saleDetail[i].TaxId).FirstOrDefault();
+                                if (tax != null)
+                                {
+                                    if (tax.Coaid != null)
+                                    {
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, tax.Coaid.ToString(), obj.master.CusId.ToString(), "-1", 0, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalExRate, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                                    }
+                                }
+                            }
+                            if (obj.Detail.saleDetail[i].SalExAmt != 0 || obj.Detail.saleDetail[i].SalExAmt != null)
+                            {
+                                TxstaxDetail excise = new TxstaxDetail();
+                                excise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.Detail.saleDetail[i].ExciseId).FirstOrDefault();
+                                if (excise != null)
+                                {
+                                    if (excise.Coaid != null)
+                                    {
+                                        k = k + 1;
+                                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, excise.Coaid.ToString(), obj.master.CusId.ToString(), "-1", 0, obj.Detail.saleDetail[i].SalExAmt, obj.master.SalExRate, obj.Detail.saleDetail[i].SalExAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                                    }
+                                }
+                            }
+                            if (obj.master.SalPayTerms == "CASH" || obj.master.SalPayTerms == "BANK")
+                            {
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.CusId.ToString(), "-1", obj.Detail.saleDetail[i].SalGrossAmt, 0, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "CHILD");
+                                k = k + 1;
+                                tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.CusId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.SalExRate, obj.Detail.saleDetail[i].SalGrossAmt, obj.master.CurId, obj.Detail.saleDetail[i].TaxId, obj.Detail.saleDetail[i].SalVatper, obj.Detail.saleDetail[i].SalTaxAmount, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.Detail.saleDetail[i].SalSubRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                            }
+                        }
+                    }
+                    TRCount++;
+                }
+
+                if (obj.master.SalPayTerms == "CASH" || obj.master.SalPayTerms == "BANK")
+                {
+                    if (obj.TotalAmount != 0 && obj.TotalAmount != null)
+                    {
+                        k = k + 1;
+                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", obj.TotalAmount, 0, obj.master.SalExRate, obj.TotalAmount, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "TOTAL");
+                    }
+                }
+                else if (obj.master.SalPayTerms == "CREDIT" || obj.Advance != 0 || obj.Advance != null || obj.master.Coaid.ToString() != "")
+                {
+                    k = k + 1;
+                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.Coaid.ToString(), obj.master.CusId.ToString(), "-1", obj.Advance, 0, obj.master.SalExRate, obj.Advance, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "CHILD");
+                    k = k + 1;
+                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", k, obj.master.CusId.ToString(), obj.master.Coaid.ToString(), "-1", 0, obj.Advance, obj.master.SalExRate, obj.Advance, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "CHILD", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "PARENT");
+                    k = k + 1;
+                    tX.insertLedgerDetail(user.Id, user.UserName, obj.master.SalSoRef, obj.master.SalDate, obj.master.SalDate, obj.master.SalPayTerms, "UN-POST", 0, obj.master.Coaid.ToString(), obj.master.Coaid.ToString(), "-1", obj.Advance, 0, obj.master.SalExRate, obj.Advance, obj.master.CurId, -1, 0, 0, obj.master.SalChqNo, obj.master.SalChqDate, obj.master.SalSoRef, obj.master.SalRemarks, "TOTAL", user.UserName, System.DateTime.Now, "Direct Sale Invoice Detail", obj.master.SitId, "TOTAL");
                 }
             }
+            if (Delete != null)
+            {
+                TxtsaleMaster master = new TxtsaleMaster();
+                master = db.TxtsaleMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).FirstOrDefault();
+                db.TxtsaleMaster.Remove(master);
+                db.SaveChanges();
 
+                List<TxtsaleDetail> lstSale = new List<TxtsaleDetail>();
+                lstSale = db.TxtsaleDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SalId == obj.master.SalId).OrderBy(x => x.SalSerialNo).ToList();
+                for (int i = 0; i < lstSale.Count; i++)
+                {
+                    db.TxtsaleDetail.Remove(lstSale[i]);
+                    db.SaveChanges();
+                }
+
+                List<Txtledger> lstLedger = new List<Txtledger>();
+                lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.SalSoRef).ToList();
+                for (int i = 0; i < lstLedger.Count; i++)
+                {
+                    db.Txtledger.Remove(lstLedger[i]);
+                    db.SaveChanges();
+                }
+
+                List<TxtinventoryStockDetail> lstInvStock = new List<TxtinventoryStockDetail>();
+                lstInvStock = db.TxtinventoryStockDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.InsNo == obj.master.SalSoRef).ToList();
+                for (int i = 0; i < lstInvStock.Count; i++)
+                {
+                    db.TxtinventoryStockDetail.Remove(lstInvStock[i]);
+                    db.SaveChanges();
+                }
+            }
             return RedirectToAction("showSale");
         }
 
@@ -1011,12 +1205,38 @@ namespace Taxtation.Controllers
             return db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno == RefCode && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
         }
 
+        public JsonResult saleTotalAmount(string RefCode)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            var abc = db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno == RefCode && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trcredit - x.Trdebit).ToString();
+
+            return Json(abc);
+        }
+
         public TXSItemUOMDetail changeItems(int id, string userid, string userName)
         {
             TXSItemUOMDetail obj = new TXSItemUOMDetail();
             obj.Txsitem = db.TxsitemDetail.Where(x => x.UserName == userName && x.Id == userid && x.ItmId == id).OrderByDescending(x => x.ItmId).FirstOrDefault();
             obj.Txuom = db.Txsuomdetail.Where(x => x.Uomid == Convert.ToInt32(obj.Txsitem.ItmUom)).FirstOrDefault();
             return obj;
+        }
+
+        public string itemQuantity(int ItmId, int StrId)
+        {
+            string userId = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+
+            TxsitemDetail item = new TxsitemDetail();
+            TxtinventoryStockDetail invStock = new TxtinventoryStockDetail();
+            item = db.TxsitemDetail.Where(x => x.Id == userId && x.UserName == userName && x.ItmId == ItmId && x.ItmIsService == false).FirstOrDefault();
+            if (item != null)
+            {
+                return db.TxtinventoryStockDetail.Where(x => x.Id == userId && x.UserName == userName && x.ItmId == ItmId && x.StrId == StrId).Sum(x => x.InsQuantityIn - x.InsQuantityOut).ToString();
+            }
+
+
+            return "0";
         }
 
         public async Task<TxstaxDetail> changeTax(string id)
