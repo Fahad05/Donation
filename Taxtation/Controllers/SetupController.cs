@@ -418,7 +418,7 @@ namespace Taxtation.Controllers
                 obj.tax.UserName = user.UserName;
                 obj.tax.TaxActive = (obj.tax.TaxActive == null) ? true : false;
                 obj.tax.TxsDefault = (obj.tax.TxsDefault == null) ? true : false;
-                obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+                obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "LIABILITY" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
                 return PartialView(obj);
             }
             else
@@ -474,6 +474,7 @@ namespace Taxtation.Controllers
                     obj1.Coaid = obj.tax.Coaid;
                     obj1.TaxActive = (TaxActive == "true") ? true : false;
                     obj1.TxsDefault = (TaxActive == "true") ? true : false;
+                    obj1.TaxCategory = obj.tax.TaxCategory;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
@@ -509,7 +510,7 @@ namespace Taxtation.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             TXSCustomerDetailView obj = new TXSCustomerDetailView();
-            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "LIABILITY").ToList();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountNature == "LIABILITY").ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";

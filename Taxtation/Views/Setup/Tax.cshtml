@@ -30,7 +30,7 @@
                             <div>
                                 Name<span class="mandatory">*</span>:
                                 <input type="text" asp-for="tax.TaxName" class="form-control" required="required" />
-                               
+
                             </div>
                             <div>
                                 Type<span class="mandatory">*</span>:
@@ -42,7 +42,7 @@
                             </div>
                             <div>
                                 Tax Percent<span class="mandatory">*</span>:
-                                <input type="number" asp-for="tax.TaxPercent" class="form-control" required/>
+                                <input type="number" asp-for="tax.TaxPercent" class="form-control" required />
                             </div>
 
                             <div>
@@ -63,7 +63,13 @@
 
                                 </select>
                             </div>
-
+                            <div>
+                                Category<span class="mandatory">*</span>:
+                                <select asp-for="tax.TaxCategory" required="required" class="form-control">
+                                    <option value="VAT">VAT</option>
+                                    <option value="EXCISE">EXCISE</option>
+                                </select>
+                            </div>
                             <br />
                             <div>
                                 @if (ViewData["_Save"].ToString() == "True")
@@ -102,27 +108,27 @@
             var userID = $('#tax_Id').val();
             var Name = $('#tax_UserName').val();
             var type1 = $('#tax_TaxType').val();
-            var DDType = "<option>Select</option>";
+            var DDType = "<option value=''>Select</option>";
             $.ajax({
                 type: 'GET',
                 url: '/Setup/lstCOAAccount',
-                data: { id: userID, userName: Name, type: type1},
+                data: { id: userID, userName: Name, type: type1 },
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
-                    console.log(result);
-                    for (var i = 0; i < result.Length; i++) {
-                        DDType += "<option Value=" + result[i].coaId + ">" + result[i].accName + "<option/>";
+                    for (var i = 0; i < result.length; i++) {
+                        DDType += "<option Value='" + result[i].coaid + "'>" + result[i].accName + "<option/>";
                     }
+                    $('#tax_Coaid option').remove();
+                    $('#tax_Coaid').append(DDType);
                 },
                 error: function () {
                 }
             })
-            $('#tax_Coaid option').remove();
-            $('#tax_Coaid').append(DDType);
+
         })
-    
-    
+
+
     });
 
 </script>

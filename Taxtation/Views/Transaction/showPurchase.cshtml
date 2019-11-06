@@ -1,6 +1,6 @@
 ﻿@model Taxtation.ViewModel.TXTPurchaseDetailView
 @{
-    ViewData["Title"] = "showPurchase";
+    ViewData["Title"] = "show Purchase";
     var query = from mas in Model.lstMaster
                 join det in Model.detail.detail on mas.PurId equals det.PurId
                 join bank in Model.lstBank on mas.BnkId equals bank.BnkId into banks

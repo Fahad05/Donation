@@ -646,6 +646,8 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.TaxAbbr).HasMaxLength(50);
 
+                entity.Property(e => e.TaxCategory).HasMaxLength(50);
+
                 entity.Property(e => e.TaxDesc).HasMaxLength(256);
 
                 entity.Property(e => e.TaxName).HasMaxLength(256);

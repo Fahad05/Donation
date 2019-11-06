@@ -90,6 +90,26 @@ namespace Taxtation.App_Code
             return temp;
         }
 
+        public string JournalVoucher(string id,string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtjournalMaster.Where(x => x.Id==id && x.UserName == userName).OrderByDescending(x => x.Trno).FirstOrDefault().Trno;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "JV-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "JV-00000001";
+            }
+
+            return temp;
+        }
+
 
         public string getParentAccountCodeDetail(string id)
         {
@@ -119,7 +139,8 @@ namespace Taxtation.App_Code
             string TrpostStatus, double TrserialNo, string TraccCode, string TrrefAccCode, string TrdocReference,
             double? Trdebit, double? Trcredit, double? TrexchangeRate, double? TramountConverted, int? TrcurId, int? TrtxsId,
             double? TrtaxPercent, double? TrtaxAmount, string TrchequeNo, DateTime? TrchequeDate, string TrrefNo, string Trremarks, string TrentryType,
-            string EnterBy, DateTime? EnterDate, string EntryFrom, int? SitId, string TrentryTypeDoc)
+            string EnterBy, DateTime? EnterDate, string EntryFrom, int? SitId, string TrentryTypeDoc,
+            int? TRCustomerRef, int? TRSupplierRef, int? TRTaxRef)
         {
             Txtledger obj = new Txtledger();
             obj.Id = id;
@@ -151,6 +172,9 @@ namespace Taxtation.App_Code
             obj.EntryFrom = EntryFrom;
             obj.SitId = SitId;
             obj.TrentryTypeDoc = TrentryTypeDoc;
+            obj.TrcustomerRef = TRCustomerRef;
+            obj.TrsupplierRef = TRSupplierRef;
+            obj.TrtaxRef = TRTaxRef;
             db.Txtledger.Add(obj);
             db.SaveChanges();
         }
