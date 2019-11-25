@@ -34,8 +34,10 @@ namespace Taxtation.Models
         public virtual DbSet<TxtjournalMaster> TxtjournalMaster { get; set; }
         public virtual DbSet<Txtledger> Txtledger { get; set; }
         public virtual DbSet<TxtopeningMaster> TxtopeningMaster { get; set; }
+        public virtual DbSet<TxtpaymentMaster> TxtpaymentMaster { get; set; }
         public virtual DbSet<TxtpurchaseDetail> TxtpurchaseDetail { get; set; }
         public virtual DbSet<TxtpurchaseMaster> TxtpurchaseMaster { get; set; }
+        public virtual DbSet<TxtreceiptMaster> TxtreceiptMaster { get; set; }
         public virtual DbSet<TxtsaleDetail> TxtsaleDetail { get; set; }
         public virtual DbSet<TxtsaleMaster> TxtsaleMaster { get; set; }
 
@@ -1194,6 +1196,100 @@ namespace Taxtation.Models
                 entity.Property(e => e.TrtotalAmount).HasColumnName("TRTotalAmount");
             });
 
+            modelBuilder.Entity<TxtpaymentMaster>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.PayId });
+
+                entity.ToTable("TXTPaymentMaster");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.PayId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.EditBy).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(50);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.TrSupAccCode).HasMaxLength(50);
+
+                entity.Property(e => e.Trdate)
+                    .HasColumnName("TRDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrexchangeRate).HasColumnName("TRExchangeRate");
+
+                entity.Property(e => e.Trgldate)
+                    .HasColumnName("TRGLDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrmainRemarks)
+                    .HasColumnName("TRMainRemarks")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Trmode)
+                    .HasColumnName("TRMode")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Trno)
+                    .IsRequired()
+                    .HasColumnName("TRNo")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrpostDate)
+                    .HasColumnName("TRPostDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrpostDateReverse)
+                    .HasColumnName("TRPostDateReverse")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrpostStatus)
+                    .HasColumnName("TRPostStatus")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrpostStatusReverse)
+                    .HasColumnName("TRPostStatusReverse")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrrefMain)
+                    .HasColumnName("TRRefMain")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrreverseDate)
+                    .HasColumnName("TRReverseDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrreverseStatus).HasColumnName("TRReverseStatus");
+
+                entity.Property(e => e.TrsubTotal).HasColumnName("TRSubTotal");
+
+                entity.Property(e => e.TrtotalAmount).HasColumnName("TRTotalAmount");
+
+                entity.Property(e => e.TrtotalTax).HasColumnName("TRTotalTax");
+
+                entity.Property(e => e.TrtotalTaxExcise).HasColumnName("TRTotalTaxExcise");
+
+                entity.Property(e => e.Trtype)
+                    .HasColumnName("TRType")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrtypeAccount)
+                    .HasColumnName("TRTypeAccount")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrtypeAccountName)
+                    .HasColumnName("TRTypeAccountName")
+                    .HasMaxLength(250);
+            });
+
             modelBuilder.Entity<TxtpurchaseDetail>(entity =>
             {
                 entity.HasKey(e => e.Sno);
@@ -1268,6 +1364,102 @@ namespace Taxtation.Models
                 entity.Property(e => e.PurSupDate).HasColumnType("smalldatetime");
 
                 entity.Property(e => e.PurType).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TxtreceiptMaster>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.RecId });
+
+                entity.ToTable("TXTReceiptMaster");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.RecId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.EditBy).HasMaxLength(50);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(50);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.TrcusAccCode)
+                    .HasColumnName("TRCusAccCode")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Trdate)
+                    .HasColumnName("TRDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrexchangeRate).HasColumnName("TRExchangeRate");
+
+                entity.Property(e => e.Trgldate)
+                    .HasColumnName("TRGLDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrmainRemarks)
+                    .HasColumnName("TRMainRemarks")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Trmode)
+                    .HasColumnName("TRMode")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Trno)
+                    .IsRequired()
+                    .HasColumnName("TRNo")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrpostDate)
+                    .HasColumnName("TRPostDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrpostDateReverse)
+                    .HasColumnName("TRPostDateReverse")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrpostStatus)
+                    .HasColumnName("TRPostStatus")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrpostStatusReverse)
+                    .HasColumnName("TRPostStatusReverse")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrrefMain)
+                    .HasColumnName("TRRefMain")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrreverseDate)
+                    .HasColumnName("TRReverseDate")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.TrreverseStatus).HasColumnName("TRReverseStatus");
+
+                entity.Property(e => e.TrsubTotal).HasColumnName("TRSubTotal");
+
+                entity.Property(e => e.TrtotalAmount).HasColumnName("TRTotalAmount");
+
+                entity.Property(e => e.TrtotalTax).HasColumnName("TRTotalTax");
+
+                entity.Property(e => e.TrtotalTaxExcise).HasColumnName("TRTotalTaxExcise");
+
+                entity.Property(e => e.Trtype)
+                    .HasColumnName("TRType")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrtypeAccount)
+                    .HasColumnName("TRTypeAccount")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TrtypeAccountName)
+                    .HasColumnName("TRTypeAccountName")
+                    .HasMaxLength(250);
             });
 
             modelBuilder.Entity<TxtsaleDetail>(entity =>
