@@ -740,6 +740,14 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.ScnDate).HasColumnType("smalldatetime");
 
+                entity.Property(e => e.ScnEditBy).HasMaxLength(256);
+
+                entity.Property(e => e.ScnEditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.ScnEnterBy).HasMaxLength(256);
+
+                entity.Property(e => e.ScnEnterDate).HasColumnType("smalldatetime");
+
                 entity.Property(e => e.ScnExcPaidAmount).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.ScnGpdate)

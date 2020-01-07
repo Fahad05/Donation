@@ -46,5 +46,9 @@ namespace Taxtation.Models
         public double? ScnTotalExciseTaxMain { get; set; }
         public string ScnSaleTrNo { get; set; }
         public DateTime? ScnSaleDate { get; set; }
+        public string ScnEnterBy { get; set; }
+        public DateTime? ScnEnterDate { get; set; }
+        public string ScnEditBy { get; set; }
+        public DateTime? ScnEditDate { get; set; }
     }
 }
