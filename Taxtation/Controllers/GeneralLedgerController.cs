@@ -219,18 +219,107 @@ namespace Taxtation.Controllers
         }
 
         [HttpGet]
-        public IActionResult PaymentDetail()
+        public async Task<IActionResult> PaymentDetail(string id)
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+            TXTPaymentMasterView obj = new TXTPaymentMasterView();
+            obj.lstCredit = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountSubNature.Contains("BANK ACCOUNT")).ToList();
+            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
+            obj.lstSupplier = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName || x.AccAccountSubNature.Contains("SUPPLIER") || x.AccAccountSubNature.Contains("CONTRACTOR")).ToList();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.AccAccountSubNature != "TAX" && (x.AccAccountNature == "ASSET" || x.AccAccountNature == "EXPENSE" || x.AccAccountNature == "LIABILITY")).OrderBy(x => x.AccName).ToList();
+            obj.lstExcise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxCategory == "EXCISE").ToList();
+            obj.lstTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxCategory == "VAT").ToList();
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                obj.master.Trdate = DateTime.Now;
+                obj.master.Trno = tX.PaymentVoucher(user.Id, user.UserName);
+                obj.lstDetailPurchase = null;
+                obj.lstDetailOther = null;
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+
+            }
+            return View(obj);
         }
 
         [HttpPost]
-        public IActionResult PaymentDetail(TXTPaymentMasterView obj)
+        public IActionResult PaymentDetail(TXTPaymentMasterView obj, string Save, string Update, string Delete)
         {
             return View();
         }
 
         #endregion
 
+
+        #region Functions
+
+        public List<Txscoadetail> PaymentCredit(string BankCash)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            List<Txscoadetail> lstCredit = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountSubNature == BankCash).ToList();
+            return lstCredit;
+        }
+
+
+        public TXTPaymentMasterView supplierChange(string Trno , int ExchangeRate, string supplier)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            TXTPaymentMasterView query = new TXTPaymentMasterView();
+            List<TxtpurchaseMaster> purchase = new List<TxtpurchaseMaster>();
+            int supId = accCodeToSupplier(supplier);
+            Txtledger Ledger = new Txtledger();
+            purchase = db.TxtpurchaseMaster.Where(x => x.Id == id && x.UserName == userName && x.SupId == supId && x.PurPayTerm== "CREDIT").ToList();
+            if(purchase != null)
+            {
+                for (int i = 0; i < purchase.Count; i++)
+                {
+                    string TotalPaid = db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno != Trno && x.TrrefNo == purchase[i].PurPoref && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
+                    if (TotalPaid != null)
+                    {
+                        TxtpaymentDetail payment = new TxtpaymentDetail();
+                        payment.PayBillDate = purchase[i].PurDate;
+                        payment.PayBillNo = purchase[i].PurPoref;
+                        payment.PayOriginalAmt = Convert.ToDouble(db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.PurId == purchase[i].PurId).Sum(x => x.PurGrossAmt).ToString());
+                        payment.PayAmtOwing = payment.PayOriginalAmt - Convert.ToDouble(TotalPaid);
+                        payment.PayDiscAmt = Convert.ToDouble(db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.PurId == purchase[i].PurId).Sum(x => x.PurDiscountAmt).ToString());
+                        payment.PayPaymentAmt = payment.PayOriginalAmt - Convert.ToDouble(TotalPaid);
+                        payment.PayExcAmt = (payment.PayOriginalAmt - Convert.ToDouble(TotalPaid)) * ExchangeRate;
+                        query.lstDetailOther.Add(payment);
+                    }
+                }
+            }
+            return query;
+        }
+
+
+        #endregion
+
+
+
+
+        public int accCodeToSupplier(string SupCode)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            var CoaId =  db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccCode == SupCode).FirstOrDefault().Coaid;
+            return db.TxssupplierDetail.Where(x => x.Id == id && x.UserName == userName && x.CoaId == CoaId).FirstOrDefault().SupId;
+        }
+
     }
+
+
+
 }
