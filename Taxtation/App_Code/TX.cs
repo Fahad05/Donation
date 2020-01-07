@@ -110,6 +110,26 @@ namespace Taxtation.App_Code
             return temp;
         }
 
+        public string PaymentVoucher(string id, string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtpaymentMaster.Where(x => x.Id == id && x.UserName == userName).OrderByDescending(x => x.Trno).FirstOrDefault().Trno;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "PV-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "PV-00000001";
+            }
+            return temp;
+            
+        }
+
 
         public string getParentAccountCodeDetail(string id)
         {
