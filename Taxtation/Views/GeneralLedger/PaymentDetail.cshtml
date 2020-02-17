@@ -1,180 +1,359 @@
-﻿@model Taxtation.Models.TxtpaymentMaster
+﻿@model Taxtation.ViewModel.TXTPaymentMasterView
 
 @{
     ViewData["Title"] = "PaymentDetail";
+
+    var index = 5;
+    if (Model.lstDetailPurchase != null)
+    {
+        index = Model.lstLedger.Count;
+    }
+    var index1 = 5;
+    if (Model.lstDetailOther != null)
+    {
+        index1 = Model.lstLedger.Count;
+    }
 }
 
-<h2>PaymentDetail</h2>
+<form asp-action="Purchase" method="post">
+    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
+        <div class="col-sm-12" style="padding-left:8.2%;">
+            @if (ViewData["_Save"].ToString() == "True")
+            {
+                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+            }
+            @if (ViewData["_Update"].ToString() == "True")
+            {
+                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
+                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+            }
+            <div style="float:right;padding-right:8.3%">
+                <a asp-action="showPurchase" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+            </div>
+        </div>
 
-<h4>TxtpaymentMaster</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="PaymentDetail">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PayId" class="control-label"></label>
-                <input asp-for="PayId" class="form-control" />
-                <span asp-validation-for="PayId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trno" class="control-label"></label>
-                <input asp-for="Trno" class="form-control" />
-                <span asp-validation-for="Trno" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trdate" class="control-label"></label>
-                <input asp-for="Trdate" class="form-control" />
-                <span asp-validation-for="Trdate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trgldate" class="control-label"></label>
-                <input asp-for="Trgldate" class="form-control" />
-                <span asp-validation-for="Trgldate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SitId" class="control-label"></label>
-                <input asp-for="SitId" class="form-control" />
-                <span asp-validation-for="SitId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrtotalAmount" class="control-label"></label>
-                <input asp-for="TrtotalAmount" class="form-control" />
-                <span asp-validation-for="TrtotalAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trtype" class="control-label"></label>
-                <input asp-for="Trtype" class="form-control" />
-                <span asp-validation-for="Trtype" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrtypeAccount" class="control-label"></label>
-                <input asp-for="TrtypeAccount" class="form-control" />
-                <span asp-validation-for="TrtypeAccount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrtypeAccountName" class="control-label"></label>
-                <input asp-for="TrtypeAccountName" class="form-control" />
-                <span asp-validation-for="TrtypeAccountName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrmainRemarks" class="control-label"></label>
-                <input asp-for="TrmainRemarks" class="form-control" />
-                <span asp-validation-for="TrmainRemarks" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrexchangeRate" class="control-label"></label>
-                <input asp-for="TrexchangeRate" class="form-control" />
-                <span asp-validation-for="TrexchangeRate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CurId" class="control-label"></label>
-                <input asp-for="CurId" class="form-control" />
-                <span asp-validation-for="CurId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trmode" class="control-label"></label>
-                <input asp-for="Trmode" class="form-control" />
-                <span asp-validation-for="Trmode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrrefMain" class="control-label"></label>
-                <input asp-for="TrrefMain" class="form-control" />
-                <span asp-validation-for="TrrefMain" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrSupAccCode" class="control-label"></label>
-                <input asp-for="TrSupAccCode" class="form-control" />
-                <span asp-validation-for="TrSupAccCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrtotalTax" class="control-label"></label>
-                <input asp-for="TrtotalTax" class="form-control" />
-                <span asp-validation-for="TrtotalTax" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrsubTotal" class="control-label"></label>
-                <input asp-for="TrsubTotal" class="form-control" />
-                <span asp-validation-for="TrsubTotal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrtotalTaxExcise" class="control-label"></label>
-                <input asp-for="TrtotalTaxExcise" class="form-control" />
-                <span asp-validation-for="TrtotalTaxExcise" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrreverseStatus" class="control-label"></label>
-                <input asp-for="TrreverseStatus" class="form-control" />
-                <span asp-validation-for="TrreverseStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrreverseDate" class="control-label"></label>
-                <input asp-for="TrreverseDate" class="form-control" />
-                <span asp-validation-for="TrreverseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrpostStatus" class="control-label"></label>
-                <input asp-for="TrpostStatus" class="form-control" />
-                <span asp-validation-for="TrpostStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrpostDate" class="control-label"></label>
-                <input asp-for="TrpostDate" class="form-control" />
-                <span asp-validation-for="TrpostDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrpostStatusReverse" class="control-label"></label>
-                <input asp-for="TrpostStatusReverse" class="form-control" />
-                <span asp-validation-for="TrpostStatusReverse" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrpostDateReverse" class="control-label"></label>
-                <input asp-for="TrpostDateReverse" class="form-control" />
-                <span asp-validation-for="TrpostDateReverse" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApprovedLevel" class="control-label"></label>
-                <input asp-for="ApprovedLevel" class="form-control" />
-                <span asp-validation-for="ApprovedLevel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EnterBy" class="control-label"></label>
-                <input asp-for="EnterBy" class="form-control" />
-                <span asp-validation-for="EnterBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EnterDate" class="control-label"></label>
-                <input asp-for="EnterDate" class="form-control" />
-                <span asp-validation-for="EnterDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EditBy" class="control-label"></label>
-                <input asp-for="EditBy" class="form-control" />
-                <span asp-validation-for="EditBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EditDate" class="control-label"></label>
-                <input asp-for="EditDate" class="form-control" />
-                <span asp-validation-for="EditDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </form>
     </div>
-</div>
+    <div class="row">
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.Id" hidden="hidden" class="form-control" />
+        </div>
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.UserName" hidden="hidden" class="form-control" />
+        </div>
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.PayId" hidden="hidden" class="form-control" />
+        </div>
+    </div>
+    <div class="row" style="padding-top:70px;z-index:1">
+        <div class="col-md-3">
+            Purchase Order:
+            <input type="text" asp-for="master.Trno" readonly="readonly" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Transaction Date:
+            <input type="date" asp-for="master.Trdate" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            Payment Mode:
+            <select asp-for="master.Trtype" class="form-control" required="required">
+                <option value="BANK ACCOUNT">BANK</option>
+                <option value="CASH">CASH</option>
+            </select>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+        </div><div class="col-md-3">
+            Credit Account:
+            <select asp-for="master.TrtypeAccount" class="form-control" required>
+                <option value="">Select</option>
+                @foreach (var j in Model.lstCredit)
+                {
+                    <option value=@j.Coaid>@j.AccName</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Payment Type:
+            <select asp-for="master.Trmode" class="form-control" required>
+                <option value="PURCHASE PAYMENT">PURCHASE PAYMENT</option>
+                <option value="OTHER PAYMENT">OTHER PAYMENT</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            Cheque/Ref No:
+            <input type="text" asp-for="master.Trmode" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Cheque Date:
+            <input type="date" asp-for="master.CurId" class="form-control" />
+        </div> <div class="col-md-3">
+            Exchange Rate:
+            <input type="number" asp-for="master.TrexchangeRate" onchange="ExchangeRate()" class="form-control" required="required" />
+        </div>
 
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Reference No:
+            <input type="text" asp-for="master.TrrefMain" class="form-control" />
+        </div>
+        <div class="col-md-9">
+            Remarks:
+            <input type="text" asp-for="master.TrmainRemarks" class="form-control" />
+
+        </div>
+
+    </div>
+    <div class="row" id="SupplierDiv">
+        <div class="col-md-3">
+            Supplier:
+            <select asp-for="master.TrSupAccCode" class="form-control">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstSupplier)
+                {
+                    <option value=@j.AccCode>@j.AccName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-3">
+            <button id="addNewRow" class="form-control">Add New Row</button>
+        </div>
+        <div class="col-lg-9"></div>
+    </div>
+    <br />
+    <div class="row" id="OtherPayment">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTableOtherPayment" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:230px;">Account</th>
+                        <th style="width:120px;">Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:230px;">Excise Slab</th>
+                        <th style="width:120px;">Excise Percent</th>
+                        <th style="width:120px;">Excise Amount</th>
+                        <th style="width:230px;">VAT Slab</th>
+                        <th style="width:120px;">VAT Percent</th>
+                        <th style="width:120px;">VAT Amount</th>
+                        <th style="width:120px;">Chq No</th>
+                        <th style="width:170px;">Chq Date</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index1; i++)
+                    {
+                        <tr>
+                            <td>
+                                <select asp-for="lstDetailOther[i].Coaid" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" asp-for="lstDetailOther[i].PayPaymentAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailOther[i].PayExcAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="lstDetailOther[i].ExciseId" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" asp-for="lstDetailOther[i].PayExcisePercent" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailOther[i].PayExciseAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="lstDetailOther[i].TaxId" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstTax)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" asp-for="lstDetailOther[i].PayTaxPercent" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailOther[i].PayTaxAmount" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="lstDetailOther[i].PayChqNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="date" asp-for="lstDetailOther[i].PayChqDate" class="form-control" style="width:170px;" /></td>
+
+                            <td><input type="text" asp-for="lstDetailOther[i].PayRemarks" class="form-control" style="width:230px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" id="PurchaseDetail">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTablePurchaseDetail" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:170px;">Bill Date</th>
+                        <th style="width:120px;">Bill No</th>
+                        <th style="width:120px;">Orignal Amount</th>
+                        <th style="width:120px;">Amount Owing</th>
+                        <th style="width:120px;">Discount Amount</th>
+                        <th style="width:120px;">Payment Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:120px;">Cheque No</th>
+                        <th style="width:170px;">Cheque Date</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index; i++)
+                    {
+                        <tr>
+                            <td><input type="date" asp-for="lstDetailPurchase[i].PayBillDate" class="form-control" style="width:170px;" /></td>
+                            <td><input type="text" asp-for="lstDetailPurchase[i].PayBillNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailPurchase[i].PayOriginalAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailPurchase[i].PayAmtOwing" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailPurchase[i].PayDiscAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailPurchase[i].PayPaymentAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailPurchase[i].PayExcAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="lstDetailPurchase[i].PayChqNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="date" asp-for="lstDetailPurchase[i].PayChqDate" class="form-control" style="width:170px;" /></td>
+                            <td><input type="text" asp-for="lstDetailPurchase[i].PayRemarks" class="form-control" style="width:230px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
+
+        <div class="col-md-2">
+            Sub Total
+            <input type="text" asp-for="master.TrsubTotal" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Excise Tax
+            <input type="text" asp-for="master.TrtotalTaxExcise" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Vat
+            <input type="text" asp-for="master.TrtotalTax" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Total
+            <input type="text" asp-for="master.TrtotalAmount" readonly="readonly" class="form-control-footer" />
+        </div>
+    </div>
+</form>
+
+@section Scripts{ 
+
+
+    <script type="text/javascript">
+        if ($('#master_Trmode').val() == 'PURCHASE PAYMENT')
+        {
+            $('#OtherPayment').hide();
+            $('#PurchaseDetail').show();
+        }
+        else
+        {
+            $('#OtherPayment').show();
+            $('#PurchaseDetail').hide();
+        }
+
+        $(document).ready(function () {
+            $('#master_Trmode').change(function () {
+
+                if ($('#master_Trmode').val() == 'PURCHASE PAYMENT') {
+                    $('#OtherPayment').hide();
+                    $('#PurchaseDetail').show();
+                    $('#SupplierDiv').show();
+                }
+                else {
+                    $('#OtherPayment').show();
+                    $('#PurchaseDetail').hide();
+                    $('#SupplierDiv').hide();
+                }
+            })
+
+            $('#master_Trtype').change(function () {
+                var credit = "<option value=''>Select</option>";
+                    $.ajax({
+                        type: 'GET',
+                        url: '/GeneralLedger/PaymentCredit',
+                        data: { BankCash: $('#master_Trtype').val() },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            for (var i = 0; i < result.length; i++) {
+                                credit += "<option value='" + result[i].accCode + "'>" + result[i].accName + "</option>";
+                            }
+                            $('#master_TrtypeAccount option').remove();
+                            $('#master_TrtypeAccount').append(credit);
+                        },
+                        error: function () {
+                        }
+                    })
+                
+ 
+            })
+
+            $('#addNewRow').click(function (event) {
+                if ($('#master_Trmode').val() == 'PURCHASE PAYMENT') {
+                    var rowCount = $('#myTablePurchaseDetail tbody tr').length;
+                    $('#myTablePurchaseDetail').append('<tr><td><input type="date" class="form-control" style="width:170px;" id="lstDetailPurchase_' + rowCount + '__PayBillDate" name="lstDetailPurchase[' + rowCount + '].PayBillDate" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailPurchase_' + rowCount + '__PayBillNo" name="lstDetailPurchase[' + rowCount + '].PayBillNo" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayOriginalAmt must be a number." id="lstDetailPurchase_' + rowCount + '__PayOriginalAmt" name="lstDetailPurchase[' + rowCount + '].PayOriginalAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayAmtOwing must be a number." id="lstDetailPurchase_' + rowCount + '__PayAmtOwing" name="lstDetailPurchase[' + rowCount + '].PayAmtOwing" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayDiscAmt must be a number." id="lstDetailPurchase_' + rowCount + '__PayDiscAmt" name="lstDetailPurchase[' + rowCount + '].PayDiscAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayPaymentAmt must be a number." id="lstDetailPurchase_' + rowCount + '__PayPaymentAmt" name="lstDetailPurchase[' + rowCount + '].PayPaymentAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayExcAmt must be a number." id="lstDetailPurchase_' + rowCount + '__PayExcAmt" name="lstDetailPurchase[' + rowCount + '].PayExcAmt" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailPurchase_' + rowCount + '__PayChqNo" name="lstDetailPurchase[' + rowCount + '].PayChqNo" value=""></td><td><input type="date" class="form-control" style="width:170px;" id="lstDetailPurchase_' + rowCount + '__PayChqDate" name="lstDetailPurchase[' + rowCount + '].PayChqDate" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="lstDetailPurchase_' + rowCount + '__PayRemarks" name="lstDetailPurchase[' + rowCount + '].PayRemarks" value=""></td></tr>')
+                }
+                else {
+                    var rowCount = $('#myTableOtherPayment tbody tr').length;
+                    var dropDownAccount = document.getElementById('lstDetailOther_0__Coaid').innerHTML;
+                    var dropDownExcise = document.getElementById('lstDetailOther_0__ExciseId').innerHTML;
+                    var dropDownTax = document.getElementById('lstDetailOther_0__TaxId').innerHTML;
+                    $('#myTableOtherPayment').append('<tr><td><select class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__Coaid" name="lstDetailOther[' + rowCount + '].Coaid">' + dropDownAccount + '</select></td ><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayPaymentAmt must be a number." id="lstDetailOther_' + rowCount + '__PayPaymentAmt" name="lstDetailOther[' + rowCount + '].PayPaymentAmt" value=""></td><td><input type="number" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayExcAmt must be a number." id="lstDetailOther_' + rowCount + '__PayExcAmt" name="lstDetailOther[' + rowCount + '].PayExcAmt" value=""></td><td><select class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__ExciseId" name="lstDetailOther[' + rowCount + '].ExciseId">' + dropDownExcise + '</select></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayExcisePercent must be a number." id="lstDetailOther_' + rowCount + '__PayExcisePercent" name="lstDetailOther[' + rowCount + '].PayExcisePercent" value=""></td><td><input type="number" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayExciseAmount must be a number." id="lstDetailOther_' + rowCount + '__PayExciseAmount" name="lstDetailOther[' + rowCount + '].PayExciseAmount" value=""></td><td><select class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__TaxId" name="lstDetailOther[' + rowCount + '].TaxId">' + dropDownTax + '</select></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayTaxPercent must be a number." id="lstDetailOther_' + rowCount + '__PayTaxPercent" name="lstDetailOther[' + rowCount + '].PayTaxPercent" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayTaxAmount must be a number." id="lstDetailOther_' + rowCount + '__PayTaxAmount" name="lstDetailOther[' + rowCount + '].PayTaxAmount" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailOther_' + rowCount + '__PayChqNo" name="lstDetailOther[' + rowCount + '].PayChqNo" value=""></td><td><input type="date" class="form-control" style="width:170px;" id="lstDetailOther_' + rowCount + '__PayChqDate" name="lstDetailOther[' + rowCount + '].PayChqDate" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__PayRemarks" name="lstDetailOther[' + rowCount + '].PayRemarks" value=""></td></tr>');
+                    $('#lstDetailOther_' + rowCount + '__Coaid').attr('Selected', true).val("-1");
+                    $('#lstDetailOther_' + rowCount + '__ExciseId').attr('Selected', true).val("-1");
+                    $('#lstDetailOther_' + rowCount + '__TaxId').attr('Selected', true).val("-1");
+                }
+                event.preventDefault();
+            })
+
+            $('#master_TrSupAccCode').change(function () {
+                if ($('#master_TrtypeAccount').val() == '') {
+                    alert('Please Select Any Credit Account!');
+                }
+                else {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/GeneralLedger/supplierChange',
+                        data: { Trno: $('#master_Trno').val(), ExchangeRate: $('#master_TrexchangeRate').val(), supplier: $('#master_TrSupAccCode').val() },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#myTablePurchaseDetail tbody tr').remove();
+                            for (var i = 0; i < result.lstDetailOther.length; i++) {
+                                $('#myTablePurchaseDetail').append('<tr><td><input type="date" class="form-control" style="width:170px;" id="lstDetailPurchase_' + i + '__PayBillDate" name="lstDetailPurchase[' + i + '].PayBillDate" value="' + result.lstDetailOther[i].payBillDate + '"></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailPurchase_' + i + '__PayBillNo" name="lstDetailPurchase[' + i + '].PayBillNo" value="' + result.lstDetailOther[i].payBillNo + '"></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayOriginalAmt must be a number." id="lstDetailPurchase_' + i + '__PayOriginalAmt" name="lstDetailPurchase[' + i + '].PayOriginalAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayAmtOwing must be a number." id="lstDetailPurchase_' + i + '__PayAmtOwing" name="lstDetailPurchase[' + i + '].PayAmtOwing" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayDiscAmt must be a number." id="lstDetailPurchase_' + i + '__PayDiscAmt" name="lstDetailPurchase[' + i + '].PayDiscAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayPaymentAmt must be a number." id="lstDetailPurchase_' + i + '__PayPaymentAmt" name="lstDetailPurchase[' + i + '].PayPaymentAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field PayExcAmt must be a number." id="lstDetailPurchase_' + i + '__PayExcAmt" name="lstDetailPurchase[' + i + '].PayExcAmt" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailPurchase_' + i + '__PayChqNo" name="lstDetailPurchase[' + i + '].PayChqNo" value=""></td><td><input type="date" class="form-control" style="width:170px;" id="lstDetailPurchase_' + i + '__PayChqDate" name="lstDetailPurchase[' + i + '].PayChqDate" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="lstDetailPurchase_' + i + '__PayRemarks" name="lstDetailPurchase[' + i + '].PayRemarks" value=""></td></tr>')
+                            }
+                            console.log(result);
+                        },
+                        error: function () {
+                        }
+                    })
+                }
+            })
+
+            function amountChange() {
+                var rowCount = $('#myTableOtherPayment tbody tr').length;
+                var subTotal = 0;
+                var totalExcise = 0;
+                var totalVAT = 0;
+                var Total = 0;
+                var excAmount = 0;
+                for (var i = 0; i < rowCount; i++) {
+                    if ($('#lstDetailOther_' + i + '__Coaid').val() != '-1' && $('#lstDetailOther_' + i + '__PayPaymentAmt') != '') {
+
+                    }
+                }
+            }
+        })
+    </script>
+
+}
