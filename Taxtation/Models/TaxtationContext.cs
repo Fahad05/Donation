@@ -38,6 +38,7 @@ namespace Taxtation.Models
         public virtual DbSet<TxtpaymentMaster> TxtpaymentMaster { get; set; }
         public virtual DbSet<TxtpurchaseDetail> TxtpurchaseDetail { get; set; }
         public virtual DbSet<TxtpurchaseMaster> TxtpurchaseMaster { get; set; }
+        public virtual DbSet<TxtreceiptDetail> TxtreceiptDetail { get; set; }
         public virtual DbSet<TxtreceiptMaster> TxtreceiptMaster { get; set; }
         public virtual DbSet<TxtsaleDetail> TxtsaleDetail { get; set; }
         public virtual DbSet<TxtsaleMaster> TxtsaleMaster { get; set; }
@@ -47,7 +48,7 @@ namespace Taxtation.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Data Source=IT02;Initial Catalog=TDCERPCore;Persist Security Info=True;User ID=sa;Password=Sirsyed45;");
+                optionsBuilder.UseSqlServer(@"Data Source=IT02;Initial Catalog=TAXTATION;Persist Security Info=True;User ID=sa;Password=Sirsyed45;");
             }
         }
 
@@ -1382,6 +1383,39 @@ namespace Taxtation.Models
                 entity.Property(e => e.PurSupDate).HasColumnType("smalldatetime");
 
                 entity.Property(e => e.PurType).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TxtreceiptDetail>(entity =>
+            {
+                entity.HasKey(e => e.Sno);
+
+                entity.ToTable("TXTReceiptDetail");
+
+                entity.Property(e => e.Sno)
+                    .HasColumnName("SNo")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Coaid).HasColumnName("COAId");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.RecChqDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.RecChqNo).HasMaxLength(50);
+
+                entity.Property(e => e.RecExciseSlab).HasMaxLength(50);
+
+                entity.Property(e => e.RecInvDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.RecInvNo).HasMaxLength(50);
+
+                entity.Property(e => e.RecRemarks).HasMaxLength(1000);
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(256);
             });
 
             modelBuilder.Entity<TxtreceiptMaster>(entity =>

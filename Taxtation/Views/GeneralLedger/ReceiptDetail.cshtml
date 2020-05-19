@@ -1,0 +1,359 @@
+﻿@model Taxtation.ViewModel.TXTReceiptMasterView
+
+@{
+    ViewData["Title"] = "ReceiptDetail";
+
+    var index = 5;
+    if (Model.lstDetailSale != null)
+    {
+        index = Model.lstLedger.Count;
+    }
+    var index1 = 5;
+    if (Model.lstDetailOther != null)
+    {
+        index1 = Model.lstLedger.Count;
+    }
+}
+
+<form asp-action="Receipt" method="post">
+    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
+        <div class="col-sm-12" style="padding-left:8.2%;">
+            @if (ViewData["_Save"].ToString() == "True")
+            {
+                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+            }
+            @if (ViewData["_Update"].ToString() == "True")
+            {
+                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
+                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+            }
+            <div style="float:right;padding-right:8.3%">
+                <a asp-action="showReceipt" asp-controller="GeneralLedger" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.Id" hidden="hidden" class="form-control" />
+        </div>
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.UserName" hidden="hidden" class="form-control" />
+        </div>
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.RecId" hidden="hidden" class="form-control" />
+        </div>
+    </div>
+    <div class="row" style="padding-top:70px;z-index:1">
+        <div class="col-md-3">
+            Sale Order:
+            <input type="text" asp-for="master.Trno" readonly="readonly" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Transaction Date:
+            <input type="date" asp-for="master.Trdate" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            Receipt Mode:
+            <select asp-for="master.Trtype" class="form-control" required="required">
+                <option value="BANK ACCOUNT">BANK</option>
+                <option value="CASH">CASH</option>
+            </select>
+
+        </div><div class="col-md-3">
+            Credit Account:
+            <select asp-for="master.TrtypeAccount" class="form-control" required>
+                <option value="">Select</option>
+                @foreach (var j in Model.lstDebit)
+                {
+                    <option value=@j.Coaid>@j.AccName</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Receipt Type:
+            <select asp-for="master.Trmode" class="form-control" required>
+                <option value="SALE RECEIPT">SALE RECEIPT</option>
+                @*<option value="OTHER RECEIPT">OTHER RECEIPT</option>*@
+            </select>
+        </div>
+        <div class="col-md-3">
+            Cheque/Ref No:
+            <input type="text" asp-for="master.Trmode" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Cheque Date:
+            <input type="date" asp-for="master.CurId" class="form-control" />
+        </div> <div class="col-md-3">
+            Exchange Rate:
+            <input type="number" asp-for="master.TrexchangeRate" onchange="ExchangeRate()" class="form-control" required="required" />
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Reference No:
+            <input type="text" asp-for="master.TrrefMain" class="form-control" />
+        </div>
+        <div class="col-md-9">
+            Remarks:
+            <input type="text" asp-for="master.TrmainRemarks" class="form-control" />
+
+        </div>
+
+    </div>
+    <div class="row" id="CustomerDiv">
+        <div class="col-md-3">
+            Customer:
+            <select asp-for="master.TrcusAccCode" class="form-control">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstCustomer)
+                {
+                    <option value=@j.AccCode>@j.AccName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-3">
+            <button id="addNewRow" class="form-control">Add New Row</button>
+        </div>
+        <div class="col-lg-9"></div>
+    </div>
+    <br />
+    <div class="row" id="OtherReceipt">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTableOtherReceipt" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:230px;">Account</th>
+                        <th style="width:120px;">Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:230px;">Excise Slab</th>
+                        <th style="width:120px;">Excise Percent</th>
+                        <th style="width:120px;">Excise Amount</th>
+                        <th style="width:230px;">VAT Slab</th>
+                        <th style="width:120px;">VAT Percent</th>
+                        <th style="width:120px;">VAT Amount</th>
+                        <th style="width:120px;">Chq No</th>
+                        <th style="width:170px;">Chq Date</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index1; i++)
+                    {
+                        <tr>
+                            <td>
+                                <select asp-for="lstDetailOther[i].Coaid" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" asp-for="lstDetailOther[i].RecReceiptAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailOther[i].RecExcAmt" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="lstDetailOther[i].ExciseId" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstExcise)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" asp-for="lstDetailOther[i].RecExcisePercent" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailOther[i].RecExciseAmount" readonly="readonly" class="form-control" style="width:120px;" /></td>
+                            <td>
+                                <select asp-for="lstDetailOther[i].TaxId" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstTax)
+                                    {
+                                        <option value=@j.TaxId>@j.TaxName</option>}
+                                </select>
+                            </td>
+                            <td><input type="number" asp-for="lstDetailOther[i].RecTaxPercent" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailOther[i].RecTaxAmount" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="lstDetailOther[i].RecChqNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="date" asp-for="lstDetailOther[i].RecChqDate" class="form-control" style="width:170px;" /></td>
+
+                            <td><input type="text" asp-for="lstDetailOther[i].RecRemarks" class="form-control" style="width:230px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" id="SaleDetail">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTableSaleDetail" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:170px;">Invoice Date</th>
+                        <th style="width:120px;">Invoice No</th>
+                        <th style="width:120px;">Orignal Amount</th>
+                        <th style="width:120px;">Amount Owing</th>
+                        <th style="width:120px;">Discount Amount</th>
+                        <th style="width:120px;">Receipt Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:120px;">Cheque No</th>
+                        <th style="width:170px;">Cheque Date</th>
+                        <th style="width:230px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index; i++)
+                    {
+                        <tr>
+                            <td><input type="date" asp-for="lstDetailSale[i].RecInvDate" class="form-control" style="width:170px;" /></td>
+                            <td><input type="text" asp-for="lstDetailSale[i].RecInvNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailSale[i].RecOriginalAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailSale[i].RecAmtOwing" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailSale[i].RecDiscAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailSale[i].RecReceiptAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" asp-for="lstDetailSale[i].RecExcAmt" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="lstDetailSale[i].RecChqNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="date" asp-for="lstDetailSale[i].RecChqDate" class="form-control" style="width:170px;" /></td>
+                            <td><input type="text" asp-for="lstDetailSale[i].RecRemarks" class="form-control" style="width:230px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
+
+        <div class="col-md-2">
+            Sub Total
+            <input type="text" asp-for="master.TrsubTotal" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Excise Tax
+            <input type="text" asp-for="master.TrtotalTaxExcise" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Vat
+            <input type="text" asp-for="master.TrtotalTax" readonly="readonly" class="form-control-footer" />
+        </div>
+        <div class="col-md-2">
+            Total
+            <input type="text" asp-for="master.TrtotalAmount" readonly="readonly" class="form-control-footer" />
+        </div>
+    </div>
+</form>
+
+@section Scripts{ 
+
+
+    <script type="text/javascript">
+        if ($('#master_Trmode').val() == 'SALE RECEIPT')
+        {
+            $('#OtherReceipt').hide();
+            $('#SaleDetail').show();
+        }
+        else
+        {
+            $('#OtherReceipt').show();
+            $('#SaleDetail').hide();
+        }
+
+        $(document).ready(function () {
+            $('#master_Trmode').change(function () {
+
+                if ($('#master_Trmode').val() == 'SALE RECEIPT') {
+                    $('#OtherReceipt').hide();
+                    $('#SaleDetail').show();
+                    $('#CustomerDiv').show();
+                }
+                else {
+                    $('#OtherReceipt').show();
+                    $('#SaleDetail').hide();
+                    $('#CustomerDiv').hide();
+                }
+            })
+
+            $('#master_Trtype').change(function () {
+                var credit = "<option value=''>Select</option>";
+                    $.ajax({
+                        type: 'GET',
+                        url: '/GeneralLedger/ReceiptDebit',
+                        data: { BankCash: $('#master_Trtype').val() },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            for (var i = 0; i < result.length; i++) {
+                                credit += "<option value='" + result[i].accCode + "'>" + result[i].accName + "</option>";
+                            }
+                            $('#master_TrtypeAccount option').remove();
+                            $('#master_TrtypeAccount').append(credit);
+                        },
+                        error: function () {
+                        }
+                    })
+                
+ 
+            })
+
+            $('#addNewRow').click(function (event) {
+                if ($('#master_Trmode').val() == 'SALE RECEIPT') {
+                    var rowCount = $('#myTableSaleDetail tbody tr').length;
+                    $('#myTableSaleDetail').append('<tr><td><input type="date" class="form-control" style="width:170px;" id="lstDetailSale_' + rowCount + '__RecInvDate" name="lstDetailSale[' + rowCount + '].RecInvDate" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailSale_' + rowCount + '__RecInvNo" name="lstDetailSale[' + rowCount + '].RecInvNo" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecOriginalAmt must be a number." id="lstDetailSale_' + rowCount + '__RecOriginalAmt" name="lstDetailSale[' + rowCount + '].RecOriginalAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecAmtOwing must be a number." id="lstDetailSale_' + rowCount + '__RecAmtOwing" name="lstDetailSale[' + rowCount + '].RecAmtOwing" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecDiscAmt must be a number." id="lstDetailSale_' + rowCount + '__RecDiscAmt" name="lstDetailSale[' + rowCount + '].RecDiscAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecReceiptAmt must be a number." id="lstDetailSale_' + rowCount + '__RecReceiptAmt" name="lstDetailSale[' + rowCount + '].RecReceiptAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecExcAmt must be a number." id="lstDetailSale_' + rowCount + '__RecExcAmt" name="lstDetailSale[' + rowCount + '].RecExcAmt" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailSale_' + rowCount + '__RecChqNo" name="lstDetailSale[' + rowCount + '].RecChqNo" value=""></td><td><input type="date" class="form-control" style="width:170px;" id="lstDetailSale_' + rowCount + '__RecChqDate" name="lstDetailSale[' + rowCount + '].RecChqDate" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="lstDetailSale_' + rowCount + '__RecRemarks" name="lstDetailSale[' + rowCount + '].RecRemarks" value=""></td></tr>')
+                }
+                else {
+                    var rowCount = $('#myTableOtherReceipt tbody tr').length;
+                    var dropDownAccount = document.getElementById('lstDetailOther_0__Coaid').innerHTML;
+                    var dropDownExcise = document.getElementById('lstDetailOther_0__ExciseId').innerHTML;
+                    var dropDownTax = document.getElementById('lstDetailOther_0__TaxId').innerHTML;
+                    $('#myTableOtherReceipt').append('<tr><td><select class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__Coaid" name="lstDetailOther[' + rowCount + '].Coaid">' + dropDownAccount + '</select></td ><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecReceiptAmt must be a number." id="lstDetailOther_' + rowCount + '__RecReceiptAmt" name="lstDetailOther[' + rowCount + '].RecReceiptAmt" value=""></td><td><input type="number" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecExcAmt must be a number." id="lstDetailOther_' + rowCount + '__RecExcAmt" name="lstDetailOther[' + rowCount + '].RecExcAmt" value=""></td><td><select class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__ExciseId" name="lstDetailOther[' + rowCount + '].ExciseId">' + dropDownExcise + '</select></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecExcisePercent must be a number." id="lstDetailOther_' + rowCount + '__RecExcisePercent" name="lstDetailOther[' + rowCount + '].RecExcisePercent" value=""></td><td><input type="number" readonly="readonly" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecExciseAmount must be a number." id="lstDetailOther_' + rowCount + '__RecExciseAmount" name="lstDetailOther[' + rowCount + '].RecExciseAmount" value=""></td><td><select class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__TaxId" name="lstDetailOther[' + rowCount + '].TaxId">' + dropDownTax + '</select></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecTaxPercent must be a number." id="lstDetailOther_' + rowCount + '__RecTaxPercent" name="lstDetailOther[' + rowCount + '].RecTaxPercent" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecTaxAmount must be a number." id="lstDetailOther_' + rowCount + '__RecTaxAmount" name="lstDetailOther[' + rowCount + '].RecTaxAmount" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailOther_' + rowCount + '__RecChqNo" name="lstDetailOther[' + rowCount + '].RecChqNo" value=""></td><td><input type="date" class="form-control" style="width:170px;" id="lstDetailOther_' + rowCount + '__RecChqDate" name="lstDetailOther[' + rowCount + '].RecChqDate" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="lstDetailOther_' + rowCount + '__RecRemarks" name="lstDetailOther[' + rowCount + '].RecRemarks" value=""></td></tr>');
+                    $('#lstDetailOther_' + rowCount + '__Coaid').attr('Selected', true).val("-1");
+                    $('#lstDetailOther_' + rowCount + '__ExciseId').attr('Selected', true).val("-1");
+                    $('#lstDetailOther_' + rowCount + '__TaxId').attr('Selected', true).val("-1");
+                }
+                event.preventDefault();
+            })
+
+            $('#master_TrSupAccCode').change(function () {
+                if ($('#master_TrtypeAccount').val() == '') {
+                    alert('Please Select Any Credit Account!');
+                }
+                else {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/GeneralLedger/customerChange',
+                        data: { Trno: $('#master_Trno').val(), ExchangeRate: $('#master_TrexchangeRate').val(), supplier: $('#master_TrCusAccCode').val() },
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            $('#myTableSaleDetail tbody tr').remove();
+                            for (var i = 0; i < result.lstDetailOther.length; i++) {
+                                $('#myTableSaleDetail').append('<tr><td><input type="date" class="form-control" style="width:170px;" id="lstDetailSale_' + i + '__RecInvDate" name="lstDetailSale[' + i + '].RecInvDate" value="' + result.lstDetailOther[i].RecInvDate + '"></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailSale_' + i + '__RecInvNo" name="lstDetailSale[' + i + '].RecInvNo" value="' + result.lstDetailOther[i].RecInvNo + '"></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecOriginalAmt must be a number." id="lstDetailSale_' + i + '__RecOriginalAmt" name="lstDetailSale[' + i + '].RecOriginalAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecAmtOwing must be a number." id="lstDetailSale_' + i + '__RecAmtOwing" name="lstDetailSale[' + i + '].RecAmtOwing" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecDiscAmt must be a number." id="lstDetailSale_' + i + '__RecDiscAmt" name="lstDetailSale[' + i + '].RecDiscAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecReceiptAmt must be a number." id="lstDetailSale_' + i + '__RecReceiptAmt" name="lstDetailSale[' + i + '].RecReceiptAmt" value=""></td><td><input type="number" class="form-control" style="width:120px;" data-val="true" data-val-number="The field RecExcAmt must be a number." id="lstDetailSale_' + i + '__RecExcAmt" name="lstDetailSale[' + i + '].RecExcAmt" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstDetailSale_' + i + '__RecChqNo" name="lstDetailSale[' + i + '].RecChqNo" value=""></td><td><input type="date" class="form-control" style="width:170px;" id="lstDetailSale_' + i + '__RecChqDate" name="lstDetailSale[' + i + '].RecChqDate" value=""></td><td><input type="text" class="form-control" style="width:230px;" id="lstDetailSale_' + i + '__RecRemarks" name="lstDetailSale[' + i + '].RecRemarks" value=""></td></tr>')
+                            }
+                            console.log(result);
+                        },
+                        error: function () {
+                        }
+                    })
+                }
+            })
+
+            function amountChange() {
+                var rowCount = $('#myTableOtherReceipt tbody tr').length;
+                var subTotal = 0;
+                var totalExcise = 0;
+                var totalVAT = 0;
+                var Total = 0;
+                var excAmount = 0;
+                for (var i = 0; i < rowCount; i++) {
+                    if ($('#lstDetailOther_' + i + '__Coaid').val() != '-1' && $('#lstDetailOther_' + i + '__RecReceiptAmt') != '') {
+
+                    }
+                }
+            }
+        })
+    </script>
+
+}

@@ -1,0 +1,102 @@
+﻿@model Taxtation.ViewModel.TXTReceiptMasterView
+@{
+    ViewData["Title"] = "show Payment Detail";
+    //var query = from mas in Model.lstMaster
+    //            join det in Model.lstLedger on mas.Trno equals det.Trno
+    //            join site in Model.lstSite on mas.SitId equals site.SitId into sites
+    //            from site in sites.DefaultIfEmpty()
+    //            join currency in Model.lstCurrency on mas.CurId equals currency.CurId into currencies
+    //            from currency in currencies.DefaultIfEmpty()
+    //            join account in Model.lstAccount on det.TraccCode equals account.AccCode into accounts
+    //            from account in accounts.DefaultIfEmpty()
+    //            select new { mas, det, site, currency, account };
+}
+
+
+<div class="MainDiv">
+    <div>
+        <h2>List Receipt Detail</h2>
+    </div>
+    <br />
+    <div style="float:left;">
+        <a asp-action="ReceiptDetail" asp-controller="GeneralLedger" class="form-control-btn" style="width:120px;">Add New</a>
+    </div>
+    @*<div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllPurchase", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>*@
+    <div style="float:right;">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+    </div>
+</div>
+<div class="GridStyle">
+    <table class="table table-striped" id="myTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Transaction No</th>
+                <th>Transaction Date</th>
+                <th>Ledger Date</th>
+                <th>Site</th>
+                <th>Currency</th>
+                <th>Exchange Rate</th>
+                <th>Reference No</th>
+                <th>Remarks</th>
+                <th>Account</th>
+                <th>Credit</th>
+                <th>Debit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var j in query)
+                {
+                    <tr>
+                        <td>@Html.ActionLink("Edit", "PaymentDetail", "GeneralLedger", new { id = j.mas.PayId })</td>
+                        <td>@Html.DisplayFor(modelItem => j.mas.Trno)</td>
+                        <td>@Html.DisplayFor(modelItem => j.mas.Trdate)</td>
+                        <td>@Html.DisplayFor(modelItem => j.mas.Trgldate)</td>
+                        <td>@Html.DisplayFor(modelItem => j.site.SitName)</td>
+                        <td>@Html.DisplayFor(modelItem => j.currency.CurName)</td>
+                        <td>@Html.DisplayFor(modelItem => j.mas.TrexchangeRate)</td>
+                        <td>@Html.DisplayFor(modelItem => j.mas.TrrefMain)</td>
+                        <td>@Html.DisplayFor(modelItem => j.mas.TrmainRemarks)</td>
+                        <td>@Html.DisplayFor(modelItem => j.account.AccCode)</td>
+                        <td>@Html.DisplayFor(modelItem => j.det.Trcredit)</td>
+                        <td>@Html.DisplayFor(modelItem => j.det.Trdebit)</td>
+
+                    </tr>
+
+                }*@
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function myFunction() {
+            debugger;
+            var input, filter, table, tr, td, i, txtValue, j;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            var tds = $('#myTable').children('tbody').children('tr').children('td').length;
+            tds = tds / tr.length;
+            for (i = 1; i < tr.length; i++) {
+                for (j = 0; j < tds; j++) {
+                    td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+}
+
+

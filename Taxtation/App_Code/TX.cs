@@ -8,7 +8,9 @@ namespace Taxtation.App_Code
     public class TX
     {
         TAXTATIONContext db = new TAXTATIONContext();
-
+        /*
+         * Scaffold-DbContext "Data Source=IT02;Initial Catalog=TAXTATION;Persist Security Info=True;User ID=sa;Password=Sirsyed45;"  Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
+         */
         
 
         public string PurchaseOrder(string userName)
@@ -129,7 +131,25 @@ namespace Taxtation.App_Code
             return temp;
             
         }
+        public string ReceiptVoucher(string id, string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtreceiptMaster.Where(x => x.Id == id && x.UserName == userName).OrderByDescending(x => x.Trno).FirstOrDefault().Trno;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "RV-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "RV-00000001";
+            }
+            return temp;
 
+        }
 
         public string getParentAccountCodeDetail(string id)
         {

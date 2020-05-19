@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\GeneralLedger\ReceiptDetail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Home\Inventory.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
