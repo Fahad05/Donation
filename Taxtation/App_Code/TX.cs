@@ -112,6 +112,44 @@ namespace Taxtation.App_Code
             return temp;
         }
 
+        public string FundTransferVoucher(string id, string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtfundTransferMaster.Where(x => x.Id == id && x.UserName == userName).OrderByDescending(x => x.Trno).FirstOrDefault().Trno;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "FT-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "FT-00000001";
+            }
+
+            return temp;
+        }
+        public string OpeningDetail(string id, string userName)
+        {
+            string temp = "";
+            try
+            {
+                var max = db.TxtopeningMaster.Where(x => x.Id == id && x.UserName == userName).OrderByDescending(x => x.Trno).FirstOrDefault().Trno;
+                string subString = max.Substring(3, 8);
+                if (!string.IsNullOrEmpty(max))
+                {
+                    temp = "OP-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                }
+            }
+            catch (Exception ex)
+            {
+                temp = "OP-00000001";
+            }
+
+            return temp;
+        }
         public string PaymentVoucher(string id, string userName)
         {
             string temp = "";
