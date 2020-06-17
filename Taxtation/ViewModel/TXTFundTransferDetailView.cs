@@ -15,7 +15,7 @@ namespace Taxtation.ViewModel
         public List<TxscurrencyDetail> lstCurrency { get; set; }
         public double? TotalDebit { get; set; }
         public double? TotalCredit { get; set; }
-        
+        public List<EFFT> eFFT { get; set; }
 
         public TXTFundTransferDetailView()
         {
@@ -27,6 +27,11 @@ namespace Taxtation.ViewModel
             lstCurrency = new List<TxscurrencyDetail>();
             TotalDebit = new double();
             TotalCredit = new double();
+            eFFT = new List<EFFT>();
+        }
+        public class EFFT
+        {
+            public double? amount { get; set; }
         }
     }
 }

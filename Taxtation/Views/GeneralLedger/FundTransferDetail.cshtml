@@ -1,0 +1,226 @@
+﻿@model Taxtation.ViewModel.TXTFundTransferDetailView
+
+@{
+    ViewData["Title"] = "Fund Transfer Detail";
+    var index = 5;
+    if (Model.lstLedger != null)
+    {
+        index = Model.lstLedger.Count;
+    }
+}
+<form asp-action="FundTransferDetail" method="post">
+    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
+        <div class="col-sm-12" style="padding-left:8.2%;">
+            @if (ViewData["_Save"].ToString() == "True")
+            {
+                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+            }
+            @if (ViewData["_Update"].ToString() == "True")
+            {
+                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
+                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+            }
+            <div style="float:right;padding-right:8.3%">
+                <a asp-action="showFundTransferDetail" asp-controller="GeneralLedger" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <input type="text" asp-for="master.TrId" hidden="hidden" class="form-control" />
+        </div>
+    </div>
+    <div class="row" style="padding-top:70px;z-index:1">
+        <div class="col-md-3">
+            Transaction No<span class="mandatory">*</span>:
+            <input type="text" asp-for="master.Trno" readonly="readonly" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Transaction Date<span class="mandatory">*</span>:
+            <input type="date" asp-for="master.Trdate" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            GL Date<span class="mandatory">*</span>:
+            <input type="date" asp-for="master.Trgldate" class="form-control" required />
+
+        </div><div class="col-md-3">
+            Site<span class="mandatory">*</span>:
+            <select asp-for="master.SitId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstSite)
+                {
+                    <option value=@j.SitId>@j.SitName</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Currency<span class="mandatory">*</span>:
+            <select asp-for="master.TrcurId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstCurrency)
+                {
+                    <option value=@j.CurId>@j.CurName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Exchange Rate<span class="mandatory">*</span>:
+            <input type="number" asp-for="master.TrexchangeRate" onchange="ExchangeRate()" class="form-control" required="required" />
+        </div>
+        <div class="col-md-3">
+            Reference No:
+            <input type="text" asp-for="master.TrrefMain" class="form-control" />
+        </div>
+        <div class="col-md-3">
+
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12">
+            Remarks:
+            <input type="text" asp-for="master.TrmainRemarks" class="form-control" />
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-3">
+            <button id="addNewRow" class="form-control">Add New Row</button>
+        </div>
+        <div class="col-lg-9"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-12" style="overflow-x:scroll;">
+            <table id="myTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:230px;">Account From</th>
+                        <th style="width:230px;">Account To</th>
+                        <th style="width:120px;">Amount</th>
+                        <th style="width:120px;">Exc. Amount</th>
+                        <th style="width:120px;">Cheque No</th>
+                        <th style="width:120px;">Cheque Date</th>
+                        <th style="width:350px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < index; i++)
+                    {
+                        <tr>
+                            <td>
+                                <select asp-for="lstLedger[i].TraccCode" onchange="ExchangeRate()" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>}
+                                </select>
+                            </td>
+                            <td>
+                                <select asp-for="lstLedger[i].TrrefAccCode" onchange="ExchangeRate()" class="form-control" style="width:230px;">
+                                    <option value="-1">Select</option>@foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.AccCode>@j.AccName</option>}
+                                </select>
+                            </td>
+                            <td><input type="text" asp-for="lstLedger[i].Trdebit" onchange="ExchangeRate()" class="form-control" style="width:120px;" /></td>
+                            <td><input type="number" step="any" asp-for="lstLedger[i].TramountConverted" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="lstLedger[i].TrchequeNo" class="form-control" style="width:120px;" /></td>
+                            <td><input type="date" asp-for="lstLedger[i].TrchequeDate" class="form-control" style="width:120px;" /></td>
+                            <td><input type="text" asp-for="lstLedger[i].Trremarks" class="form-control" style="width:350px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br />
+
+</form>
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+        $(window).load(function () {
+            ExchangeRate();
+        });
+
+        function ExchangeRate() {
+
+            var ExRate = $('#master_TrexchangeRate').val();
+            var rows = $('#myTable tbody tr').length;
+            for (var i = 0; i < rows; i++) {
+
+                if ($('#lstLedger_' + i + '__TraccCode').val() != '-1' && $('#lstLedger_' + i + '__TrrefaccCode').val() != '-1' && $('#eFFT_' + i + '__amount').val() != '') {
+                    if (ExRate != '') {
+
+                        $('#lstLedger_' + i + '__TramountConverted').val(parseFloat($('#eFFT_' + i + '__amount').val() * ExRate).toFixed(2));
+                    }
+                    else { $('#lstLedger_' + i + '__TramountConverted').val(0); }
+                }
+
+            }
+
+
+        }
+
+        $('#addNewRow').click(function (event) {
+            var rowCount = $('#myTable tbody tr').length;
+            var dropDownAccountTo = document.getElementById('lstLedger_0__TraccCode').innerHTML;
+            var dropDownAccountFrom = document.getElementById('lstLedger_0__TrrefaccCode').innerHTML;
+            $('#myTable').append('<tr><td><select onchange="ExchangeRate()" class="form-control" style="width:230px;" id="lstLedger_' + rowCount + '__TraccCode" name="lstLedger[' + rowCount + '].TraccCode">< option value = "-1" > Select</option >' + dropDownAccountTo + '</select ></td><td><input type="text" onchange="ExchangeRate()" class="form-control" style="width:120px;" data-val="true" data-val-number="The field amount must be a number." id="eFFT_' + rowCount + '__amount" name="eFFT[' + rowCount + '].amount" value=""></td><td><select onchange="ExchangeRate()"  class="form-control" style="width:120px;" id="eFFT_' + rowCount + '__debitCredit" name="eFFT[' + rowCount + '].debitCredit">< option value = "001" > Debit</option ><option value="002">Credit</option></select ></td><td><input type="number" step="any" class="form-control" style="width:120px;" data-val="true" data-val-number="The field TramountConverted must be a number." id="lstLedger_' + rowCount + '__TramountConverted" name="lstLedger[' + rowCount + '].TramountConverted" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstLedger_' + rowCount + '__TrrefNo" name="lstLedger[' + rowCount + '].TrrefNo" value=""></td><td><input type="text" class="form-control" style="width:350px;" id="lstLedger_' + rowCount + '__Trremarks" name="lstLedger[' + rowCount + '].Trremarks" value=""></td></tr>')
+            $('#lstLedger_' + rowCount + '__TraccCode').attr('Selected', true).val("-1");
+            event.preventDefault();
+        })
+
+        $(document).ready(function () {
+            $('#Save').on('click', function (event) {
+                var count = 0;
+                var rowCount = $('#myTable tbody tr').length;
+                var ExRate = $('#master_TrexchangeRate').val();
+
+                if (ExRate == '' || ExRate == 0) {
+                    alert('Please Enter Valid Exchange Rate!');
+                    event.preventDefault();
+                }
+                for (var i = 0; i < rowCount; i++) {
+                    if ($('#lstLedger_' + i + '__TraccCode').val() != '-1' && $('#lstLedger_' + i + '__TrrefaccCode').val() != '-1' && $('#eFFT_' + i + '__amount').val() != '') {
+                        count++;
+                    }
+                }
+                if (parseFloat(count) == 0) {
+                    alert('Please Select Account or Enter Amount!');
+                    event.preventDefault();
+                }
+            })
+        })
+
+        $(document).ready(function () {
+            $('#Update').on('click', function (event) {
+                var count = 0;
+                var rowCount = $('#myTable tbody tr').length;
+                var ExRate = $('#master_TrexchangeRate').val();
+
+                if (ExRate == '' || ExRate == 0) {
+                    alert('Please Enter Valid Exchange Rate!');
+                    event.preventDefault();
+                }
+                for (var i = 0; i < rowCount; i++) {
+                    if ($('#lstLedger_' + i + '__TraccCode').val() != '-1' && $('#lstLedger_' + i + '__TrrefaccCode').val() != '-1' && $('#eFFT_' + i + '__amount').val() != '') {
+                        count++;
+                    }
+                }
+                if (parseFloat(count) == 0) {
+                    alert('Please Select Account or Enter Amount!');
+                    event.preventDefault();
+                }
+            })
+        })
+    </script>
+
+}
