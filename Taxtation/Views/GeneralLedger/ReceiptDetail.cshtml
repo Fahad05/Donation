@@ -250,6 +250,12 @@
 
 
     <script type="text/javascript">
+
+
+        $(window).load(function () {
+            amountChange();
+        });
+
         if ($('#master_Trmode').val() == 'SALE RECEIPT')
         {
             $('#OtherReceipt').hide();
@@ -348,10 +354,15 @@
                 var Total = 0;
                 var excAmount = 0;
                 for (var i = 0; i < rowCount; i++) {
-                    if ($('#lstDetailOther_' + i + '__Coaid').val() != '-1' && $('#lstDetailOther_' + i + '__RecReceiptAmt') != '') {
-
+                    if ($('#lstDetailSale_'+i+'__RecInvDate').val() != '' && $('#lstDetailOther_' + i + '__RecReceiptAmt') != '') {
+                        subTotal += parseFloat($('lstDetailSale_' + i + '__PayOriginalAmt').val());
+                        //totalExcise += parseFloat($('lstDetailSale_' + i + '__PayExcAmt').val());
+                        Total = subTotal;
                     }
                 }
+                $('#TrsubTotal').val(parseFloat(subTotal).toFixed(2));
+                $('#TrtotalAmount').val(parseFloat(Total).toFixed(2));
+
             }
         })
     </script>
