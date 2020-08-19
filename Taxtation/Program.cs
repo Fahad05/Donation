@@ -19,10 +19,7 @@ namespace Taxtation
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseKestrel()
                 .UseStartup<Startup>()
-             .UseIISIntegration()
                 .Build();
     }
 }

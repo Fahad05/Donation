@@ -32,6 +32,5 @@ namespace Taxtation.Models
         public double? PurExRate { get; set; }
         public string PurItmType { get; set; }
         public int? SitId { get; set; }
-        public int? Coaid { get; set; }
     }
 }

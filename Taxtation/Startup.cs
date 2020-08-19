@@ -31,15 +31,6 @@ namespace Taxtation
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddSession(options =>
-            {
-                // Set a short timeout for easy testing.
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = true;
-                // Make the session cookie essential
-                options.Cookie.IsEssential = true;
-            });
-
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -73,7 +64,7 @@ namespace Taxtation
             }
 
             app.UseStaticFiles();
-            app.UseSession();
+
             app.UseAuthentication();
 
             app.UseMvc(routes =>

@@ -10,8 +10,6 @@ namespace Taxtation.Controllers
 {
     public class HomeController : Controller
     {
-        TAXTATIONContext db = new TAXTATIONContext();
-
         public IActionResult Index()
         {
             return View();
@@ -55,29 +53,6 @@ namespace Taxtation.Controllers
         public IActionResult Dashboard()
         {
             return View();
-        }
-
-        public IActionResult Ledger()
-        {
-            return View();
-        }
-
-        public IActionResult Reports()
-        {
-            return View();
-        }
-
-        public IActionResult Inventory()
-        {
-            return View();
-        }
-
-        public JsonResult CurrencyChart()
-        {
-            List<TxscurrencyDetail> lstCurrency = new List<TxscurrencyDetail>();
-            lstCurrency = db.TxscurrencyDetail.ToList();
-
-            return Json(lstCurrency);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@model Taxtation.Models.TxscurrencyDetail
 
-<div style="height:25px;"></div>
+<h4>Currency Detail</h4>
+<hr />
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -18,15 +19,13 @@
                         {
                             <div>
                                 @Html.TextBoxFor(model => model.CurId, new { @class = "form-control", @Hidden = "Hidden" })
-                            </div> <div style="float:right">
-                                @Html.CheckBox("CurActive", Model.CurActive.Value)Active
                             </div>
                             <div>
-                                Name<span class="mandatory">*</span>:
+                                Name:
                                 @Html.TextBoxFor(model => model.CurName, new { @class = "form-control", @required = true })
                             </div>
-                            <div style="float:right">
-
+                            <div>
+                                @Html.CheckBox("CurActive", Model.CurActive.Value)Active
                                 @Html.CheckBox("CurIsLocal", Model.CurIsLocal.Value)Is Local
                             </div>
                             <div>
@@ -42,13 +41,13 @@
                                 }
                                 @if (ViewData["_Update"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)"  class="btnControlDML">Update</button>
                                 }
-                                <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
+                                 <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
                                     Hide
                                 </button>
                             </div>
-
+                           
                         }
                     </div>
 

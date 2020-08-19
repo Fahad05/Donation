@@ -26,6 +26,5 @@ namespace Taxtation.Models
         public double? PurExPer { get; set; }
         public double? PurExAmt { get; set; }
         public string PurRemarks { get; set; }
-        public string PurDisType { get; set; }
     }
 }

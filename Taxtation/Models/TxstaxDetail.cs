@@ -18,8 +18,5 @@ namespace Taxtation.Models
         public DateTime? EnterDate { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
-        public int? Coaid { get; set; }
-        public bool? TxsDefault { get; set; }
-        public string TaxCategory { get; set; }
     }
 }

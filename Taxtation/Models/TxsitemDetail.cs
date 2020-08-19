@@ -28,9 +28,5 @@ namespace Taxtation.Models
         public DateTime? EnterDate { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
-        public string ItmExpenseAccount { get; set; }
-        public string ItmRevenueAccount { get; set; }
-        public string ItmCogsaccount { get; set; }
-        public string ItmAssetAccount { get; set; }
     }
 }

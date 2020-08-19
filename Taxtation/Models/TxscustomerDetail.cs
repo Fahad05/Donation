@@ -27,7 +27,5 @@ namespace Taxtation.Models
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
         public int? CusCrDays { get; set; }
-        public int? CoaId { get; set; }
-        public string CusPayTerm { get; set; }
     }
 }

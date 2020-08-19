@@ -11,14 +11,13 @@ namespace Taxtation.ViewModel
         public TxscustomerDetail master { get;set; }
         public List<TxscountryDetail> lstCountry { get; set; }
         public List<TxscityDetail> lstCity { get; set; }
-        public List<Txscoadetail> lstAccount { get; set; }
+
 
         public TXSCustomerDetailView()
         {
             master = new TxscustomerDetail();
             lstCountry = new List<TxscountryDetail>();
             lstCity = new List<TxscityDetail>();
-            lstAccount = new List<Txscoadetail>();
         }
 
     }

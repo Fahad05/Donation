@@ -6,58 +6,38 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <div style="margin-top:20px; text-align:center;">
-        <img src="~/images/setups.gif" />
-    </div>
+<div style="margin-left:40%;margin-top:20px;">
+    <img src="~/images/setups.gif" />
+</div>
+<div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:180px;">
+    <ul class="nav navbar-nav">
+        <li>
+            <a asp-action="showCurrency" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#C78ECC"><img src="~/images/accounting.png" class="ImgStyleMain" style="background-color:#C78ECC;" /><br /> CURRENCY</a>
+        </li>
+        <li>
+            <a asp-action="showStore" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#48C7C8"><img src="~/images/store.png" class="ImgStyleMain" style="background-color:#48C7C8;" /><br /> STORE</a>
+        </li>
+        <li>
+            <a asp-action="showBank" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/bank.png" class="ImgStyleMain" style="background-color:#E1BE5C;" /><br /> BANK</a>
+        </li>
+        <li>
+            <a asp-action="showTax" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/tax.png" class="ImgStyleMain" style="background-color:#55C77E;" /><br /> TAX</a>
+        </li>
+        <li>
+            <a asp-action="showCustomer" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#EA70B1"><img src="~/images/crm.png" class="ImgStyleMain" style="background-color:#EA70B1;" /><br /> CUSTOMER</a>
+        </li>
+        <li>
+            <a asp-action="showSupplier" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#51CFFF"><img src="~/images/crm.png" class="ImgStyleMain" style="background-color:#51CFFF;" /><br /> SUPPLIER</a>
+        </li>
+        <li>
+            <a asp-action="showItem" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#3498DB"><img src="~/images/item.png" class="ImgStyleMain" style="background-color:#3498DB;" /><br /> ITEM</a>
 
-    <h4>ACCOUNTS</h4>
-    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
+        </li>
+        <li>
+            <a asp-action="showSite" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#f97177"><img src="~/images/site.png" class="ImgStyleMain" style="background-color:#f97177;" /><br /> SITE</a>
 
-        <ul class="nav navbar-nav">
-            <li>
-                <a asp-action="showTax" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/tax.png" class="ImgStyleMain" style="background-color:#55C77E;" /><br /> TAX</a>
-            </li>
-            <li>
-                <a asp-action="showBank" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/bank.png" class="ImgStyleMain" style="background-color:#E1BE5C;" /><br /> BANK</a>
-            </li>
-            <li>
-                <a asp-action="showCOA" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#b4c33a"><img src="~/images/coa.png" class="ImgStyleMain" style="background-color:#b4c33a;" /><br />ACCOUNTS</a>
-            </li>
-            <li>
-                <a asp-action="showCurrency" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#C78ECC"><img src="~/images/accounting.png" class="ImgStyleMain" style="background-color:#C78ECC;" /><br /> CURRENCY</a>
-            </li>
-        </ul>
-    </div>
-    <h4>LOCATION</h4>
-    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
-        <ul class="nav navbar-nav">
-            <li>
-                <a asp-action="showSite" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#f97177"><img src="~/images/site.png" class="ImgStyleMain" style="background-color:#f97177;" /><br /> SITE</a>
-
-            </li>
-            <li>
-                <a asp-action="showProject" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#34dbbc"><img src="~/images/project.png" class="ImgStyleMain" style="background-color:#34dbbc;" /><br /> PROJECT</a>
-
-            </li>
-            <li>
-                <a asp-action="showStore" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#48C7C8"><img src="~/images/store.png" class="ImgStyleMain" style="background-color:#48C7C8;" /><br /> STORE</a>
-            </li>
-        </ul>
-    </div>
-
-    <h4>INVENTORY</h4>
-    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
-        <ul class="nav navbar-nav">
-            <li>
-                <a asp-action="showItem" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#3498DB"><img src="~/images/item.png" class="ImgStyleMain" style="background-color:#3498DB;" /><br /> ITEM</a>
-            </li>
-            <li>
-                <a asp-action="showCustomer" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#EA70B1"><img src="~/images/crm.png" class="ImgStyleMain" style="background-color:#EA70B1;" /><br /> CUSTOMER</a>
-            </li>
-            <li>
-                <a asp-action="showSupplier" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#51CFFF"><img src="~/images/crm.png" class="ImgStyleMain" style="background-color:#51CFFF;" /><br /> SUPPLIER</a>
-            </li>
-        </ul>
-    </div>
+        </li>
+    </ul>
+</div>
 }
 

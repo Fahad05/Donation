@@ -19,10 +19,8 @@ namespace Taxtation.ViewModel
     }
 
 
-    public class PDEF
+    public abstract class PDEF
     {
-        public string UOM { get; set; }
-        public double? lastPrice { get; set; }
         public double? subAmount { get; set; }
         public double? AmtAfterExcise { get; set; }
         public string DiscountType { get; set; }
