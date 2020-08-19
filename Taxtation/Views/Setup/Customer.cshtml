@@ -1,6 +1,6 @@
 ﻿@model Taxtation.ViewModel.TXSCustomerDetailView
 
-
+<div style="height:25px;"></div>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -20,56 +20,59 @@
                                 <input type="text" asp-for="master.CusId" class="form-control" hidden="hidden" />
                             </div>
                             <div>
-                                Type:
+                                Type<span class="mandatory">*</span>:
                                 <select asp-for="master.CusType" class="form-control" required="required">
-                                    <option value="-1">Select</option>
+                                    <option value="">Select</option>
                                     <option value="MANUFACTURE">MANUFACTURE</option>
                                     <option value="TRADER">TRADER</option>
                                     <option value="SERVICE PROVIDER">SERVICE PROVIDER</option>
                                 </select>
                             </div>
-                            <div>
-                                Name:
-                                <input type="text" asp-for="master.CusName" class="form-control" required="required" />
+                            <div style="float:right">
                                 @Html.CheckBox("CusActive", Model.master.CusActive.Value)Active
                             </div>
                             <div>
+                                Name<span class="mandatory">*</span>:
+                                <input type="text" asp-for="master.CusName" class="form-control" required="required" />
+
+                            </div>
+                            <div>
                                 Abbriviation:
-                                <input type="text" asp-for="master.CusAbbr" class="form-control" required="required" />
+                                <input type="text" asp-for="master.CusAbbr" class="form-control" />
                             </div>
                             <div>
                                 Person:
-                                <input type="text" asp-for="master.CusPerson" class="form-control" required="required" />
+                                <input type="text" asp-for="master.CusPerson" class="form-control" />
                             </div>
                             <div>
                                 Address:
-                                <input type="text" asp-for="master.CusAddress" class="form-control" required="required" />
+                                <input type="text" asp-for="master.CusAddress" class="form-control" />
                             </div>
                             <div>
                                 Phone No:
-                                <input type="text" asp-for="master.CusPhNo" class="form-control" required="required" />
+                                <input type="text" asp-for="master.CusPhNo" class="form-control" />
                             </div>
                             <div>
                                 Fax:
-                                <input type="text" asp-for="master.CusFaxNo" class="form-control" required="required" />
+                                <input type="text" asp-for="master.CusFaxNo" class="form-control" />
                             </div>
 
                             <div>
                                 Email:
-                                <input type="email" asp-for="master.CusEmail" class="form-control" required="required" />
+                                <input type="email" asp-for="master.CusEmail" class="form-control" />
                             </div>
                             <div>
                                 NTN:
-                                <input type="number" asp-for="master.CusNtn" class="form-control" required="required" />
+                                <input type="number" asp-for="master.CusNtn" class="form-control" />
                             </div>
                             <div>
                                 STRN:
-                                <input type="number" asp-for="master.CusStrn" class="form-control" required="required" />
+                                <input type="number" asp-for="master.CusStrn" class="form-control" />
                             </div>
                             <div>
-                                Country:
+                                Country<span class="mandatory">*</span>:
                                 <select asp-for="master.CusCountry" class="form-control" required="required">
-                                    <option value="-1">Select</option>
+                                    <option value="">Select</option>
                                     @foreach (var j in Model.lstCountry)
                                     {
                                         <option value=@j.CouCode>@j.CouName</option>
@@ -77,9 +80,9 @@
                                 </select>
                             </div>
                             <div>
-                                City:
+                                City<span class="mandatory">*</span>:
                                 <select asp-for="master.CusCity" class="form-control" required="required">
-                                    <option value="-1">Select</option>
+                                    <option value="">Select</option>
                                     @foreach (var j in Model.lstCity)
                                     {
                                         <option value=@j.CtyCode>@j.CtyName</option>
@@ -88,12 +91,23 @@
                             </div>
                             <div>
                                 Credit Days:
-                                <input type="number" asp-for="master.CusCrDays" class="form-control" required="required" />
+                                <input type="number" asp-for="master.CusCrDays" class="form-control" />
                             </div>
                             <div>
                                 Description:
                                 <input type="text" asp-for="master.CusDesc" class="form-control" />
                             </div>
+                            <div>
+                                Credit<span class="mandatory">*</span>:
+                                <select asp-for="master.CoaId" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstAccount)
+                                    {
+                                        <option value=@j.Coaid>@j.AccName</option>
+                                    }
+                                </select>
+                            </div>
+                            
                             <br />
                             <div>
                                 @if (ViewData["_Save"].ToString() == "True")
@@ -102,7 +116,7 @@
                                 }
                                 @if (ViewData["_Update"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Update" id="Update" value="Update"style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
                                 }
                                 <button type="button" id="btnHideModal" style="float:right;background-image:url(../images/button/Clear.png)" data-dismiss="modal" class="btnControlDML">
                                     Hide

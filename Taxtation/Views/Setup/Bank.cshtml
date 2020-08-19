@@ -1,5 +1,5 @@
 ﻿@model Taxtation.Models.TxsbankDetail
-
+<div style="height:25px;"></div>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -18,37 +18,40 @@
                     <div>
                         <input type="text" asp-for="BnkId" class="form-control" hidden="hidden" />
                     </div>
-                    <div>
-                        Name:
-                        <input type="text" asp-for="BnkName" class="form-control" required="required" />
+                    <div style="float:right;">
                         @Html.CheckBox("BnkActive", Model.BnkActive.Value)Active
                     </div>
                     <div>
-                        Abbriviation:
+                        Name<span class="mandatory">*</span>:
+                        <input type="text" asp-for="BnkName" class="form-control" required="required" />
+                      
+                    </div>
+                    <div>
+                        Abbriviation<span class="mandatory">*</span>:
                         <input type="text" asp-for="BnkAbbr" class="form-control" required="required" />
                     </div>
                     <div>
-                        Bank Branch:
+                        Bank Branch<span class="mandatory">*</span>:
                         <input type="text" asp-for="BnkBranch" class="form-control" required="required" />
                     </div>
                     <div>
-                        Acc. No:
+                        Acc. No<span class="mandatory">*</span>:
                         <input type="text" asp-for="BnkAccNo" class="form-control" required="required" />
                     </div>
                     <div>
-                        Phone No:
+                        Phone No<span class="mandatory">*</span>:
                         <input type="text" asp-for="BnkPhNo" class="form-control" required="required" />
                     </div>
                     <div>
-                        Fax:
+                        Fax<span class="mandatory">*</span>:
                         <input type="text" asp-for="BnkFax" class="form-control" required="required" />
                     </div>
                     <div>
-                        URL:
+                        URL:<span class="mandatory">*</span>:
                         <input type="url" asp-for="BnkUrl" class="form-control" required="required" />
                     </div>
                     <div>
-                        Email:
+                        Email<span class="mandatory">*</span>:
                         <input type="email" asp-for="BnkEmail" class="form-control" required="required" />
                     </div>
                     <div>

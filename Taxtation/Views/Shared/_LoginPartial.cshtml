@@ -17,9 +17,12 @@
                 <button class="w3-bar-item w3-button w3-large" style="text-align:right;" onclick="w3_close()"><img src="~/images/cross.png" style="width:30px;" /></button>
                 <a asp-action="Dashboard" asp-controller="Home" class="w3-bar-item w3-button" style="color:#EF6E64"><img src="~/images/dsh.png" class="ImgStyle" style="background-color:#EF6E64;" /> DASHBOARD</a>
                 <a asp-action="Setup" asp-controller="Home" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/setups.png" class="ImgStyle" style="background-color:#55C77E;" /> SETUPS</a>
-                <a asp-action="Sale" asp-controller="Home" class="w3-bar-item w3-button" style="color:#EA70B1"><img src="~/images/sale.png" class="ImgStyle" style="background-color:#EA70B1;" /> SALES</a>
+                <a asp-action="Ledger" asp-controller="Home" class="w3-bar-item w3-button" style="color:#C78ECC"><img src="~/images/ledger.png" class="ImgStyle" style="background-color:#C78ECC;" /> LEDGER</a>
                 <a asp-action="Purchase" asp-controller="Home" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/purchase.png" class="ImgStyle" style="background-color:#E1BE5C;" /> PURCHASES</a>
+                @*<a asp-action="Inventory" asp-controller="Home" class="w3-bar-item w3-button" style="color:#3498DB"><img src="~/images/im.png" class="ImgStyle" style="background-color:#3498DB;" /> INVENTORY</a>*@
+                <a asp-action="Sale" asp-controller="Home" class="w3-bar-item w3-button" style="color:#EA70B1"><img src="~/images/sale.png" class="ImgStyle" style="background-color:#EA70B1;" /> SALES</a>
                 <a asp-action="Index" asp-controller="Manage" class="w3-bar-item w3-button" style="color:#48C7C8"><img src="~/images/crm.png" class="ImgStyle" style="background-color:#48C7C8;" /> USERS</a>
+                @*<a asp-action="Reports" asp-controller="Home" class="w3-bar-item w3-button" style="color:#B3C13E"><img src="~/images/rpt.png" class="ImgStyle" style="background-color:#B3C13E;" /> REPORTS</a>*@
                 <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                     <button type="submit" style="color:#EF6E64" class="w3-bar-item w3-button"><img src="~/images/Logoff.png" class="ImgStyle" style="background-color:#EF6E64;" /> LOG OUT</button>
                 </form>
@@ -33,8 +36,8 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
-        <li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+        <li><a asp-area="" asp-controller="Account" asp-action="Register" style="width:100px;">Register</a></li>
+        <li><a asp-area="" asp-controller="Account" asp-action="Login" style="width:100px;">Log in</a></li>
     </ul>
 }
 

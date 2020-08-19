@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rotativa.AspNetCore;
+using Taxtation.App_Code;
 using Taxtation.Models;
 using Taxtation.Services;
 using Taxtation.ViewModel;
@@ -22,7 +23,7 @@ namespace Taxtation.Controllers
     [Route("[controller]/[action]")]
     public class SetupController : Controller
     {
-
+        TX tX = new TX();
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -134,24 +135,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCurrency");
         }
 
-        public IActionResult PrintAllCurrency()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxscurrencyDetail> lstCurrency = new List<TxscurrencyDetail>();
-            lstCurrency = db.TxscurrencyDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportCurrency", lstCurrency)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+      
         #endregion
 
         #region Store
@@ -232,24 +216,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showStore");
         }
 
-        public IActionResult PrintAllStore()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxsstoreDetail> lstStore = new List<TxsstoreDetail>();
-            lstStore = db.TxsstoreDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportStore", lstStore)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
         #endregion
 
         #region Site
@@ -329,24 +296,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showSite");
         }
-        public IActionResult PrintAllSites()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxssiteDetail> lstSite = new List<TxssiteDetail>();
-            lstSite = db.TxssiteDetail.ToList();
-        
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportSites", lstSite)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches ="--footer-center \"  Page: [page]/[toPage]\"" +" --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-        
-        }
+     
 
         #endregion
 
@@ -433,24 +383,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showBank");
         }
 
-        public IActionResult PrintAllBank()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxsbankDetail> lstBank = new List<TxsbankDetail>();
-            lstBank = db.TxsbankDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportBank", lstBank)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
         #endregion
 
         #region Tax
@@ -480,23 +413,36 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TxstaxDetail obj = new TxstaxDetail();
-                obj.TaxActive = (obj.TaxActive == null) ? true : false;
+                TXSTaxDetailView obj = new TXSTaxDetailView();
+                obj.tax.Id = user.Id;
+                obj.tax.UserName = user.UserName;
+                obj.tax.TaxActive = (obj.tax.TaxActive == null) ? true : false;
+                obj.tax.TxsDefault = (obj.tax.TxsDefault == null) ? true : false;
+                obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "LIABILITY" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
                 return PartialView(obj);
             }
             else
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TxstaxDetail obj = new TxstaxDetail();
-                obj = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == Convert.ToInt32(id)).FirstOrDefault();
-                obj.TaxActive = (obj.TaxActive == true) ? true : false;
+                TXSTaxDetailView obj = new TXSTaxDetailView();
+                obj.tax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.tax.TaxActive = (obj.tax.TaxActive == true) ? true : false;
+                obj.tax.TxsDefault = (obj.tax.TxsDefault == true) ? true : false;
+                if (obj.tax.TaxType == "SALE")
+                {
+                    obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "LIABILITY" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+                }
+                if (obj.tax.TaxType == "PURCHASE")
+                {
+                    obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+                }
                 return PartialView(obj);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Tax(TxstaxDetail obj, string Save, string Update, string TaxActive)
+        public async Task<IActionResult> Tax(TXSTaxDetailView obj, string Save, string Update, string TaxActive, string TxsDefault)
         {
             var user = await _userManager.GetUserAsync(User);
             if (User == null)
@@ -505,25 +451,30 @@ namespace Taxtation.Controllers
             }
             if (Save != null)
             {
-                obj.Id = user.Id;
-                obj.UserName = user.UserName;
-                obj.TaxActive = (obj.TaxActive == true) ? true : false;
-                obj.EnterBy = user.UserName;
-                obj.EnterDate = System.DateTime.Now;
-                db.TxstaxDetail.Add(obj);
+                obj.tax.Id = user.Id;
+                obj.tax.UserName = user.UserName;
+                obj.tax.TaxActive = (TaxActive == "true") ? true : false;
+                obj.tax.TxsDefault = (TaxActive == "true") ? true : false;
+                obj.tax.EnterBy = user.UserName;
+                obj.tax.EnterDate = System.DateTime.Now;
+                db.TxstaxDetail.Add(obj.tax);
                 db.SaveChanges();
             }
             if (Update != null)
             {
                 TxstaxDetail obj1 = new TxstaxDetail();
-                obj1 = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.TaxId).FirstOrDefault();
+                obj1 = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxId == obj.tax.TaxId).FirstOrDefault();
                 if (obj1 != null)
                 {
-                    obj1.TaxName = obj.TaxName;
-                    obj1.TaxAbbr = obj.TaxAbbr;
-                    obj1.TaxPercent = obj.TaxPercent;
-                    obj1.TaxDesc = obj.TaxDesc;
-                    obj1.TaxActive = (obj.TaxActive == true) ? true : false;
+                    obj1.TaxName = obj.tax.TaxName;
+                    obj1.TaxType = obj.tax.TaxType;
+                    obj1.TaxAbbr = obj.tax.TaxAbbr;
+                    obj1.TaxPercent = obj.tax.TaxPercent;
+                    obj1.TaxDesc = obj.tax.TaxDesc;
+                    obj1.Coaid = obj.tax.Coaid;
+                    obj1.TaxActive = (TaxActive == "true") ? true : false;
+                    obj1.TxsDefault = (TaxActive == "true") ? true : false;
+                    obj1.TaxCategory = obj.tax.TaxCategory;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
@@ -531,24 +482,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showTax");
         }
-        public IActionResult PrintAllTax()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxstaxDetail> lstTax = new List<TxstaxDetail>();
-            lstTax = db.TxstaxDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportTax", lstTax)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+       
         #endregion
 
         #region Customer
@@ -563,6 +497,7 @@ namespace Taxtation.Controllers
             }
             List<TxscustomerDetail> lstCustomer = new List<TxscustomerDetail>();
             lstCustomer = db.TxscustomerDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            
             return View(lstCustomer);
         }
 
@@ -574,11 +509,13 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            TXSCustomerDetailView obj = new TXSCustomerDetailView();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountNature == "LIABILITY").ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TXSCustomerDetailView obj = new TXSCustomerDetailView();
+                
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master.CusActive = (obj.master.CusActive == null) ? true : false;
                 return PartialView(obj);
@@ -587,7 +524,6 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TXSCustomerDetailView obj = new TXSCustomerDetailView();
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master = db.TxscustomerDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CusId == Convert.ToInt32(id)).FirstOrDefault();
                 obj.lstCity = db.TxscityDetail.Where(x => x.CouCode == obj.master.CusCountry).ToList();
@@ -634,6 +570,7 @@ namespace Taxtation.Controllers
                     obj1.CusCountry = obj.master.CusCountry;
                     obj1.CusDesc = obj.master.CusDesc;
                     obj1.CusCrDays = obj.master.CusCrDays;
+                    obj1.CoaId = obj.master.CoaId;
                     obj1.CusActive = (CusActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
@@ -642,25 +579,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showCustomer");
         }
-        public IActionResult PrintAllCustomer()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxscustomerDetail> lstCustomer = new List<TxscustomerDetail>();
-            lstCustomer = db.TxscustomerDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportCustomer", lstCustomer)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
-
+      
         #endregion
 
         #region Supplier
@@ -686,11 +605,13 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            TXSSupplierDetailView obj = new TXSSupplierDetailView();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountNature == "ASSET").ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TXSSupplierDetailView obj = new TXSSupplierDetailView();
+                
                 obj.master.SupActive = (obj.master.SupActive == null) ? true : false;
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 return PartialView(obj);
@@ -699,7 +620,6 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TXSSupplierDetailView obj = new TXSSupplierDetailView();
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master = db.TxssupplierDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SupId == Convert.ToInt32(id)).FirstOrDefault();
                 obj.master.SupActive = (obj.master.SupActive == true) ? true : false;
@@ -746,6 +666,7 @@ namespace Taxtation.Controllers
                     obj1.SupCountry = obj.master.SupCountry;
                     obj1.SupDesc = obj.master.SupDesc;
                     obj1.SupCrDays = obj.master.SupCrDays;
+                    obj1.CoaId = obj.master.CoaId;
                     obj1.SupActive = (SupActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
@@ -755,24 +676,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showSupplier");
         }
 
-        public IActionResult PrintAllSupplier()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxssupplierDetail> lstSupplier = new List<TxssupplierDetail>();
-            lstSupplier = db.TxssupplierDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportSupplier", lstSupplier)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+      
         #endregion
 
         #region Item
@@ -810,6 +714,10 @@ namespace Taxtation.Controllers
                 obj.lstParent = db.TxsitemDetail.Where(x => x.ItmType != "ITEM").ToList();
                 obj.lstStore = db.TxsstoreDetail.ToList();
                 obj.lstUOM = db.Txsuomdetail.ToList();
+                obj.lstAssetAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstInventoryAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstExpenseAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "EXPENSE").ToList();
+                obj.lstRevenueAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "REVENUE").ToList();
                 return PartialView(obj);
             }
             else
@@ -821,6 +729,10 @@ namespace Taxtation.Controllers
                 obj.lstParent = db.TxsitemDetail.Where(x => x.ItmId != Convert.ToInt32(id) && x.ItmType != "ITEM").ToList();
                 obj.lstStore = db.TxsstoreDetail.ToList();
                 obj.lstUOM = db.Txsuomdetail.ToList();
+                obj.lstAssetAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstInventoryAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "NORMAL").ToList();
+                obj.lstExpenseAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "EXPENSE").ToList();
+                obj.lstRevenueAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "REVENUE").ToList();
                 obj.master.ItmActive = (obj.master.ItmActive == true) ? true : false;
                 obj.master.ItmIsSale = (obj.master.ItmIsSale == true) ? true : false;
                 obj.master.ItmIsPurchase = (obj.master.ItmIsPurchase == true) ? true : false;
@@ -872,6 +784,10 @@ namespace Taxtation.Controllers
                     obj1.ItmOpQty = obj.master.ItmOpQty;
                     obj1.ItmOpStore = obj.master.ItmOpStore;
                     obj1.ItmActive = (ItmActive == "true") ? true : false;
+                    obj1.ItmExpenseAccount = obj.master.ItmExpenseAccount;
+                    obj1.ItmRevenueAccount = obj.master.ItmRevenueAccount;
+                    obj1.ItmCogsaccount = obj.master.ItmCogsaccount;
+                    obj1.ItmAssetAccount = obj.master.ItmAssetAccount;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
                     db.SaveChanges();
@@ -880,25 +796,239 @@ namespace Taxtation.Controllers
             return RedirectToAction("showItem");
         }
 
-        public IActionResult PrintAllItem()
-        {
-            //var user = await _userManager.GetUserAsync(User);
-            //if (User == null)
-            //{
-            //    throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            //}
-            List<TxsitemDetail> lstItem = new List<TxsitemDetail>();
-            lstItem = db.TxsitemDetail.ToList();
-
-            //lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            return new ViewAsPdf("ReportItem", lstItem)
-            {
-                // CustomSwitches = "--page-offset 0 --footer-center Page: [page]/[toPage]\ --footer-font-size 12"};
-                CustomSwitches = "--footer-center \"  Page: [page]/[toPage]\"" + " --footer-line --footer-font-size \"10\" --footer-spacing 1 --footer-font-name \"Segoe UI\""
-            };
-
-        }
+      
         #endregion
+
+
+        #region COA
+
+        public async Task<IActionResult> showCOA()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<Txscoadetail> lstCOA = new List<Txscoadetail>();
+            lstCOA = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return View(lstCOA);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> COA(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                ViewData["_HiddenCode"] = "0";
+                ViewData["_ParentAccountCode"] = "0";
+                TXSCOADetailView obj = new TXSCOADetailView();
+                obj.coa.AccActive = (obj.coa.AccActive == null) ? true : false;
+                obj.lstCoa = db.Txscoadetail.Where(x=>x.UserName==user.UserName).ToList();
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                TXSCOADetailView obj = new TXSCOADetailView();
+                obj.coa = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Coaid == Convert.ToInt32(id)).FirstOrDefault();
+                obj.coa.AccActive = (obj.coa.AccActive == true) ? true : false;
+                ViewData["_HiddenCode"] = obj.coa.AccCode;
+                ViewData["_ParentAccountCode"] = obj.coa.AccParentAccount;
+                return PartialView(obj);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> COA(TXSCOADetailView obj, string AccActive, string Save, string Update)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            obj.coa.Id = user.Id;
+            obj.coa.UserName = user.UserName;
+            obj.coa.AccActive = (AccActive == "true") ? true : false;
+            obj.coa.AccHierarchyCode = obj.coa.AccCode;
+            obj.coa.AccGrpCode = obj.coa.AccAccountNature;
+            obj.coa.AccTaxAccount = false;
+            obj.coa.AccAllowBudgeting = false;
+            obj.coa.AccAllowPosting = false;
+            obj.coa.AccReconcile = false;
+            obj.coa.AccThirdParty = false;
+            if (Save!=null)
+            {
+                obj.coa.EnterBy = user.UserName;
+                obj.coa.EnterDate = System.DateTime.Now;
+                db.Txscoadetail.Add(obj.coa);
+                db.SaveChanges();
+            }
+            if(Update != null)
+            {
+                Txscoadetail txscoadetail = new Txscoadetail();
+                txscoadetail = db.Txscoadetail.Where(x => x.Id == obj.coa.Id && x.UserName == user.UserName && x.Coaid == obj.coa.Coaid).FirstOrDefault();
+                txscoadetail.AccName = obj.coa.AccName;
+                txscoadetail.AccAbbr = obj.coa.AccAbbr;
+                txscoadetail.AccDesc = obj.coa.AccDesc;
+                txscoadetail.AccHierarchyCode = obj.coa.AccCode;
+                txscoadetail.AccGrpCode = obj.coa.AccAccountNature;
+
+                txscoadetail.AccComCode = obj.coa.AccComCode;
+                txscoadetail.AccBsuCode = obj.coa.AccBsuCode;
+                txscoadetail.AccParentAccount = obj.coa.AccParentAccount;
+                txscoadetail.AccAccountType = obj.coa.AccAccountType;
+                txscoadetail.AccAccountNature = obj.coa.AccAccountNature;
+                txscoadetail.AccAccountSubNature = obj.coa.AccAccountSubNature;
+                txscoadetail.AccTaxAccount = obj.coa.AccTaxAccount;
+                txscoadetail.AccAllowBudgeting = obj.coa.AccAllowBudgeting;
+                txscoadetail.AccReconcile = obj.coa.AccReconcile;
+                txscoadetail.AccThirdParty = obj.coa.AccThirdParty;
+                txscoadetail.AccEffectPeriodStart = obj.coa.AccEffectPeriodStart;
+                txscoadetail.AccEffectPeriodEnd = obj.coa.AccEffectPeriodEnd;
+                txscoadetail.AccActive = obj.coa.AccActive;
+                txscoadetail.EditOutSide = obj.coa.EditOutSide;
+                txscoadetail.OpeningBalance = obj.coa.OpeningBalance;
+                txscoadetail.ClosingBalance = obj.coa.ClosingBalance;
+                txscoadetail.OpeningBalanceCr = obj.coa.OpeningBalanceCr;
+                txscoadetail.ClosingBalanceCr = obj.coa.ClosingBalanceCr;
+                txscoadetail.TransactionDr = obj.coa.TransactionDr;
+                txscoadetail.TransactionCr = obj.coa.TransactionCr;
+                txscoadetail.AccLevel = obj.coa.AccLevel;
+                txscoadetail.TopeningBalance = obj.coa.TopeningBalance;
+                txscoadetail.TclosingBalance = obj.coa.TclosingBalance;
+                txscoadetail.TopeningBalanceCr = obj.coa.TopeningBalanceCr;
+                txscoadetail.TclosingBalanceCr = obj.coa.TopeningBalanceCr;
+                txscoadetail.TtransactionDr = obj.coa.TtransactionDr;
+                txscoadetail.TtransactionCr = obj.coa.TtransactionCr;
+                txscoadetail.Pl = obj.coa.Pl;
+                txscoadetail.Bs = obj.coa.Bs;
+                txscoadetail.Cf = obj.coa.Cf;
+                txscoadetail.Ce = obj.coa.Ce;
+                txscoadetail.Cf1 = obj.coa.Cf1;
+                txscoadetail.Cf2 = obj.coa.Cf2;
+                txscoadetail.Ce1 = obj.coa.Ce1;
+                txscoadetail.Ce2 = obj.coa.Ce2;
+                txscoadetail.AccLevelNo = obj.coa.AccLevelNo;
+                txscoadetail.AccNameLevelWise = obj.coa.AccNameLevelWise;
+                txscoadetail.AccAccountTypeShort = obj.coa.AccAccountTypeShort;
+                txscoadetail.AccOpeningBalance = obj.coa.AccOpeningBalance;
+                obj.coa.EditBy = user.UserName;
+                obj.coa.EditDate = System.DateTime.Now;
+                db.SaveChanges();
+            }
+            return RedirectToAction("showCOA");
+        }
+
+       
+
+        #endregion
+
+
+        #region Project
+
+        [HttpGet]
+        public async Task<IActionResult> showProject()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<TxsprojectDetail> lstProj = new List<TxsprojectDetail>();
+            lstProj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return View(lstProj);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Project(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                TxsprojectDetail obj = new TxsprojectDetail();
+                obj.ProActive = (obj.ProActive == null) ? true : false;
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                TxsprojectDetail obj = new TxsprojectDetail();
+                obj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.ProActive = (obj.ProActive == true) ? true : false;
+                return PartialView(obj);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Project(TxsprojectDetail obj, string ProActive, string Save, string Update)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (Save != null)
+            {
+                obj.Id = user.Id;
+                obj.UserName = user.UserName;
+                obj.ProActive = (ProActive == "true") ? true : false;
+                obj.EnterBy = user.UserName;
+                obj.EnterDate = System.DateTime.Now;
+                db.TxsprojectDetail.Add(obj);
+                db.SaveChanges();
+            }
+            if (Update != null)
+            {
+                TxsprojectDetail obj1 = new TxsprojectDetail();
+                obj1 = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == obj.ProId).FirstOrDefault();
+                if (obj1 != null)
+                {
+                    obj1.ProName = obj.ProName;
+                    obj1.ProAbbr = obj.ProAbbr;
+                    obj1.ProDesc = obj.ProDesc;
+                    obj1.ProActive = (ProActive == "true") ? true : false;
+                    obj1.EditBy = user.UserName;
+                    obj1.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("showProject");
+        }
+
+        #endregion
+
+
+
+        [HttpGet]
+        public List<Txscoadetail> lstCOAAccount(string id, string userName, string type)
+        {
+            List<Txscoadetail> lst = new List<Txscoadetail>();
+            if (type == "SALE")
+            {
+                lst = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "LIABILITY" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+            }
+            if (type == "PURCHASE")
+            {
+                lst = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountType == "TRANSACTION" && x.AccAccountNature == "ASSET" && x.AccAccountSubNature == "TAX" && x.AccActive == true).ToList();
+            }
+            return lst;
+        }
+
 
         [HttpGet]
         public List<TxscityDetail> lstCity(string id)
@@ -907,5 +1037,73 @@ namespace Taxtation.Controllers
             lst = db.TxscityDetail.Where(x => x.CouCode == id).ToList();
             return lst;
         }
+
+        [HttpGet]
+        public IActionResult getParentAccountDetail(string AccountNature, string AccCode)
+        {
+            List<Txscoadetail> obj = new List<Txscoadetail>();
+            obj = db.Txscoadetail.Where(x => x.AccAccountNature == AccountNature && x.AccCode != AccCode && x.AccAccountType == "CONTROL").OrderBy(x => x.AccName).ToList();
+            return Ok(obj);
+        }
+
+        [HttpGet]
+        public IActionResult getParentAccountCodeDetail(string AccCode, string len)
+        {
+            string parentCode = "";
+            parentCode = tX.getParentAccountCodeDetail(AccCode);
+            //if (parentCode != null)
+            //{
+            if (len == "1") { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 3)) + 1).ToString("D3"); } else { parentCode = "001"; } }
+            if (len == "5") { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 4)) + 1).ToString("D4"); } else { parentCode = "0001"; } }
+            if (len == "10") { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 5)) + 1).ToString("D5"); } else { parentCode = "00001"; } }
+            if (Convert.ToInt32(len) >= 16) { if (parentCode != null) { parentCode = (Convert.ToInt32(Right(parentCode, 6)) + 1).ToString("D6"); } else { parentCode = "000001"; } }
+            //}
+            return Json(parentCode);
+        }
+
+        [HttpGet]
+        public IActionResult findParentAccount(string table, string AccCode)
+        {
+            if (table == "Txscoadetail")
+            {
+                Txscoadetail obj = new Txscoadetail();
+                obj = tX.findParentAccount(AccCode);
+                return Ok(obj);
+            }
+            //if (table == "GltreceiptMaster")
+            //{
+            //    //TRTypeAccount
+            //    GltreceiptMaster obj = new GltreceiptMaster();
+            //    obj = setup.findParentAccountReceiptMaster(AccCode);
+            //    return Ok(obj);
+            //}
+            //if (table == "GltpaymentMaster")
+            //{
+            //    //TRTypeAccount
+            //    GltpaymentMaster obj = new GltpaymentMaster();
+            //    obj = setup.findParentAccountPaymentMaster(AccCode);
+            //    return Ok(obj);
+            //}
+            return Ok();
+        }
+
+
+        #region Methods
+
+        public string Left(string str, int length)
+        {
+            str = (str ?? string.Empty);
+            return str.Substring(0, Math.Min(length, str.Length));
+        }
+
+        public string Right(string str, int length)
+        {
+            str = (str ?? string.Empty);
+            return (str.Length >= length)
+                ? str.Substring(str.Length - length, length)
+                : str;
+        }
+
+        #endregion
     }
 }

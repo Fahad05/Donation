@@ -1,7 +1,6 @@
 ﻿@model Taxtation.Models.TxsstoreDetail
 
-<h4>TxsstoreDetail</h4>
-<hr />
+<div style="height:25px;"></div>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -20,13 +19,14 @@
                     <div>
                         @Html.TextBoxFor(model => model.StrId, new { @class = "form-control", @Hidden = "Hidden" })
                     </div>
+                    <div style="float:right"> @Html.CheckBox("StrActive", Model.StrActive.Value)Active</div>
                     <div>
-                        Name:
+                        Name<span class="mandatory">*</span>:
                         @Html.TextBoxFor(model => model.StrName, new { @class = "form-control", @required = true })
-                        @Html.CheckBox("StrActive", Model.StrActive.Value)Active
+                       
                     </div>
                     <div>
-                        Abbriviation:
+                        Abbriviation<span class="mandatory">*</span>:
                         @Html.TextBoxFor(model => model.StrAbbr, new { @class = "form-control", @required = true })
                     </div>
                     <div>
