@@ -13,7 +13,7 @@ using Taxtation.Models;
 using Taxtation.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rotativa.AspNetCore;
-
+using Microsoft.AspNetCore.Http;
 namespace Taxtation
 {
     public class Startup
@@ -37,7 +37,7 @@ namespace Taxtation
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
                 // Make the session cookie essential
-                options.Cookie.IsEssential = true;
+              //  options.Cookie.IsEssential = true;
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
