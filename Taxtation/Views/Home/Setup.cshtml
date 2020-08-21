@@ -6,31 +6,35 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <div style="margin-top:20px; text-align:center;">
+    <div style="margin-top:50px; text-align:center;">
         <img src="~/images/setups.gif" />
     </div>
 
-    <h4>ACCOUNTS</h4>
-    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
+    @*<h4>ACCOUNTS</h4>*@
+    <div style="margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);">
 
         <ul class="nav navbar-nav">
-            <li>
-                <a asp-action="showTax" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/tax.png" class="ImgStyleMain" style="background-color:#55C77E;" /><br /> TAX</a>
-            </li>
-            <li>
+            @*<li>
                 <a asp-action="showBank" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/bank.png" class="ImgStyleMain" style="background-color:#E1BE5C;" /><br /> BANK</a>
-            </li>
+            </li>*@
             <li>
                 <a asp-action="showCOA" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#b4c33a"><img src="~/images/coa.png" class="ImgStyleMain" style="background-color:#b4c33a;" /><br />ACCOUNTS</a>
             </li>
             <li>
                 <a asp-action="showCurrency" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#C78ECC"><img src="~/images/accounting.png" class="ImgStyleMain" style="background-color:#C78ECC;" /><br /> CURRENCY</a>
             </li>
-        </ul>
+            <li>
+                <a asp-action="showTax" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/tax.png" class="ImgStyleMain" style="background-color:#55C77E;" /><br /> TAX</a>
+            </li>
+        @*</ul>
     </div>
     <h4>LOCATION</h4>
     <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav">*@
             <li>
                 <a asp-action="showSite" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#f97177"><img src="~/images/site.png" class="ImgStyleMain" style="background-color:#f97177;" /><br /> SITE</a>
 
@@ -42,12 +46,12 @@
             <li>
                 <a asp-action="showStore" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#48C7C8"><img src="~/images/store.png" class="ImgStyleMain" style="background-color:#48C7C8;" /><br /> STORE</a>
             </li>
-        </ul>
+        @*</ul>
     </div>
 
     <h4>INVENTORY</h4>
     <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav">*@
             <li>
                 <a asp-action="showItem" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#3498DB"><img src="~/images/item.png" class="ImgStyleMain" style="background-color:#3498DB;" /><br /> ITEM</a>
             </li>

@@ -10,11 +10,12 @@
     <ul class="nav navbar-nav">
         <li>
 
-            <button class="w3-button w3-xlarge" style="color:white;" onclick="w3_open()"><img src="~/images/menu.png" style="width:40px;" /></button>
-            <div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="display:none;z-index:3;" id="mySidebar">
-                <a asp-area="" asp-controller="Manage" class="w3-bar-item w3-button" asp-action="Index" style="background-color:lightgray;color:black;" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+            <button class="w3-button w3-xlarge" style="color:white;" onclick="w3_open()"><img src="~/images/menu.png" style="width:40px;" />&nbsp;<img src="~/images/LogoSide.png" style="width:220px;" /></button>
+            <div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="display:none;z-index:3;padding-left: 12px; padding-top: 10px;" id="mySidebar">
+                @*<a asp-area="" asp-controller="Manage" class="w3-bar-item w3-button" asp-action="Index" style="background-color:lightgray;color:black;" title="Manage">Hello @UserManager.GetUserName(User)!</a>*@
 
-                <button class="w3-bar-item w3-button w3-large" style="text-align:right;" onclick="w3_close()"><img src="~/images/cross.png" style="width:30px;" /></button>
+                @*<button class="w3-bar-item w3-button w3-large" style="text-align:right;" onclick="w3_close()"><img src="~/images/cross.png" style="width:30px;" /></button>*@
+
                 <a asp-action="Dashboard" asp-controller="Home" class="w3-bar-item w3-button" style="color:#EF6E64"><img src="~/images/dsh.png" class="ImgStyle" style="background-color:#EF6E64;" /> DASHBOARD</a>
                 <a asp-action="Setup" asp-controller="Home" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/setups.png" class="ImgStyle" style="background-color:#55C77E;" /> SETUPS</a>
                 <a asp-action="Ledger" asp-controller="Home" class="w3-bar-item w3-button" style="color:#C78ECC"><img src="~/images/ledger.png" class="ImgStyle" style="background-color:#C78ECC;" /> LEDGER</a>
@@ -31,10 +32,17 @@
             <div class="w3-overlay w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>
         </li>
     </ul>
-   
+    @*<ul class="nav navbar-nav navbar-right">
+            <a asp-area="" asp-controller="Manage" class="w3-bar-item w3-button" asp-action="Index" style="color:lightgray;" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+        </ul>*@
 }
 else
 {
+    <ul class="nav navbar-nav">
+        <li>
+            <img src="~/images/LogoSide.png" style="width:220px; margin-top:8px; margin-bottom:8px;" />
+        </li>
+    </ul>
     <ul class="nav navbar-nav navbar-right">
         <li><a asp-area="" asp-controller="Account" asp-action="Register" style="width:100px;">Register</a></li>
         <li><a asp-area="" asp-controller="Account" asp-action="Login" style="width:100px;">Log in</a></li>
@@ -54,12 +62,12 @@ else
         document.getElementById("myOverlay").style.display = "none";
     }
 
-        //function myFunction() {
-        //    var x = document.getElementById("myDIV");
-        //    if (x.style.display === "none") {
-        //        x.style.display = "block";
-        //    } else {
-        //        x.style.display = "none";
-        //    }
-        //}
+                    //function myFunction() {
+                    //    var x = document.getElementById("myDIV");
+                    //    if (x.style.display === "none") {
+                    //        x.style.display = "block";
+                    //    } else {
+                    //        x.style.display = "none";
+                    //    }
+                    //}
 </script>

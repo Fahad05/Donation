@@ -382,6 +382,10 @@ a {
     transition: opacity 0s
 }
 
+.w3-divtop {
+    margin-top: 50px;
+}
+
 .w3-input {
     padding: 8px;
     display: block;
@@ -438,7 +442,7 @@ a {
 
 .w3-sidebar {
     height: 100%;
-    width: 250px;
+    width: 316px;
     background-color: #fff;
     margin-left:-15px;
     margin-top:-50px;
@@ -1496,7 +1500,8 @@ a {
 
 .w3-light-grey, .w3-hover-light-grey:hover, .w3-light-gray, .w3-hover-light-gray:hover {
     color: #f1f1f1 !important;
-    background-color: #03103A !important
+    background-color: #03103A !important;
+    margin-top: 0px;
 }
 
 .w3-dark-grey, .w3-hover-dark-grey:hover, .w3-dark-gray, .w3-hover-dark-gray:hover {
