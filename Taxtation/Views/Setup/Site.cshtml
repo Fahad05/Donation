@@ -19,7 +19,11 @@
                             <div>
                                 @Html.TextBoxFor(model => model.SitId, new { @class = "form-control", @Hidden = "Hidden" })
                             </div>
-                            <div style="float:right;"> @Html.CheckBox("SitActive", Model.SitActive.Value)Active</div>
+                            <div style="float:right;">
+                                @Html.CheckBox("SitActive", Model.SitActive.Value)Active
+                                &nbsp;
+                                @Html.CheckBox("SitDefault", Model.SitDefault.Value)Default
+                            </div>
                             <div>
                                 Name<span class="mandatory">*</span>:
                                 @Html.TextBoxFor(model => model.SitName, new { @class = "form-control", @required = true })

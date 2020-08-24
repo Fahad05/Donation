@@ -19,15 +19,14 @@
                             <div>
                                 @Html.TextBoxFor(model => model.CurId, new { @class = "form-control", @Hidden = "Hidden" })
                             </div> <div style="float:right">
-                                @Html.CheckBox("CurActive", Model.CurActive.Value)Active
-                            </div>
+    @Html.CheckBox("CurIsLocal", Model.CurIsLocal.Value)Is Local
+    @Html.CheckBox("CurActive", Model.CurActive.Value)Active
+</div>
                             <div>
                                 Name<span class="mandatory">*</span>:
                                 @Html.TextBoxFor(model => model.CurName, new { @class = "form-control", @required = true })
                             </div>
                             <div style="float:right">
-
-                                @Html.CheckBox("CurIsLocal", Model.CurIsLocal.Value)Is Local
                             </div>
                             <div>
                                 Abbriviation:

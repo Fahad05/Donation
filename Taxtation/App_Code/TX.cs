@@ -9,7 +9,7 @@ namespace Taxtation.App_Code
     {
         TAXTATIONContext db = new TAXTATIONContext();
         /*
-         * Scaffold-DbContext "Data Source=IT02;Initial Catalog=TAXTATION;Persist Security Info=True;User ID=sa;Password=Sirsyed45;"  Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
+         * Scaffold-DbContext "Data Source=QaiserPC;Initial Catalog=TAXTATION;Persist Security Info=True;User ID=sa;Password=Sirsyed45;"  Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
          */
         
 

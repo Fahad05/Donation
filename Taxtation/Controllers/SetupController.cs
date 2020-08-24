@@ -247,6 +247,7 @@ namespace Taxtation.Controllers
                 ViewData["_Update"] = "False";
                 TxssiteDetail obj = new TxssiteDetail();
                 obj.SitActive = (obj.SitActive == null) ? true : false;
+                obj.SitDefault = (obj.SitDefault == null) ? true : false;
                 return PartialView(obj);
             }
             else
@@ -256,6 +257,7 @@ namespace Taxtation.Controllers
                 TxssiteDetail obj = new TxssiteDetail();
                 obj = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == Convert.ToInt32(id)).FirstOrDefault();
                 obj.SitActive = (obj.SitActive == true) ? true : false;
+                obj.SitDefault = (obj.SitDefault == true) ? true : false;
                 return PartialView(obj);
             }
         }
@@ -269,32 +271,48 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            if (Save != null)
+
+            TxssiteDetail objcheck = new TxssiteDetail();
+            objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true).FirstOrDefault();
+            if (objcheck != null)
             {
-                obj.Id = user.Id;
-                obj.UserName = user.UserName;
-                obj.SitActive = (obj.SitActive == true) ? true : false;
-                obj.EnterBy = user.UserName;
-                obj.EnterDate = System.DateTime.Now;
-                db.TxssiteDetail.Add(obj);
-                db.SaveChanges();
+                ViewBag.Error = "error message";
+                return RedirectToAction("showSite");
+                //return View("Setup", "Site");
+                //, new { id = objcheck.SitId }
+                //return RedirectToAction("Site");
             }
-            if (Update != null)
+            else
             {
-                TxssiteDetail obj1 = new TxssiteDetail();
-                obj1 = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == obj.SitId).FirstOrDefault();
-                if (obj1 != null)
+                if (Save != null)
                 {
-                    obj1.SitName = obj.SitName;
-                    obj1.SitAbbr = obj.SitAbbr;
-                    obj1.SitDesc = obj.SitDesc;
-                    obj1.SitActive = (obj.SitActive == true) ? true : false;
-                    obj1.EditBy = user.UserName;
-                    obj1.EditDate = System.DateTime.Now;
+                    obj.Id = user.Id;
+                    obj.UserName = user.UserName;
+                    obj.SitActive = (obj.SitActive == true) ? true : false;
+                    obj.SitDefault = (obj.SitDefault == true) ? true : false;
+                    obj.EnterBy = user.UserName;
+                    obj.EnterDate = System.DateTime.Now;
+                    db.TxssiteDetail.Add(obj);
                     db.SaveChanges();
                 }
+                if (Update != null)
+                {
+                    TxssiteDetail obj1 = new TxssiteDetail();
+                    obj1 = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == obj.SitId).FirstOrDefault();
+                    if (obj1 != null)
+                    {
+                        obj1.SitName = obj.SitName;
+                        obj1.SitAbbr = obj.SitAbbr;
+                        obj1.SitDesc = obj.SitDesc;
+                        obj1.SitActive = (obj.SitActive == true) ? true : false;
+                        obj1.SitDefault = (obj.SitDefault == true) ? true : false;
+                        obj1.EditBy = user.UserName;
+                        obj1.EditDate = System.DateTime.Now;
+                        db.SaveChanges();
+                    }
+                }
+                return RedirectToAction("showSite");
             }
-            return RedirectToAction("showSite");
         }
      
 

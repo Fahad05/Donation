@@ -17,6 +17,17 @@
         padding-top: 20px;
     }
 }
+.buttonsize {
+    width: 100px;
+    margin-top: 23px;
+}
+@media screen and (max-width:400px) {
+    .buttonsize {
+        width: 64px;
+        margin-top: -2px;
+        margin-bottom: 5px;
+    } 
+}
 @media screen and (max-width:400px) {
     .top-padding-main {
         padding-top: 78px;

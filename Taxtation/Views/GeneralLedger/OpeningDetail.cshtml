@@ -2,37 +2,58 @@
 
 @{
     ViewData["Title"] = "Opening Detail";
-    var index = 5;
+    var index = 7;
     if (Model.lstLedger != null)
     {
         index = Model.lstLedger.Count;
     }
 }
 <form asp-action="OpeningDetail" method="post">
-    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
+    <div class="row" style="position:fixed; padding-top:5px;padding-bottom:3px;z-index:2;background-color:#EEEEEE;left:-1px;right:0">
         <div class="col-sm-12" style="padding-left:8.2%;">
             @if (ViewData["_Save"].ToString() == "True")
             {
-                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                <button type="submit" name="Save" id="Save" value="Save" AccessKey="S" class="form-control-btn buttonsize">S̲AVE</button>
             }
             @if (ViewData["_Update"].ToString() == "True")
             {
-                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
-                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
-                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+                //style="background-image:url(../images/button/Save.png)" class="btnControlDML"
+                //style="background-image:url(../images/button/Update.png)" class="btnControlDML"
+                //style="background-image:url(../images/button/Delete.png)" class="btnControlDML"
+                //style="background-image:url(../images/button/Report.png)" class="btnControlDML"
+                //style="background-image:url(../images/button/back.png)" class="btnControlDML"
+
+                <button type="submit" name="Update" id="Update" value="Update" AccessKey="U" class="form-control-btn buttonsize">U̲PDATE</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" AccessKey="L" class="form-control-btn buttonsize">DEL̲ETE</button>
+                <button type="submit" name="Report" id="Report" value="Report" AccessKey="R" class="form-control-btn buttonsize">R̲EPORT</button>
             }
+            <button name="Add Row" id="addNewRow" value="Add Row" AccessKey="A" class="form-control-btn buttonsize">A̲DDROW</button>
+            <a asp-action="showOpeningDetail" asp-controller="GeneralLedger" AccessKey="B" class="form-control-btn buttonsize">B̲ACK</a>
             <div style="float:right;padding-right:8.3%">
-                <a asp-action="showOpeningDetail" asp-controller="GeneralLedger" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+                <table class="w3-table-all">
+                    <tr>
+                        <td>
+                            Total Debit:
+                            <input type="text" asp-for="TotalDebit" readonly="readonly" class="form-control-footer" />
+                        </td>
+                        <td>
+                            Total Credit:
+                            <input type="text" asp-for="TotalCredit" readonly="readonly" class="form-control-footer" />
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
-
     </div>
+
+
+
     <div class="row">
         <div class="col-lg-4">
             <input type="text" asp-for="master.TrId" hidden="hidden" class="form-control" />
         </div>
     </div>
-    <div class="row" style="padding-top:70px;z-index:1">
+    <div class="row" style="padding-top:70px;z-index:1; margin-top:60px;">
         <div class="col-md-3">
             Transaction No<span class="mandatory">*</span>:
             <input type="text" asp-for="master.Trno" readonly="readonly" class="form-control" />
@@ -48,7 +69,7 @@
         </div><div class="col-md-3">
             Site<span class="mandatory">*</span>:
             <select asp-for="master.SitId" class="form-control" required="required">
-                <option value="">Select</option>
+                <option value="">SELECT SITE</option>
                 @foreach (var j in Model.lstSite)
                 {
                     <option value=@j.SitId>@j.SitName</option>
@@ -60,7 +81,7 @@
         <div class="col-md-3">
             Currency<span class="mandatory">*</span>:
             <select asp-for="master.TrcurId" class="form-control" required="required">
-                <option value="">Select</option>
+                <option value="">SELECT CURRENCY</option>
                 @foreach (var j in Model.lstCurrency)
                 {
                     <option value=@j.CurId>@j.CurName</option>
@@ -76,24 +97,18 @@
             <input type="text" asp-for="master.TrrefMain" class="form-control" />
         </div>
         <div class="col-md-3">
-
-        </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col-md-12">
             Remarks:
-            <input type="text" asp-for="master.TrmainRemarks" class="form-control" />
+            @*<input type="text" asp-for="master.TrmainRemarks" class="form-control" />*@
+            <textarea asp-for="master.TrmainRemarks" class="form-control" rows="1" cols="15"></textarea>
         </div>
     </div>
-    <br>
-    <div class="row">
+
+    @*<div class="row">
         <div class="col-lg-3">
             <button id="addNewRow" class="form-control">Add New Row</button>
         </div>
         <div class="col-lg-9"></div>
-    </div>
+    </div>*@
     <br />
     <div class="row">
         <div class="col-lg-12" style="overflow-x:scroll;">
@@ -109,12 +124,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                  
                     @for (int i = 0; i < index; i++)
                     {
                         <tr>
                             <td>
                                 <select asp-for="lstLedger[i].TraccCode" onchange="ExchangeRate()" class="form-control" style="width:230px;">
-                                    <option value="-1">Select</option>@foreach (var j in Model.lstAccount)
+                                    <option value="-1">SELECT ACCOUNT</option>@foreach (var j in Model.lstAccount)
                                     {
                                         <option value=@j.AccCode>@j.AccName</option>}
                                 </select>
@@ -135,10 +151,7 @@
             </table>
         </div>
     </div>
-    <br />
-
-    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
-
+    @*<div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
         <div class="col-md-2">
             Total Debit:
             <input type="text" asp-for="TotalDebit" readonly="readonly" class="form-control-footer" />
@@ -147,7 +160,7 @@
             Total Credit:
             <input type="text" asp-for="TotalCredit" readonly="readonly" class="form-control-footer" />
         </div>
-    </div>
+    </div>*@
 </form>
 
 
@@ -188,7 +201,7 @@
         $('#addNewRow').click(function (event) {
             var rowCount = $('#myTable tbody tr').length;
             var dropDownAccount = document.getElementById('lstLedger_0__TraccCode').innerHTML;
-            $('#myTable').append('<tr><td><select onchange="ExchangeRate()" class="form-control" style="width:230px;" id="lstLedger_' + rowCount + '__TraccCode" name="lstLedger[' + rowCount + '].TraccCode">< option value = "-1" > Select</option >' + dropDownAccount + '</select ></td><td><input type="text" onchange="ExchangeRate()" class="form-control" style="width:120px;" data-val="true" data-val-number="The field amount must be a number." id="eFOD_' + rowCount + '__amount" name="eFOD[' + rowCount + '].amount" value=""></td><td><select onchange="ExchangeRate()"  class="form-control" style="width:120px;" id="eFOD_' + rowCount + '__debitCredit" name="eFOD[' + rowCount + '].debitCredit">< option value = "001" > Debit</option ><option value="002">Credit</option></select ></td><td><input type="number" step="any" class="form-control" style="width:120px;" data-val="true" data-val-number="The field TramountConverted must be a number." id="lstLedger_' + rowCount + '__TramountConverted" name="lstLedger[' + rowCount + '].TramountConverted" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstLedger_' + rowCount + '__TrrefNo" name="lstLedger[' + rowCount + '].TrrefNo" value=""></td><td><input type="text" class="form-control" style="width:350px;" id="lstLedger_' + rowCount + '__Trremarks" name="lstLedger[' + rowCount + '].Trremarks" value=""></td></tr>')
+            $('#myTable').append('<tr><td><select onchange="ExchangeRate()" class="form-control" style="width:230px;" id="lstLedger_' + rowCount + '__TraccCode" name="lstLedger[' + rowCount + '].TraccCode">< option value = "-1" > Select</option >' + dropDownAccount + '</select ></td><td><input type="text" onchange="ExchangeRate()" class="form-control" style="width:120px;" data-val="true" data-val-number="The field amount must be a number." id="eFOD_' + rowCount + '__amount" name="eFOD[' + rowCount + '].amount" value=""></td><td><select onchange="ExchangeRate()"  class="form-control" style="width:120px;" id="eFOD_' + rowCount + '__debitCredit" name="eFOD[' + rowCount + '].debitCredit"><option value="001">Debit</option><option value="002">Credit</option></select ></td><td><input type="number" step="any" class="form-control" style="width:120px;" data-val="true" data-val-number="The field TramountConverted must be a number." id="lstLedger_' + rowCount + '__TramountConverted" name="lstLedger[' + rowCount + '].TramountConverted" value=""></td><td><input type="text" class="form-control" style="width:120px;" id="lstLedger_' + rowCount + '__TrrefNo" name="lstLedger[' + rowCount + '].TrrefNo" value=""></td><td><input type="text" class="form-control" style="width:350px;" id="lstLedger_' + rowCount + '__Trremarks" name="lstLedger[' + rowCount + '].Trremarks" value=""></td></tr>')
             $('#lstLedger_' + rowCount + '__TraccCode').attr('Selected', true).val("-1");
             event.preventDefault();
         })

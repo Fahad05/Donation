@@ -8,17 +8,18 @@
 <div class="MainDiv">
     <div>
         <h2>Site</h2>
-
     </div>
     <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Site","Setup")'></div>
-    <br />
     <div style="float:left;">
-        <button id="btnAddRow" style="width:120px;" class="form-control-btn">Add New</button>
+        <button id="btnAddRow" style="width:100px;" class="form-control-btn">Add New</button>
     </div>
-    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllSites", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="text-align:right;width:100px;float:left;padding-left:2px;padding-right:1px;">@Html.ActionLink("Report", "PrintAllSites", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="float:left;">
+        <a asp-action="Setup" asp-controller="Home" AccessKey="B" class="form-control-btn" style="width:100px;">B̲ACK</a>
+    </div>
 
     <div style="float:right;">
-        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name" style="width:330px;">
     </div>
 </div>
 <div class="GridStyle">
@@ -46,6 +47,9 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.SitActive)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SitDefault)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.EnterBy)
@@ -89,6 +93,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SitActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SitDefault)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.EnterBy)

@@ -18,13 +18,16 @@
     <div>
         <h2>List Opening Detail</h2>
     </div>
-    <br />
+
     <div style="float:left;">
-        <a asp-action="OpeningDetail" asp-controller="GeneralLedger" class="form-control-btn" style="width:120px;">Add New</a>
+        <a asp-action="OpeningDetail" asp-controller="GeneralLedger" AccessKey="A" class="form-control-btn" style="width:100px;">A̲DD NEW</a>
     </div>
-    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllOpening", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="text-align:right;width:100px;float:left;padding-left:2px;padding-right:1px;">@Html.ActionLink("R̲EPORT", "PrintAllOpening", "Reports", new { }, new { target = "_blank", @class = "form-control-btn", @accesskey = "R" })</div>
+    <div style="float:left;">
+        <a asp-action="Ledger" asp-controller="Home" AccessKey="B" class="form-control-btn" style="width:100px;">B̲ACK</a>
+    </div>
     <div style="float:right;">
-        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name" style="width:330px;">
     </div>
 </div>
 <div class="GridStyle">
@@ -32,35 +35,38 @@
         <thead>
             <tr>
                 <th></th>
-                <th>Transaction No</th>
-                <th>Transaction Date</th>
-                <th>Ledger Date</th>
-                <th>Site</th>
-                <th>Currency</th>
-                <th>Exchange Rate</th>
-                <th>Reference No</th>
-                <th>Remarks</th>
-                <th>Account</th>
-                <th>Credit</th>
-                <th>Debit</th>
+                <th>TR. NO.</th>
+                <th>TR. DATE</th>
+                @*<th>Ledger Date</th>*@
+                <th>ACCOUNT</th>
+                <th>DEBIT</th>
+                <th>CREDIT</th>
+                <th>SITE</th>
+                <th>CURRENCY</th>
+                <th>EXC. RATE</th>
+                <th>REF. NO.</th>
+                <th>REMARKS</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var j in query)
             {
                 <tr>
-                    <td>@Html.ActionLink("Edit", "OpeningDetail", "GeneralLedger", new { id = j.mas.TrId })</td>
+                    @*<td>
+                        <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("OpeningDetail","GeneralLedger", new { id=j.mas.TrId })'>Edit</a>
+                    </td>*@
+                    <td>@Html.ActionLink("Edit", "OpeningDetail", "GeneralLedger", new { id = j.mas.TrId}, new { @class = "form-control-btn-edit" })</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.Trno)</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.Trdate)</td>
-                    <td>@Html.DisplayFor(modelItem => j.mas.Trgldate)</td>
+                    @*<td>@Html.DisplayFor(modelItem => j.mas.Trgldate)</td>*@
+                    <td>@Html.DisplayFor(modelItem => j.account.AccName)</td>
+                    <td>@Html.DisplayFor(modelItem => j.det.Trdebit)</td>
+                    <td>@Html.DisplayFor(modelItem => j.det.Trcredit)</td>
                     <td>@Html.DisplayFor(modelItem => j.site.SitName)</td>
                     <td>@Html.DisplayFor(modelItem => j.currency.CurName)</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.TrexchangeRate)</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.TrrefMain)</td>
                     <td>@Html.DisplayFor(modelItem => j.mas.TrmainRemarks)</td>
-                    <td>@Html.DisplayFor(modelItem => j.account.AccCode)</td>
-                    <td>@Html.DisplayFor(modelItem => j.det.Trcredit)</td>
-                    <td>@Html.DisplayFor(modelItem => j.det.Trdebit)</td>
 
                 </tr>
 
@@ -70,6 +76,7 @@
 </div>
 
 @section Scripts{
+   
     <script type="text/javascript">
 
         function myFunction() {

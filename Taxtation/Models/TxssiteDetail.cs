@@ -16,5 +16,6 @@ namespace Taxtation.Models
         public DateTime? EnterDate { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
+        public bool? SitDefault { get; set; }
     }
 }
