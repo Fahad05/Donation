@@ -11,9 +11,9 @@
     </div>
     <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Site","Setup")'></div>
     <div style="float:left;">
-        <button id="btnAddRow" style="width:100px;" class="form-control-btn">Add New</button>
+        <button id="btnAddRow" AccessKey="A" style="width:100px;" class="form-control-btn">A̲DD NEW</button>
     </div>
-    <div style="text-align:right;width:100px;float:left;padding-left:2px;padding-right:1px;">@Html.ActionLink("Report", "PrintAllSites", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="text-align:right;width:100px;float:left;padding-left:2px;padding-right:1px;">@Html.ActionLink("R̲EPORT", "PrintAllSites", "Reports", new { }, new { target = "_blank", @class = "form-control-btn", @accesskey = "R" })</div>
     <div style="float:left;">
         <a asp-action="Setup" asp-controller="Home" AccessKey="B" class="form-control-btn" style="width:100px;">B̲ACK</a>
     </div>
@@ -27,43 +27,42 @@
         <thead>
             <tr>
                 <th></th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Id)
+                <th style="display: none;">
+                    User ID
+                </th>
+                <th style="display: none;">
+                    User Name
+                </th>
+                <th style="display: none;">
+                    ID
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.UserName)
+                    Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SitId)
+                    Abbreviation
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SitName)
+                    Description
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SitAbbr)
+                    Active
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SitDesc)
+                    Default
+                </th>
+                <th style="display: none;">
+                    Enter By
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SitActive)
+                    Enter Date
+                </th>
+                <th style="display: none;">
+                    Edit By
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SitDefault)
+                    Edit Date
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EnterBy)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EnterDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EditBy)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EditDate)
-                </th>
-
             </tr>
         </thead>
         <tbody>
@@ -73,13 +72,13 @@
                 <td>
                     <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("Site","Setup", new { id=item.SitId })'>Edit</a>
                 </td>
-                <td>
+                <td style="display: none;">
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
-                <td>
+                <td style="display: none;">
                     @Html.DisplayFor(modelItem => item.UserName)
                 </td>
-                <td>
+                <td style="display: none;">
                     @Html.DisplayFor(modelItem => item.SitId)
                 </td>
                 <td>
@@ -97,17 +96,19 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.SitDefault)
                 </td>
-                <td>
+                <td style="display: none;">
                     @Html.DisplayFor(modelItem => item.EnterBy)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EnterDate)
+                    @*@Html.DisplayFor(modelItem => item.EnterDate)*@
+                    @Convert.ToString(string.Format("{0:dd-MMM-yyyy hh:mm tt}", item.EnterDate))
                 </td>
-                <td>
+                <td style="display: none;">
                     @Html.DisplayFor(modelItem => item.EditBy)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EditDate)
+                    @*@Html.DisplayFor(modelItem => item.EditDate)*@
+                    @Convert.ToString(string.Format("{0:dd-MMM-yyyy hh:mm tt}", item.EditDate))
                 </td>
 
             </tr>

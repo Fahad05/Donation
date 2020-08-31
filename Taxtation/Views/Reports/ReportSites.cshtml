@@ -28,44 +28,53 @@
 </head>
 <body>
     <div class="container">
-        <p style="float:right">@Html.Label(DateTime.Today.ToString("dd-MM-yyyy"))</p>
-        <h2>SITES DETAIL</h2>
+        <p style="float:right;">Print Date Time: @Html.Label(DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt"))</p>
+        <h2>SITE DETAIL</h2>
         <div style="width:100%;border-top:1px solid black"></div>
         <br />
-        <table class="table table-bordered">
+        <table class="table table-bordered" style="text-wrap: none;">
             <thead>
                 <tr style="background-color:#F1F1F1">
-                    <th>Code</th>
+                    <th>S. No.</th>
                     <th>Name</th>
                     <th>Abbrevition</th>
                     <th>Description</th>
                     <th>Active</th>
-                    <th>Enter by</th>
+                    <th>Default</th>
+                    <th style="display: none;">Enter by</th>
                     <th>Enter Date</th>
-                    <th>Edit By</th>
+                    <th style="display: none;">Edit By</th>
                     <th>Edit Date</th>
 
                 </tr>
             </thead>
             <tbody>
-
+                @{ int i = 0; }
                 @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @item.SitId
+                {
+                    <tr>
+                        <td>@*@item.SitId*@@(i += 1)</td>
+                        <td>@item.SitName</td>
+                        <td>@item.SitAbbr</td>
+                        <td>@item.SitDesc</td>
+                        <td>
+                            @if (item.SitActive == true)
+                            {@Html.Encode("Yes") }
+                        else
+                        { @Html.Encode("No")}
                     </td>
-                    <td>@item.SitName</td>
-                    <td>@item.SitAbbr</td>
-                    <td>@item.SitDesc</td>
-                    <td>@item.SitActive</td>
-                    <td>@item.EnterBy</td>
-                    <td> @item.EnterDate</td>
-                    <td>@item.EditBy</td>
-                    <td>@item.EditDate</td>
-                </tr>
+                    <td>
+                        @if (item.SitDefault == true)
+                        {@Html.Encode("Yes") }
+                    else
+                    { @Html.Encode("No")}
+                </td>
+                <td style="display: none;">@item.EnterBy</td>
+                <td>@Convert.ToString(string.Format("{0:dd-MMM-yyyy hh:mm tt}", item.EnterDate))</td>
+                <td style="display: none;">@item.EditBy</td>
+                <td>@Convert.ToString(string.Format("{0:dd-MMM-yyyy hh:mm tt}", item.EditDate))</td>
+            </tr>
         }
-
             </tbody>
         </table>
     </div>

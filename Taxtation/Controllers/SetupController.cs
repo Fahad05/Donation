@@ -89,7 +89,7 @@ namespace Taxtation.Controllers
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
                 TxscurrencyDetail obj = new TxscurrencyDetail();
-                obj = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurId == Convert.ToInt32(id)).FirstOrDefault();
+                obj = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurId== Convert.ToInt32(id)).FirstOrDefault();
                 if (obj != null) { }
                 obj.CurActive = (obj.CurActive == true) ? true : false;
                 obj.CurIsLocal = (obj.CurIsLocal == true) ? true : false;
@@ -116,11 +116,11 @@ namespace Taxtation.Controllers
                 db.TxscurrencyDetail.Add(obj);
                 db.SaveChanges();
             }
-            if (Update != null)
+            if(Update!=null)
             {
                 TxscurrencyDetail obj1 = new TxscurrencyDetail();
                 obj1 = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurId == obj.CurId).FirstOrDefault();
-                if (obj1 != null)
+                if(obj1!=null)
                 {
                     obj1.CurName = obj.CurName;
                     obj1.CurAbbr = obj.CurAbbr;
@@ -135,7 +135,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCurrency");
         }
 
-
+      
         #endregion
 
         #region Store
@@ -143,7 +143,7 @@ namespace Taxtation.Controllers
         public async Task<IActionResult> showStore()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (User == null)
+            if(User==null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
@@ -160,7 +160,7 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            if (id == null)
+            if(id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
@@ -188,7 +188,7 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            if (Save != null)
+            if(Save!=null)
             {
                 obj.Id = user.Id;
                 obj.UserName = user.UserName;
@@ -198,11 +198,11 @@ namespace Taxtation.Controllers
                 db.TxsstoreDetail.Add(obj);
                 db.SaveChanges();
             }
-            if (Update != null)
+            if(Update!=null)
             {
                 TxsstoreDetail obj1 = new TxsstoreDetail();
                 obj1 = db.TxsstoreDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.StrId == obj.StrId).FirstOrDefault();
-                if (obj1 != null)
+                if(obj1!=null)
                 {
                     obj1.StrName = obj.StrName;
                     obj1.StrAbbr = obj.StrAbbr;
@@ -216,7 +216,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showStore");
         }
 
-
+       
         #endregion
 
         #region Site
@@ -273,63 +273,72 @@ namespace Taxtation.Controllers
             }
 
             TxssiteDetail objcheck = new TxssiteDetail();
-            //objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitDefault == true).FirstOrDefault();
-            //if (objcheck != null)
-            //{
-            //    ViewBag.Error = "error message";
-            //    return RedirectToAction("showSite");
-            //    //return View("Setup", "Site");
-            //    //, new { id = objcheck.SitId }
-            //    //return RedirectToAction("Site");
-            //}
-            //else
-            //{
+            objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true && obj.SitDefault == true).FirstOrDefault();
+            if (objcheck != null)
+            {
+                //ViewBag.Error = "error message";
+                //return RedirectToAction("showSite", "Setup");                
+                //return RedirectToAction("showSite");
+                //ViewBag.Message = "error message";
+
+                //ViewData["Message"] = "Some error message";
+                //return View();
+
+                ViewBag.ErrorMessage = "My error message";
+                return View(obj);
+
+                //string id = "";
+                //if (id == null)
+                //{
+                //    ViewData["_Save"] = "True";
+                //    ViewData["_Update"] = "False";
+                //    obj.SitActive = (obj.SitActive == null) ? true : false;
+                //    obj.SitDefault = (obj.SitDefault == null) ? true : false;
+                //    return PartialView(obj);
+                //}
+                //else
+                //{
+                //    ViewData["_Save"] = "False";
+                //    ViewData["_Update"] = "True";
+                //    obj = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == Convert.ToInt32(id)).FirstOrDefault();
+                //    obj.SitActive = (obj.SitActive == true) ? true : false;
+                //    obj.SitDefault = (obj.SitDefault == true) ? true : false;
+                //    return PartialView(obj);
+                //}
+            }
+            else
+            {
                 if (Save != null)
                 {
-                    objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitDefault == true).FirstOrDefault();
-                    if (objcheck == null)
-                    {
-                        obj.Id = user.Id;
-                        obj.UserName = user.UserName;
-                        obj.SitActive = (obj.SitActive == true) ? true : false;
-                        obj.SitDefault = (obj.SitDefault == true) ? true : false;
-                        obj.EnterBy = user.UserName;
-                        obj.EnterDate = System.DateTime.Now;
-                        db.TxssiteDetail.Add(obj);
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-
-                    }
+                    obj.Id = user.Id;
+                    obj.UserName = user.UserName;
+                    obj.SitActive = (obj.SitActive == true) ? true : false;
+                    obj.SitDefault = (obj.SitDefault == true) ? true : false;
+                    obj.EnterBy = user.UserName;
+                    obj.EnterDate = System.DateTime.Now;
+                    db.TxssiteDetail.Add(obj);
+                    db.SaveChanges();
                 }
                 if (Update != null)
                 {
-                    objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true ).FirstOrDefault();
-                    if (objcheck == null)
+                    TxssiteDetail obj1 = new TxssiteDetail();
+                    obj1 = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == obj.SitId).FirstOrDefault();
+                    if (obj1 != null)
                     {
-                        obj = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == obj.SitId).FirstOrDefault();
-                        if (obj != null)
-                        {
-                            obj.SitName = obj.SitName;
-                            obj.SitAbbr = obj.SitAbbr;
-                            obj.SitDesc = obj.SitDesc;
-                            obj.SitActive = (obj.SitActive == true) ? true : false;
-                            obj.SitDefault = (obj.SitDefault == true) ? true : false;
-                            obj.EditBy = user.UserName;
-                            obj.EditDate = System.DateTime.Now;
-                            db.SaveChanges();
-                        }
-                    }
-                    else
-                    {
-
+                        obj1.SitName = obj.SitName;
+                        obj1.SitAbbr = obj.SitAbbr;
+                        obj1.SitDesc = obj.SitDesc;
+                        obj1.SitActive = (obj.SitActive == true) ? true : false;
+                        obj1.SitDefault = (obj.SitDefault == true) ? true : false;
+                        obj1.EditBy = user.UserName;
+                        obj1.EditDate = System.DateTime.Now;
+                        db.SaveChanges();
                     }
                 }
                 return RedirectToAction("showSite");
-            //}
+            }
         }
-
+     
 
         #endregion
 
@@ -346,7 +355,7 @@ namespace Taxtation.Controllers
             lstBank = db.TxsbankDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
             return View(lstBank);
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> Bank(string id)
         {
@@ -382,7 +391,7 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            if (Save != null)
+            if(Save!=null)
             {
                 obj.Id = user.Id;
                 obj.UserName = user.UserName;
@@ -392,11 +401,11 @@ namespace Taxtation.Controllers
                 db.TxsbankDetail.Add(obj);
                 db.SaveChanges();
             }
-            if (Update != null)
+            if(Update!=null)
             {
                 TxsbankDetail obj1 = new TxsbankDetail();
                 obj1 = db.TxsbankDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.BnkId == obj.BnkId).FirstOrDefault();
-                if (obj1 != null)
+                if(obj1!=null)
                 {
                     obj1.BnkName = obj.BnkName;
                     obj1.BnkAbbr = obj.BnkAbbr;
@@ -416,7 +425,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showBank");
         }
 
-
+       
         #endregion
 
         #region Tax
@@ -515,7 +524,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showTax");
         }
-
+       
         #endregion
 
         #region Customer
@@ -530,7 +539,7 @@ namespace Taxtation.Controllers
             }
             List<TxscustomerDetail> lstCustomer = new List<TxscustomerDetail>();
             lstCustomer = db.TxscustomerDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-
+            
             return View(lstCustomer);
         }
 
@@ -548,7 +557,7 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-
+                
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 obj.master.CusActive = (obj.master.CusActive == null) ? true : false;
                 return PartialView(obj);
@@ -612,7 +621,7 @@ namespace Taxtation.Controllers
             }
             return RedirectToAction("showCustomer");
         }
-
+      
         #endregion
 
         #region Supplier
@@ -644,7 +653,7 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-
+                
                 obj.master.SupActive = (obj.master.SupActive == null) ? true : false;
                 obj.lstCountry = db.TxscountryDetail.ToList();
                 return PartialView(obj);
@@ -709,7 +718,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showSupplier");
         }
 
-
+      
         #endregion
 
         #region Item
@@ -829,7 +838,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showItem");
         }
 
-
+      
         #endregion
 
 
@@ -863,7 +872,7 @@ namespace Taxtation.Controllers
                 ViewData["_ParentAccountCode"] = "0";
                 TXSCOADetailView obj = new TXSCOADetailView();
                 obj.coa.AccActive = (obj.coa.AccActive == null) ? true : false;
-                obj.lstCoa = db.Txscoadetail.Where(x => x.UserName == user.UserName).ToList();
+                obj.lstCoa = db.Txscoadetail.Where(x=>x.UserName==user.UserName).ToList();
                 return PartialView(obj);
             }
             else
@@ -897,14 +906,14 @@ namespace Taxtation.Controllers
             obj.coa.AccAllowPosting = false;
             obj.coa.AccReconcile = false;
             obj.coa.AccThirdParty = false;
-            if (Save != null)
+            if (Save!=null)
             {
                 obj.coa.EnterBy = user.UserName;
                 obj.coa.EnterDate = System.DateTime.Now;
                 db.Txscoadetail.Add(obj.coa);
                 db.SaveChanges();
             }
-            if (Update != null)
+            if(Update != null)
             {
                 Txscoadetail txscoadetail = new Txscoadetail();
                 txscoadetail = db.Txscoadetail.Where(x => x.Id == obj.coa.Id && x.UserName == user.UserName && x.Coaid == obj.coa.Coaid).FirstOrDefault();
@@ -960,7 +969,7 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCOA");
         }
 
-
+       
 
         #endregion
 
