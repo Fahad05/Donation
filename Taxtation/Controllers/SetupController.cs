@@ -273,14 +273,38 @@ namespace Taxtation.Controllers
             }
 
             TxssiteDetail objcheck = new TxssiteDetail();
-            objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true).FirstOrDefault();
+            objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true && obj.SitDefault == true).FirstOrDefault();
             if (objcheck != null)
             {
-                ViewBag.Error = "error message";
-                return RedirectToAction("showSite");
-                //return View("Setup", "Site");
-                //, new { id = objcheck.SitId }
-                //return RedirectToAction("Site");
+                //ViewBag.Error = "error message";
+                //return RedirectToAction("showSite", "Setup");                
+                //return RedirectToAction("showSite");
+                //ViewBag.Message = "error message";
+
+                //ViewData["Message"] = "Some error message";
+                //return View();
+
+                ViewBag.ErrorMessage = "My error message";
+                return View(obj);
+
+                //string id = "";
+                //if (id == null)
+                //{
+                //    ViewData["_Save"] = "True";
+                //    ViewData["_Update"] = "False";
+                //    obj.SitActive = (obj.SitActive == null) ? true : false;
+                //    obj.SitDefault = (obj.SitDefault == null) ? true : false;
+                //    return PartialView(obj);
+                //}
+                //else
+                //{
+                //    ViewData["_Save"] = "False";
+                //    ViewData["_Update"] = "True";
+                //    obj = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == Convert.ToInt32(id)).FirstOrDefault();
+                //    obj.SitActive = (obj.SitActive == true) ? true : false;
+                //    obj.SitDefault = (obj.SitDefault == true) ? true : false;
+                //    return PartialView(obj);
+                //}
             }
             else
             {
