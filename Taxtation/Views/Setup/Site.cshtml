@@ -24,11 +24,11 @@
                             <div style="padding-bottom: 10px;">
                                 @if (ViewData["_Save"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Save" id="Save" value="Save" AccessKey="S" class="form-control-btn buttonsizesetup">S̲AVE</button>
+                                    <button type="submit" name="Save" id="Save" value="Save" AccessKey="S" class="form-control-btn buttonsizesetup" onclick="CheckAvailability()">S̲AVE</button>
                                 }
                                 @if (ViewData["_Update"].ToString() == "True")
                                 {
-                                    <button type="submit" name="Update" id="Update" value="Update" AccessKey="U" class="form-control-btn buttonsizesetup">U̲PDATE</button>
+                                    <button type="submit" name="Update" id="Update" value="Update" AccessKey="U" class="form-control-btn buttonsizesetup" onclick="CheckAvailability()">U̲PDATE</button>
                                 }
                             </div>
                             <div>
@@ -62,4 +62,31 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
 }
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+   function CheckAvailability() {
+            //var Default = $("#SitDefault").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DefaultCheck","Setup")',
+                //data: '{SitDefault: "' + Default + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response) {
+                        //Email available.
+                        event.stopImmediatePropagation();
+                        alert("Default Value Already Set");
+                    }
+                    //else {
+                    //    //Email not available.
+                    //    alert("Data Saved Successfully");
+                    //}
+                }
+            });
+        };
+</script>
