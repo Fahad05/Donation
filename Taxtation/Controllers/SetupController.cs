@@ -16,6 +16,8 @@ using Taxtation.App_Code;
 using Taxtation.Models;
 using Taxtation.Services;
 using Taxtation.ViewModel;
+using Microsoft.AspNetCore.Session;
+using Microsoft.AspNetCore.Http;
 
 namespace Taxtation.Controllers
 {
@@ -29,7 +31,6 @@ namespace Taxtation.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly UrlEncoder _urlEncoder;
-
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
         TAXTATIONContext db = new TAXTATIONContext();
@@ -45,6 +46,7 @@ namespace Taxtation.Controllers
             _emailSender = emailSender;
             _logger = logger;
             _urlEncoder = urlEncoder;
+
         }
 
         [TempData]
@@ -224,6 +226,8 @@ namespace Taxtation.Controllers
         public async Task<IActionResult> showSite()
         {
             var user = await _userManager.GetUserAsync(User);
+            HttpContext.Session.SetString("UName", user.UserName);
+            HttpContext.Session.SetString("UId", user.Id);
             if (User == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -256,8 +260,10 @@ namespace Taxtation.Controllers
                 ViewData["_Update"] = "True";
                 TxssiteDetail obj = new TxssiteDetail();
                 obj = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == Convert.ToInt32(id)).FirstOrDefault();
+                HttpContext.Session.SetInt32("SitId", Convert.ToInt32(id));
                 obj.SitActive = (obj.SitActive == true) ? true : false;
                 obj.SitDefault = (obj.SitDefault == true) ? true : false;
+                HttpContext.Session.SetString("SitDefault", obj.SitDefault.ToString());
                 return PartialView(obj);
             }
         }
@@ -271,40 +277,15 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
             TxssiteDetail objcheck = new TxssiteDetail();
-            objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true && obj.SitDefault == true).FirstOrDefault();
+            string id = HttpContext.Session.GetString("UId"), name = HttpContext.Session.GetString("UName");
+            int sid = Convert.ToInt32(HttpContext.Session.GetInt32("SitId"));
+            bool sdefault= Convert.ToBoolean(HttpContext.Session.GetString("SitDefault"));
+            objcheck = db.TxssiteDetail.Where(x => x.Id == id && x.UserName == name && x.SitId != sid && x.SitDefault == true ).FirstOrDefault();
+            //objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true && obj.SitDefault == true).FirstOrDefault();
             if (objcheck != null)
             {
-                //ViewBag.Error = "error message";
-                //return RedirectToAction("showSite", "Setup");                
-                //return RedirectToAction("showSite");
-                //ViewBag.Message = "error message";
-
-                //ViewData["Message"] = "Some error message";
-                //return View();
-
-                ViewBag.ErrorMessage = "My error message";
-                return View(obj);
-
-                //string id = "";
-                //if (id == null)
-                //{
-                //    ViewData["_Save"] = "True";
-                //    ViewData["_Update"] = "False";
-                //    obj.SitActive = (obj.SitActive == null) ? true : false;
-                //    obj.SitDefault = (obj.SitDefault == null) ? true : false;
-                //    return PartialView(obj);
-                //}
-                //else
-                //{
-                //    ViewData["_Save"] = "False";
-                //    ViewData["_Update"] = "True";
-                //    obj = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId == Convert.ToInt32(id)).FirstOrDefault();
-                //    obj.SitActive = (obj.SitActive == true) ? true : false;
-                //    obj.SitDefault = (obj.SitDefault == true) ? true : false;
-                //    return PartialView(obj);
-                //}
+                return RedirectToAction("showSite");
             }
             else
             {
@@ -1145,7 +1126,16 @@ namespace Taxtation.Controllers
                 ? str.Substring(str.Length - length, length)
                 : str;
         }
-
+        public JsonResult DefaultCheck()
+        {
+            TxssiteDetail objcheck1 = new TxssiteDetail();
+            objcheck1 = null;
+            string id= HttpContext.Session.GetString("UId"), name= HttpContext.Session.GetString("UName");
+            int sid = Convert.ToInt32(HttpContext.Session.GetInt32("SitId"));
+            bool sdefault = Convert.ToBoolean(HttpContext.Session.GetString("SitDefault"));
+            objcheck1 = db.TxssiteDetail.Where(x => x.Id == id && x.UserName == name && x.SitId != sid && x.SitDefault == true).FirstOrDefault();
+            return Json(objcheck1);
+        }
         #endregion
     }
 }
