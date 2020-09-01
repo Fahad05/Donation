@@ -1342,6 +1342,10 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.TrexchangeRate).HasColumnName("TRExchangeRate");
 
+                entity.Property(e => e.Trgldate)
+                    .HasColumnName("TRGLDate")
+                    .HasColumnType("smalldatetime");
+
                 entity.Property(e => e.TrmainRemarks)
                     .HasColumnName("TRMainRemarks")
                     .HasMaxLength(250);

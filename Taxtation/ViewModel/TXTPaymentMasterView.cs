@@ -19,7 +19,7 @@ namespace Taxtation.ViewModel
         public List<TxstaxDetail> lstExcise { get; set; }
         public List<TxstaxDetail> lstTax { get; set; }
         public List<Txscoadetail> lstAccount { get; set; }
-
+        public List<TxssiteDetail> lstSite { get; set; }
 
         public TXTPaymentMasterView()
         {
@@ -34,6 +34,7 @@ namespace Taxtation.ViewModel
             lstExcise = new List<TxstaxDetail>();
             lstTax = new List<TxstaxDetail>();
             lstAccount = new List<Txscoadetail>();
+            lstSite = new List<TxssiteDetail>();
         }
     }
 }

@@ -52,6 +52,173 @@ namespace Taxtation.Controllers
         [TempData]
         public string StatusMessage { get; set; }
 
+        #region Opening Detail
+        [HttpGet]
+        public async Task<IActionResult> showOpeningDetail()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+            TXTOpeningDetailView obj = new TXTOpeningDetailView();
+            obj.lstMaster = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trtype == "OPENING" && x.TrentryType == "CHILD").ToList();
+            obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
+            //obj.lstSite.Select(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
+
+            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true).ToList();
+            return View(obj);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OpeningDetail(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+            TXTOpeningDetailView obj = new TXTOpeningDetailView();
+            obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
+            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccActive == true).ToList();
+
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                obj.master.Trno = tX.OpeningDetail(user.Id, user.UserName);
+                obj.master.Trdate = DateTime.Now;
+                obj.master.Trgldate = DateTime.Now;
+                obj.master.TrexchangeRate = 1;
+                obj.lstLedger = null;
+                obj.eFOD = null;
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                obj.master = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TrId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno && x.TrentryType == "CHILD").OrderBy(x => x.TrserialNo).ToList();
+                for (int i = 0; i < obj.lstLedger.Count; i++)
+                {
+                    EFOD eFOD = new EFOD();
+                    if (obj.lstLedger[i].Trdebit != 0) { eFOD.amount = obj.lstLedger[i].Trdebit; eFOD.debitCredit = "001"; }
+                    if (obj.lstLedger[i].Trcredit != 0) { eFOD.amount = obj.lstLedger[i].Trcredit; eFOD.debitCredit = "002"; }
+                    obj.eFOD.Add(eFOD);
+                }
+                obj.TotalCredit = obj.lstLedger.Sum(x => x.Trcredit);
+                obj.TotalDebit = obj.lstLedger.Sum(x => x.Trdebit);
+            }
+            return View(obj);
+        }
+        [HttpPost]
+        public async Task<IActionResult> OpeningDetail(TXTOpeningDetailView obj, string Save, string Update, string Delete, string TraAdusting)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+            if (Save != null)
+            {
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = DateTime.Now;
+                db.TxtopeningMaster.Add(obj.master);
+                db.SaveChanges();
+                int k = 0;
+                for (int i = 0; i < obj.lstLedger.Count; i++)
+                {
+                    if (obj.lstLedger[i].TraccCode != "-1" && obj.eFOD[i].amount != null)
+                    {
+                        if (obj.eFOD[i].debitCredit == "001") { obj.lstLedger[i].Trcredit = 0; obj.lstLedger[i].Trdebit = obj.eFOD[i].amount; }
+                        if (obj.eFOD[i].debitCredit == "002") { obj.lstLedger[i].Trcredit = obj.eFOD[i].amount; obj.lstLedger[i].Trdebit = 0; }
+                        k = k + 1;
+                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "CHILD", 0, 0, 0);
+                        //k = k + 1;
+                        //tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "PARENT", 0, 0, 0);
+                    }
+                }
+            }
+            if (Update != null)
+            {
+                TxtopeningMaster objUpdate = new TxtopeningMaster();
+                objUpdate = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TrId == obj.master.TrId).FirstOrDefault();
+                if (objUpdate != null)
+                {
+                    objUpdate.Trdate = obj.master.Trdate;
+                    objUpdate.Trgldate = obj.master.Trgldate;
+                    objUpdate.SitId = obj.master.SitId;
+                    objUpdate.TrtotalAmount = obj.master.TrtotalAmount;
+                    objUpdate.TrmainRemarks = obj.master.TrmainRemarks;
+                    objUpdate.TrexchangeRate = obj.master.TrexchangeRate;
+                    objUpdate.TrcurId = obj.master.TrcurId;
+                    objUpdate.TrrefMain = obj.master.TrrefMain;
+                    objUpdate.EditBy = user.UserName;
+                    objUpdate.EditDate = DateTime.Now;
+                    db.SaveChanges();
+                }
+
+
+                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
+                //for (int i = 0; i < obj.lstLedger.Count; i++)
+                //{
+                //    db.Txtledger.Remove(obj.lstLedger[i]);
+                //    db.SaveChanges();
+                //}
+
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                int k = 0;
+
+                for (int i = 0; i < obj.lstLedger.Count; i++)
+                {
+                    if (obj.lstLedger[i].TraccCode != "-1" && obj.eFOD[i].amount != null)
+                    {
+                        if (obj.eFOD[i].debitCredit == "001") { obj.lstLedger[i].Trcredit = 0; obj.lstLedger[i].Trdebit = obj.eFOD[i].amount; }
+                        if (obj.eFOD[i].debitCredit == "002") { obj.lstLedger[i].Trcredit = obj.eFOD[i].amount; obj.lstLedger[i].Trdebit = 0; }
+                        k = k + 1;
+                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "CHILD", 0, 0, 0);
+                        //k = k + 1;
+                        //tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "PARENT", 0, 0, 0);
+                    }
+                }
+            }
+            if (Delete != null)
+            {
+                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
+                //for (int i = 0; i < obj.lstLedger.Count; i++)
+                //{
+                //    db.Txtledger.Remove(obj.lstLedger[i]);
+                //    db.SaveChanges();
+                //}
+
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                //obj.master = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).FirstOrDefault();
+                //db.TxtopeningMaster.Remove(obj.master);
+                //db.SaveChanges();
+
+                db.TxtopeningMaster.RemoveRange(db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+            }
+            return RedirectToAction("showOpeningDetail");
+        }
+
+        #endregion
+
         #region Journal Detail
         [HttpGet]
         public async Task<IActionResult> showJournalDetail()
@@ -71,7 +238,6 @@ namespace Taxtation.Controllers
             obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true).ToList();
             return View(obj);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> JournalDetail(string id)
@@ -146,8 +312,8 @@ namespace Taxtation.Controllers
                         if (obj.eFJV[i].debitCredit == "002") { obj.lstLedger[i].Trcredit = obj.eFJV[i].amount; obj.lstLedger[i].Trdebit = 0; }
                         k = k + 1;
                         tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "JOURNAL", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Journal Detail", obj.master.SitId, "CHILD", 0, 0, 0);
-                        k = k + 1;
-                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "JOURNAL", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Journal Detail", obj.master.SitId, "PARENT", 0, 0, 0);
+                        //k = k + 1;
+                        //tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "JOURNAL", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Journal Detail", obj.master.SitId, "PARENT", 0, 0, 0);
                     }
                 }
             }
@@ -172,12 +338,15 @@ namespace Taxtation.Controllers
                 }
 
 
-                obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
-                for (int i = 0; i < obj.lstLedger.Count; i++)
-                {
-                    db.Txtledger.Remove(obj.lstLedger[i]);
-                    db.SaveChanges();
-                }
+                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
+                //for (int i = 0; i < obj.lstLedger.Count; i++)
+                //{
+                //    db.Txtledger.Remove(obj.lstLedger[i]);
+                //    db.SaveChanges();
+                //}
+
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
 
                 int k = 0;
                 for (int i = 0; i < obj.lstLedger.Count; i++)
@@ -188,22 +357,33 @@ namespace Taxtation.Controllers
                         if (obj.eFJV[i].debitCredit == "002") { obj.lstLedger[i].Trcredit = obj.eFJV[i].amount; obj.lstLedger[i].Trdebit = 0; }
                         k = k + 1;
                         tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "JOURNAL", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Journal Detail", obj.master.SitId, "CHILD", 0, 0, 0);
-                        k = k + 1;
-                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "JOURNAL", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Journal Detail", obj.master.SitId, "PARENT", 0, 0, 0);
+                        //k = k + 1;
+                        //tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "JOURNAL", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Journal Detail", obj.master.SitId, "PARENT", 0, 0, 0);
                     }
                 }
             }
             if (Delete != null)
             {
-                obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
-                for (int i = 0; i < obj.lstLedger.Count; i++)
-                {
-                    db.Txtledger.Remove(obj.lstLedger[i]);
-                    db.SaveChanges();
-                }
-                obj.master = db.TxtjournalMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).FirstOrDefault();
-                db.TxtjournalMaster.Remove(obj.master);
+
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
                 db.SaveChanges();
+
+                //obj.master = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).FirstOrDefault();
+                //db.TxtopeningMaster.Remove(obj.master);
+                //db.SaveChanges();
+
+                db.TxtjournalMaster.RemoveRange(db.TxtjournalMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
+                //for (int i = 0; i < obj.lstLedger.Count; i++)
+                //{
+                //    db.Txtledger.Remove(obj.lstLedger[i]);
+                //    db.SaveChanges();
+                //}
+                //obj.master = db.TxtjournalMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).FirstOrDefault();
+                //db.TxtjournalMaster.Remove(obj.master);
+                //db.SaveChanges();
             }
             return RedirectToAction("showJournalDetail");
         }
@@ -498,9 +678,22 @@ namespace Taxtation.Controllers
 
         #region Payment Detail
         [HttpGet]
-        public IActionResult showPayment()
+        public async Task<IActionResult> showPayment()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+            TXTPaymentMasterView obj = new TXTPaymentMasterView();
+            obj.lstMaster = db.TxtpaymentMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trtype == "PAYMENT" && x.TrentryType == "CHILD").ToList();
+            obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
+            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true).ToList();
+            return View(obj);
         }
 
         [HttpGet]
@@ -520,12 +713,15 @@ namespace Taxtation.Controllers
             obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.AccAccountSubNature != "TAX" && (x.AccAccountNature == "ASSET" || x.AccAccountNature == "EXPENSE" || x.AccAccountNature == "LIABILITY")).OrderBy(x => x.AccName).ToList();
             obj.lstExcise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxCategory == "EXCISE").ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxCategory == "VAT").ToList();
+            obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                obj.master.Trdate = DateTime.Now;
                 obj.master.Trno = tX.PaymentVoucher(user.Id, user.UserName);
+                obj.master.Trdate = DateTime.Now;
+                obj.master.Trgldate = DateTime.Now;
+                obj.master.TrexchangeRate = 1;
                 obj.lstDetailPurchase = null;
                 obj.lstDetailOther = null;
             }
@@ -533,6 +729,20 @@ namespace Taxtation.Controllers
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
+
+                //ViewData["_Save"] = "False";
+                //ViewData["_Update"] = "True";
+                //obj.master = db.TxtjournalMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TrId == Convert.ToInt32(id)).FirstOrDefault();
+                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno && x.TrentryType == "CHILD").OrderBy(x => x.TrserialNo).ToList();
+                //for (int i = 0; i < obj.lstLedger.Count; i++)
+                //{
+                //    EFJV eFJV = new EFJV();
+                //    if (obj.lstLedger[i].Trdebit != 0) { eFJV.amount = obj.lstLedger[i].Trdebit; eFJV.debitCredit = "001"; }
+                //    if (obj.lstLedger[i].Trcredit != 0) { eFJV.amount = obj.lstLedger[i].Trcredit; eFJV.debitCredit = "002"; }
+                //    obj.eFJV.Add(eFJV);
+                //}
+                //obj.TotalCredit = obj.lstLedger.Sum(x => x.Trcredit);
+                //obj.TotalDebit = obj.lstLedger.Sum(x => x.Trdebit);
 
             }
             return View(obj);
@@ -543,173 +753,6 @@ namespace Taxtation.Controllers
         {
             return View();
         }
-
-        #endregion
-
-
-        #region Opening Detail
-        [HttpGet]
-        public async Task<IActionResult> showOpeningDetail()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (User == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-            HttpContext.Session.SetString("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.UserName);
-            TXTOpeningDetailView obj = new TXTOpeningDetailView();
-            obj.lstMaster = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
-            obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trtype == "OPENING" && x.TrentryType == "CHILD").ToList();
-            obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
-            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
-            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true).ToList();
-            return View(obj);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> OpeningDetail(string id)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (User == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-            HttpContext.Session.SetString("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.UserName);
-            TXTOpeningDetailView obj = new TXTOpeningDetailView();
-            obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
-            obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
-            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountType == "TRANSACTION" && x.AccActive == true).ToList();
-            
-            if (id == null)
-            {
-                ViewData["_Save"] = "True";
-                ViewData["_Update"] = "False";
-                obj.master.Trno = tX.OpeningDetail(user.Id, user.UserName);
-                obj.master.Trdate = DateTime.Now;
-                obj.master.Trgldate = DateTime.Now;
-                obj.master.TrexchangeRate = 1;
-                obj.lstLedger = null;
-                obj.eFOD = null;
-            }
-            else
-            {
-                ViewData["_Save"] = "False";
-                ViewData["_Update"] = "True";
-                obj.master = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TrId == Convert.ToInt32(id)).FirstOrDefault();
-                obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno && x.TrentryType == "CHILD").OrderBy(x => x.TrserialNo).ToList();
-                for (int i = 0; i < obj.lstLedger.Count; i++)
-                {
-                    EFOD eFOD = new EFOD();
-                    if (obj.lstLedger[i].Trdebit != 0) { eFOD.amount = obj.lstLedger[i].Trdebit; eFOD.debitCredit = "001"; }
-                    if (obj.lstLedger[i].Trcredit != 0) { eFOD.amount = obj.lstLedger[i].Trcredit; eFOD.debitCredit = "002"; }
-                    obj.eFOD.Add(eFOD);
-                }
-                obj.TotalCredit = obj.lstLedger.Sum(x => x.Trcredit);
-                obj.TotalDebit = obj.lstLedger.Sum(x => x.Trdebit);
-            }
-            return View(obj);
-        }
-        [HttpPost]
-        public async Task<IActionResult> OpeningDetail(TXTOpeningDetailView obj, string Save, string Update, string Delete, string TraAdusting)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (User == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-            HttpContext.Session.SetString("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.UserName);
-            if (Save != null)
-            {
-                obj.master.Id = user.Id;
-                obj.master.UserName = user.UserName;
-                obj.master.EnterBy = user.UserName;
-                obj.master.EnterDate = DateTime.Now;
-                db.TxtopeningMaster.Add(obj.master);
-                db.SaveChanges();
-                int k = 0;
-                for (int i = 0; i < obj.lstLedger.Count; i++)
-                {
-                    if (obj.lstLedger[i].TraccCode != "-1" && obj.eFOD[i].amount != null)
-                    {
-                        if (obj.eFOD[i].debitCredit == "001") { obj.lstLedger[i].Trcredit = 0; obj.lstLedger[i].Trdebit = obj.eFOD[i].amount; }
-                        if (obj.eFOD[i].debitCredit == "002") { obj.lstLedger[i].Trcredit = obj.eFOD[i].amount; obj.lstLedger[i].Trdebit = 0; }
-                        k = k + 1;
-                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "CHILD", 0, 0, 0);
-                        //k = k + 1;
-                        //tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "PARENT", 0, 0, 0);
-                    }
-                }
-            }
-            if (Update != null)
-            {
-                TxtopeningMaster objUpdate = new TxtopeningMaster();
-                objUpdate = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TrId == obj.master.TrId).FirstOrDefault();
-                if (objUpdate != null)
-                {
-                    objUpdate.Trdate = obj.master.Trdate;
-                    objUpdate.Trgldate = obj.master.Trgldate;
-                    objUpdate.SitId = obj.master.SitId;
-                    objUpdate.TrtotalAmount = obj.master.TrtotalAmount;
-                    objUpdate.TrmainRemarks = obj.master.TrmainRemarks;
-                    objUpdate.TrexchangeRate = obj.master.TrexchangeRate;
-                    objUpdate.TrcurId = obj.master.TrcurId;
-                    objUpdate.TrrefMain = obj.master.TrrefMain;
-                    objUpdate.EditBy = user.UserName;
-                    objUpdate.EditDate = DateTime.Now;
-                    db.SaveChanges();
-                }
-
-
-                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
-                //for (int i = 0; i < obj.lstLedger.Count; i++)
-                //{
-                //    db.Txtledger.Remove(obj.lstLedger[i]);
-                //    db.SaveChanges();
-                //}
-
-                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
-                db.SaveChanges();
-
-                int k = 0;
-                
-                for (int i = 0; i < obj.lstLedger.Count; i++)
-                {
-                    if (obj.lstLedger[i].TraccCode != "-1" && obj.eFOD[i].amount != null)
-                    {
-                        if (obj.eFOD[i].debitCredit == "001") { obj.lstLedger[i].Trcredit = 0; obj.lstLedger[i].Trdebit = obj.eFOD[i].amount; }
-                        if (obj.eFOD[i].debitCredit == "002") { obj.lstLedger[i].Trcredit = obj.eFOD[i].amount; obj.lstLedger[i].Trdebit = 0; }
-                        k = k + 1;
-                        tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "CHILD", 0, 0, 0);
-                        //k = k + 1;
-                        //tX.insertLedgerDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "OPENING", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.lstLedger[i].TraccCode, "", obj.lstLedger[i].Trdebit, obj.lstLedger[i].Trcredit, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.TrcurId, 0, 0, 0, "", null, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "TOTAL", user.UserName, DateTime.Now, "Opening Detail", obj.master.SitId, "PARENT", 0, 0, 0);
-                    }
-                }
-            }
-            if (Delete != null)
-            {
-                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).ToList();
-                //for (int i = 0; i < obj.lstLedger.Count; i++)
-                //{
-                //    db.Txtledger.Remove(obj.lstLedger[i]);
-                //    db.SaveChanges();
-                //}
-
-                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
-                db.SaveChanges();
-
-                //obj.master = db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).FirstOrDefault();
-                //db.TxtopeningMaster.Remove(obj.master);
-                //db.SaveChanges();
-
-                db.TxtopeningMaster.RemoveRange(db.TxtopeningMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
-                db.SaveChanges();
-            }
-            return RedirectToAction("showOpeningDetail");
-        }
-
 
         #endregion
 

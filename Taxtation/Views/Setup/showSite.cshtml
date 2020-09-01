@@ -68,7 +68,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-            <tr>
+            <tr style="white-space:nowrap;">
                 <td>
                     <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("Site","Setup", new { id=item.SitId })'>Edit</a>
                 </td>

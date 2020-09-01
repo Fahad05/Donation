@@ -2,39 +2,54 @@
 
 @{
     ViewData["Title"] = "Journal Detail";
-    var index = 5;
+    var index = 7;
     if (Model.lstLedger != null)
     {
         index = Model.lstLedger.Count;
     }
 }
 <form asp-action="JournalDetail" method="post">
-    <div class="row" style="position:fixed;padding-top:10px;z-index:2;background-color:#EEEEEE;left:0;right:0">
+    <div class="row" style="position:fixed; padding-top:5px;padding-bottom:3px;z-index:2;background-color:#EEEEEE;left:-1px;right:0">
         <div class="col-sm-12" style="padding-left:8.2%;">
             @if (ViewData["_Save"].ToString() == "True")
             {
-                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                <button type="submit" name="Save" id="Save" value="Save" AccessKey="S" class="form-control-btn buttonsize">S̲AVE</button>
             }
             @if (ViewData["_Update"].ToString() == "True")
             {
-                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
-                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
-                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+                <button type="submit" name="Update" id="Update" value="Update" AccessKey="U" class="form-control-btn buttonsize">U̲PDATE</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" AccessKey="L" class="form-control-btn buttonsize">DEL̲ETE</button>
+                <button type="submit" name="Report" id="Report" value="Report" AccessKey="R" class="form-control-btn buttonsize">R̲EPORT</button>
             }
+            <button name="Add Row" id="addNewRow" value="Add Row" AccessKey="A" class="form-control-btn buttonsize">A̲DDROW</button>
+            <a asp-action="showJournalDetail" asp-controller="GeneralLedger" AccessKey="B" class="form-control-btn buttonsize">B̲ACK</a>
             <div style="float:right;padding-right:8.3%">
-                <a asp-action="showJournalDetail" asp-controller="GeneralLedger" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+                <table class="w3-table-all">
+                    <tr>
+                        <td>
+                            Total Debit:
+                            <input type="text" asp-for="TotalDebit" readonly="readonly" class="form-control-footer" />
+                        </td>
+                        <td>
+                            Total Credit:
+                            <input type="text" asp-for="TotalCredit" readonly="readonly" class="form-control-footer" />
+                        </td>
+                        <td>
+                            @Html.CheckBox("TraAdusting", Model.master.Tradjusting.Value) Adjusting
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
-
     </div>
     <div class="row">
         <div class="col-lg-4">
             <input type="text" asp-for="master.TrId" hidden="hidden" class="form-control" />
         </div>
     </div>
-    <div class="row" style="padding-top:70px;z-index:1">
+    <div class="row" style="padding-top:60px;z-index:1; margin-top:60px;">
         <div class="col-md-3">
-            Purchase Order<span class="mandatory">*</span>:
+            Transaction No<span class="mandatory">*</span>:
             <input type="text" asp-for="master.Trno" readonly="readonly" class="form-control" />
         </div>
         <div class="col-md-3">
@@ -48,10 +63,17 @@
         </div><div class="col-md-3">
             Site<span class="mandatory">*</span>:
             <select asp-for="master.SitId" class="form-control" required="required">
-                <option value="">Select</option>
+                <option value="">SELECT SITE</option>
                 @foreach (var j in Model.lstSite)
                 {
-                    <option value=@j.SitId>@j.SitName</option>
+                    if (@j.SitDefault == true)
+                    {
+                        <option value=@j.SitId selected>@j.SitName</option>
+                    }
+                    else
+                    {
+                        <option value=@j.SitId>@j.SitName</option>
+                    }
                 }
             </select>
         </div>
@@ -60,10 +82,17 @@
         <div class="col-md-3">
             Currency<span class="mandatory">*</span>:
             <select asp-for="master.TrcurId" class="form-control" required="required">
-                <option value="">Select</option>
+                <option value="">SELECT CURRENCY</option>
                 @foreach (var j in Model.lstCurrency)
                 {
-                    <option value=@j.CurId>@j.CurName</option>
+                    if (@j.CurIsLocal == true)
+                    {
+                        <option value=@j.CurId selected>@j.CurName</option>
+                    }
+                    else
+                    {
+                        <option value=@j.CurId>@j.CurName</option>
+                    }
                 }
             </select>
         </div>
@@ -71,28 +100,15 @@
             Exchange Rate<span class="mandatory">*</span>:
             <input type="number" asp-for="master.TrexchangeRate" onchange="ExchangeRate()" class="form-control" required="required" />
         </div>
-            <div class="col-md-3">
-                Reference No:
-                <input type="text" asp-for="master.TrrefMain" class="form-control" />
-            </div>
-         <div class="col-md-3">
-
+        <div class="col-md-3">
+            Reference No:
+            <input type="text" asp-for="master.TrrefMain" class="form-control" />
         </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col-md-12">
+        <div class="col-md-3">
             Remarks:
-            <input type="text" asp-for="master.TrmainRemarks" class="form-control" />
+            @*<input type="text" asp-for="master.TrmainRemarks" class="form-control" />*@
+            <textarea asp-for="master.TrmainRemarks" class="form-control textareavertical" rows="1" cols="15"></textarea>
         </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-lg-3">
-            <button id="addNewRow" class="form-control">Add New Row</button>
-        </div>
-        <div class="col-lg-9"></div>
     </div>
     <br />
     <div class="row">
@@ -100,7 +116,7 @@
             <table id="myTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th style="width:230px;">Account</th>
+                        <th style="width:250px;">Account</th>
                         <th style="width:120px;">Amount</th>
                         <th style="width:120px;">Debit/Credit</th>
                         <th style="width:120px;">Exc. Amount</th>
@@ -113,8 +129,8 @@
                     {
                         <tr>
                             <td>
-                                <select asp-for="lstLedger[i].TraccCode" onchange="ExchangeRate()" class="form-control" style="width:230px;">
-                                    <option value="-1">Select</option>@foreach (var j in Model.lstAccount)
+                                <select asp-for="lstLedger[i].TraccCode" onchange="ExchangeRate()" class="chosen-select" style="width: 250px;">
+                                    <option value="-1">SELECT ACCOUNT</option>@foreach (var j in Model.lstAccount)
                                     {
                                         <option value=@j.AccCode>@j.AccName</option>}
                                 </select>
@@ -136,35 +152,14 @@
         </div>
     </div>
     <br />
-
-    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
-
-        <div class="col-md-2">
-            Total Debit:
-            <input type="text" asp-for="TotalDebit" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-2">
-            Total Credit:
-            <input type="text" asp-for="TotalCredit" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-2">
-            @Html.CheckBox("TraAdusting", Model.master.Tradjusting.Value) Adjusting Entry
-        </div>
-
-
-    </div>
 </form>
-
 
 @section Scripts{
     <script type="text/javascript">
-
         $(window).load(function () {
             ExchangeRate();
         });
-
         function ExchangeRate() {
-
             var ExRate = $('#master_TrexchangeRate').val();
             var rows = $('#myTable tbody tr').length;
             var TotalDebit = 0;
@@ -262,5 +257,4 @@
             })
         })
     </script>
-
 }

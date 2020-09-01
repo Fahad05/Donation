@@ -12,6 +12,10 @@ html {
     -webkit-text-size-adjust: 100%
 }
 
+.textareavertical {
+    resize: vertical;
+}
+
 body {
     margin: 0
 }
@@ -1774,7 +1778,7 @@ a {
 .GridStyle {
     overflow-x: auto;
     width: 100%;
-    height: 370px;
+    height: 100%;
     margin-left: 0px;
 }
 .btnControlDML {

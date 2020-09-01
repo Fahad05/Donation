@@ -47,7 +47,7 @@
     </div>
     <div class="row" style="padding-top:70px;z-index:1">
         <div class="col-md-3">
-            Purchase Order:
+            Transaction No:
             <input type="text" asp-for="master.Trno" readonly="readonly" class="form-control" />
         </div>
         <div class="col-md-3">
@@ -77,7 +77,7 @@
             Payment Type:
             <select asp-for="master.Trmode" class="form-control" required>
                 <option value="PURCHASE PAYMENT">PURCHASE PAYMENT</option>
-                @*<option value="OTHER PAYMENT">OTHER PAYMENT</option>*@
+                <option value="OTHER PAYMENT">OTHER PAYMENT</option>
             </select>
         </div>
         <div class="col-md-3">

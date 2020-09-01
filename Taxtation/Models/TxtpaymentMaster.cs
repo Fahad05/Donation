@@ -29,5 +29,6 @@ namespace Taxtation.Models
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
         public string TrmapCode { get; set; }
+        public DateTime? Trgldate { get; set; }
     }
 }
