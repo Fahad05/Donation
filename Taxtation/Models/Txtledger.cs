@@ -46,5 +46,10 @@ namespace Taxtation.Models
         public int? TrtaxRef { get; set; }
         public DateTime? TrinvDate { get; set; }
         public string TrinvNo { get; set; }
+        public double? TramountWithTax { get; set; }
+        public double? Tramount { get; set; }
+        public int? TrtxsExciseId { get; set; }
+        public double? TrtaxExcisePercent { get; set; }
+        public double? TrtaxExciseAmount { get; set; }
     }
 }

@@ -252,11 +252,21 @@ a {
     color: inherit
 }
 
+@media screen and (max-width:400px) {
+    .w3-table-all {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+        display: inline-block;
+        border: 1px solid #ccc;
+    }
+}
+
 .w3-table, .w3-table-all {
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
-    display: table
+    display: table;
 }
 
 .w3-table-all {

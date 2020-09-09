@@ -27,5 +27,11 @@ namespace Taxtation.Models
         public double? PurExAmt { get; set; }
         public string PurRemarks { get; set; }
         public string PurDisType { get; set; }
+        public double? PurPaidAmt { get; set; }
+        public double? PurBalAmt { get; set; }
+        public string PurPoref { get; set; }
+        public int? SupId { get; set; }
+        public string PurPayTerm { get; set; }
+        public DateTime? PurDate { get; set; }
     }
 }

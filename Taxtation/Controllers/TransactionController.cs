@@ -450,9 +450,7 @@ namespace Taxtation.Controllers
 
 
         #endregion
-
        
-
         #region Sales
 
         [HttpGet]

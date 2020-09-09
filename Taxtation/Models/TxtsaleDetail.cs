@@ -29,5 +29,7 @@ namespace Taxtation.Models
         public double? SalReturnTax { get; set; }
         public string SalSubRemarks { get; set; }
         public double? SalExAmt { get; set; }
+        public double? SalPaidAmt { get; set; }
+        public double? SalBalAmt { get; set; }
     }
 }

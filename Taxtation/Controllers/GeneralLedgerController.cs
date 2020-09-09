@@ -132,8 +132,10 @@ namespace Taxtation.Controllers
             {
                 obj.master.Id = user.Id;
                 obj.master.UserName = user.UserName;
+                obj.master.Trno = tX.OpeningDetail(user.Id, user.UserName);
                 obj.master.EnterBy = user.UserName;
                 obj.master.EnterDate = DateTime.Now;
+                obj.master.TrtotalAmount = obj.TotalCredit;
                 db.TxtopeningMaster.Add(obj.master);
                 db.SaveChanges();
                 int k = 0;
@@ -159,7 +161,7 @@ namespace Taxtation.Controllers
                     objUpdate.Trdate = obj.master.Trdate;
                     objUpdate.Trgldate = obj.master.Trgldate;
                     objUpdate.SitId = obj.master.SitId;
-                    objUpdate.TrtotalAmount = obj.master.TrtotalAmount;
+                    objUpdate.TrtotalAmount = obj.TotalCredit;
                     objUpdate.TrmainRemarks = obj.master.TrmainRemarks;
                     objUpdate.TrexchangeRate = obj.master.TrexchangeRate;
                     objUpdate.TrcurId = obj.master.TrcurId;
@@ -280,6 +282,8 @@ namespace Taxtation.Controllers
                 }
                 obj.TotalCredit = obj.lstLedger.Sum(x => x.Trcredit);
                 obj.TotalDebit = obj.lstLedger.Sum(x => x.Trdebit);
+                //obj.TotalCredit = obj.master.TrtotalAmount;
+                //obj.TotalDebit = obj.master.TrtotalAmount;
             }
             return View(obj);
         }
@@ -298,9 +302,11 @@ namespace Taxtation.Controllers
             {
                 obj.master.Id = user.Id;
                 obj.master.UserName = user.UserName;
+                obj.master.Trno = tX.JournalVoucher(user.Id, user.UserName);
                 obj.master.EnterBy = user.UserName;
                 obj.master.EnterDate = DateTime.Now;
                 obj.master.Tradjusting = (TraAdusting == "true") ? true : false;
+                obj.master.TrtotalAmount = obj.TotalCredit;
                 db.TxtjournalMaster.Add(obj.master);
                 db.SaveChanges();
                 int k = 0;
@@ -326,7 +332,7 @@ namespace Taxtation.Controllers
                     objUpdate.Trdate = obj.master.Trdate;
                     objUpdate.Trgldate = obj.master.Trgldate;
                     objUpdate.SitId = obj.master.SitId;
-                    objUpdate.TrtotalAmount = obj.master.TrtotalAmount;
+                    objUpdate.TrtotalAmount = obj.TotalCredit;
                     objUpdate.TrmainRemarks = obj.master.TrmainRemarks;
                     objUpdate.TrexchangeRate = obj.master.TrexchangeRate;
                     objUpdate.TrcurId = obj.master.TrcurId;
@@ -334,6 +340,7 @@ namespace Taxtation.Controllers
                     objUpdate.TrrefMain = obj.master.TrrefMain;
                     objUpdate.EditBy = user.UserName;
                     objUpdate.EditDate = DateTime.Now;
+                    //objUpdate.TrtotalAmount = obj.TotalCredit;
                     db.SaveChanges();
                 }
 
@@ -709,11 +716,16 @@ namespace Taxtation.Controllers
             TXTPaymentMasterView obj = new TXTPaymentMasterView();
             obj.lstCredit = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountSubNature.Contains("BANK ACCOUNT")).ToList();
             obj.lstCurrency = db.TxscurrencyDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.CurActive == true).ToList();
-            obj.lstSupplier = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName || x.AccAccountSubNature.Contains("SUPPLIER") || x.AccAccountSubNature.Contains("CONTRACTOR")).ToList();
-            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.AccAccountSubNature != "TAX" && (x.AccAccountNature == "ASSET" || x.AccAccountNature == "EXPENSE" || x.AccAccountNature == "LIABILITY")).OrderBy(x => x.AccName).ToList();
+            //obj.lstSupplier = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountSubNature.Contains("SUPPLIER")).ToList();
+            obj.lstSupplier = db.TxssupplierDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.AccAccountSubNature != "TAX" && x.AccAccountSubNature != "BANK ACCOUNT" && x.AccAccountSubNature != "CASH" && (x.AccAccountNature == "ASSET" || x.AccAccountNature == "EXPENSE" || x.AccAccountNature == "LIABILITY")).OrderBy(x => x.AccName).ToList();
+            obj.lstAccountMultiple = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && (x.AccAccountSubNature.Contains("BANK ACCOUNT") || x.AccAccountSubNature.Contains("CASH"))).ToList();
             obj.lstExcise = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxCategory == "EXCISE").ToList();
             obj.lstTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxCategory == "VAT").ToList();
             obj.lstSite = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitActive == true).ToList();
+
+            //obj.lstDetailMultiple = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && (x.AccAccountSubNature.Contains("BANK ACCOUNT") || x.AccAccountSubNature.Contains("CASH"))).ToList();
+
             if (id == null)
             {
                 ViewData["_Save"] = "True";
@@ -722,18 +734,63 @@ namespace Taxtation.Controllers
                 obj.master.Trdate = DateTime.Now;
                 obj.master.Trgldate = DateTime.Now;
                 obj.master.TrexchangeRate = 1;
-                obj.lstDetailPurchase = null;
-                obj.lstDetailOther = null;
+                obj.lstLedger = null;
+                obj.lstDetail = null;
+                obj.lstDetailBill = null;
+                obj.lstDetailMultiple = null;                
             }
             else
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
+                obj.master = db.TxtpaymentMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PayId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno && x.TraccCode != obj.master.TrtypeAccount && x.TrentryType == "CHILD").OrderBy(x => x.TrserialNo).ToList();
+                obj.lstDetailBill = db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno).OrderBy(x => x.PayId).ToList();
+                obj.lstDetailMultiple = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno && x.TraccCode != obj.master.TrtypeAccount && x.Trdebit == 0 && x.TrentryType == "CHILD").OrderBy(x => x.TrserialNo).ToList();
+                //obj.lstLedger = null;
 
-                //ViewData["_Save"] = "False";
-                //ViewData["_Update"] = "True";
-                //obj.master = db.TxtjournalMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TrId == Convert.ToInt32(id)).FirstOrDefault();
-                //obj.lstLedger = db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno && x.TrentryType == "CHILD").OrderBy(x => x.TrserialNo).ToList();
+                var query = from mas in obj.lstLedger
+                            join account in obj.lstAccount on mas.TraccCode equals account.AccCode into accounts
+                            from account in accounts.DefaultIfEmpty()
+                            select new { mas };
+
+                foreach(var j in query)
+                {
+                    Txtledger le = new Txtledger();
+                    le = j.mas;
+                    obj.lstLedger.Add(le);
+                }
+
+                if (obj.master.Trtype == "MULTIPLE")
+                {
+                    var query1 = from mas in obj.lstDetailMultiple
+                                 join account in obj.lstAccountMultiple on mas.TraccCode equals account.AccCode into accounts
+                                 from account in accounts.DefaultIfEmpty()
+                                 select new { mas };
+
+                    foreach (var j in query1)
+                    {
+                        Txtledger le = new Txtledger();
+                        le = j.mas;
+                        obj.lstDetailMultiple.Add(le);
+                    }
+                }
+                else
+                {
+                    obj.lstLedger = null;
+                }
+
+                //obj.lstLedger = query.ToList();
+
+                //obj.lstLedger = query.ToList();
+                //obj.lstLedger = db.Txtledger.Join<,Txscoadetail,,>
+                //obj.lstLedger = query.ToList();
+
+                //List<query1> lst = obj.GetAllHyperlink();
+                //return lst.GroupBy(x => x.Attraction) // group links by attraction
+                //          .Select(g => g.First()) // select first link from each group
+                //          .ToList(); // convert result to list
+
                 //for (int i = 0; i < obj.lstLedger.Count; i++)
                 //{
                 //    EFJV eFJV = new EFJV();
@@ -749,9 +806,303 @@ namespace Taxtation.Controllers
         }
 
         [HttpPost]
-        public IActionResult PaymentDetail(TXTPaymentMasterView obj, string Save, string Update, string Delete)
+        public async Task<IActionResult> PaymentDetail(TXTPaymentMasterView obj, string Save, string Update, string Delete)
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+
+            if (Save != null)
+            {
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = DateTime.Now;
+                db.TxtpaymentMaster.Add(obj.master);
+                db.SaveChanges();
+
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                int k = 0;
+                for (int i = 0; i < obj.lstLedger.Count; i++)
+                {
+                    if (obj.lstLedger[i].TraccCode != "-1" && obj.lstLedger[i].Tramount != 0)
+                    {
+                        k = k + 1;
+                        tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.master.TrtypeAccount, "", obj.lstLedger[i].TramountConverted, 0, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+
+                        if (obj.master.Trtype != "MULTIPLE")
+                        {
+                            k = k + 1;
+                            tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.master.TrtypeAccount, obj.lstLedger[i].TraccCode, "", 0, obj.lstLedger[i].TramountWithTax, obj.master.TrexchangeRate, obj.lstLedger[i].TramountWithTax, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                        }
+                    }
+                    if (obj.lstLedger[i].TrtaxAmount != 0 && obj.lstLedger[i].TrtxsId != -1)
+                    {
+                        obj.lstAllTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxId == obj.lstLedger[i].TrtxsId).ToList();
+                        if (obj.lstAllTax != null)
+                        {
+                            obj.lstTaxAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.Coaid == obj.lstAllTax[0].Coaid).OrderBy(x => x.AccName).ToList();
+                        }
+
+                        if (obj.lstTaxAccount != null)
+                        {
+                            k = k + 1;
+                            if (obj.lstLedger[i].TramountWithTax > 0)
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", obj.lstLedger[i].TrtaxAmount, 0, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxAmount, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                            else
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", 0, obj.lstLedger[i].TrtaxAmount * -1, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxAmount * -1, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                        }
+                    }
+                    if (obj.lstLedger[i].TrtaxExciseAmount != 0 && obj.lstLedger[i].TrtxsExciseId != -1)
+                    {
+                        obj.lstAllTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxId == obj.lstLedger[i].TrtxsExciseId).ToList();
+                        if (obj.lstAllTax != null)
+                        {
+                            obj.lstTaxAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.Coaid == obj.lstAllTax[0].Coaid).OrderBy(x => x.AccName).ToList();
+                        }
+
+                        if (obj.lstTaxAccount != null)
+                        {
+                            k = k + 1;
+                            if (obj.lstLedger[i].TramountWithTax > 0)
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", obj.lstLedger[i].TrtaxExciseAmount, 0, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxExciseAmount, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                            else
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", 0, obj.lstLedger[i].TrtaxExciseAmount * -1, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxExciseAmount * -1, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                        }
+                    }
+
+                }
+
+                if (obj.master.Trtype != "MULTIPLE")
+                {
+                    k = k + 1;
+                    tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.master.TrtypeAccount, obj.master.TrtypeAccount, "", 0, obj.master.TrtotalAmount, obj.master.TrexchangeRate, obj.master.TrtotalAmount, obj.master.CurId, -1, 0, 0, "", null, obj.master.TrrefMain, obj.master.TrmainRemarks, "TOTAL", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "TOTAL", 0, 0, 0, obj.master.TrtotalAmount, obj.master.TrtotalAmount, -1, 0, 0);
+                }
+                else
+                {
+                    for (int i = 0; i < obj.lstDetailMultiple.Count; i++)
+                    {
+                        if (obj.lstDetailMultiple[i].TraccCode != "-1" && obj.lstDetailMultiple[i].Trcredit != 0)
+                        {
+                            k = k + 1;
+                            tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstDetailMultiple[i].TraccCode, obj.lstDetailMultiple[i].TraccCode, "", 0, obj.lstDetailMultiple[i].TramountConverted, obj.master.TrexchangeRate, obj.lstDetailMultiple[i].TramountConverted, obj.master.CurId, -1, 0, 0, obj.lstDetailMultiple[i].TrchequeNo, obj.lstDetailMultiple[i].TrchequeDate, obj.master.TrrefMain, obj.master.TrmainRemarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.master.TrtotalAmount, obj.master.TrtotalAmount, -1, 0, 0);
+                        }
+                    }
+                }
+
+                obj.lstDetailBillCheck = db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno).OrderBy(x => x.PayId).ToList();
+                for (int i = 0; i < obj.lstDetailBillCheck.Count; i++)
+                {
+                    double? TotalPaid = SupplierPaidAmount(obj.master.Trno, obj.lstDetailBillCheck[i].PblCode, obj.lstDetailBillCheck[i].PblSerialNo, obj.lstDetailBillCheck[i].InvCode, "NO");
+                    TxtpurchaseDetail objUpdatePurchaseDetail = new TxtpurchaseDetail();
+                    objUpdatePurchaseDetail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurPoref == obj.lstDetailBillCheck[i].PblCode && x.PurSerialNo == obj.lstDetailBillCheck[i].PblSerialNo).FirstOrDefault();
+                    if (objUpdatePurchaseDetail != null)
+                    {
+                        objUpdatePurchaseDetail.PurPaidAmt = TotalPaid;
+                        objUpdatePurchaseDetail.PurBalAmt = objUpdatePurchaseDetail.PurNetAmt - TotalPaid;
+                        db.SaveChanges();
+                    }
+                }
+
+                db.TxtpaymentBillDetail.RemoveRange(db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno));
+                db.SaveChanges();
+
+                for (int i = 0; i < obj.lstDetailBill.Count; i++)
+                {
+                    if (obj.lstDetailBill[i].PblCode != "" && obj.lstDetailBill[i].PblPaidAmount != 0)
+                    {
+                        k = k + 1;
+                        tX.insertPaymentBill(user.Id, user.UserName, obj.master.Trno, obj.lstDetailBill[i].PblCode, obj.lstDetailBill[i].PblDate, k, obj.lstDetailBill[i].InvCode, obj.lstDetailBill[i].PblBillAmount, obj.lstDetailBill[i].PblOwingAmount, obj.lstDetailBill[i].PblPaidAmount, obj.lstDetailBill[i].PblBalanceAmount, obj.lstDetailBill[i].PblSubRemarks, "", obj.master.SupId);
+
+                        double? TotalPaid = SupplierPaidAmount(obj.master.Trno, obj.lstDetailBillCheck[i].PblCode, obj.lstDetailBillCheck[i].PblSerialNo, obj.lstDetailBillCheck[i].InvCode, "YES");
+                        TxtpurchaseDetail objUpdatePurchaseDetail = new TxtpurchaseDetail();
+                        objUpdatePurchaseDetail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurPoref == obj.lstDetailBillCheck[i].PblCode && x.PurSerialNo == obj.lstDetailBillCheck[i].PblSerialNo).FirstOrDefault();
+                        if (objUpdatePurchaseDetail != null)
+                        {
+                            objUpdatePurchaseDetail.PurPaidAmt = TotalPaid;
+                            objUpdatePurchaseDetail.PurBalAmt = objUpdatePurchaseDetail.PurNetAmt - TotalPaid;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+
+            if (Update != null)
+            {
+                TxtpaymentMaster objUpdate = new TxtpaymentMaster();
+                objUpdate = db.TxtpaymentMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno).FirstOrDefault();
+                if (objUpdate != null)
+                {
+                    objUpdate.Trdate = obj.master.Trdate;
+                    objUpdate.Trgldate = obj.master.Trgldate;
+                    objUpdate.SitId = obj.master.SitId;
+                    objUpdate.TrtotalAmount = obj.master.TrtotalAmount;
+                    objUpdate.TrmainRemarks = obj.master.TrmainRemarks;
+                    objUpdate.TrexchangeRate = obj.master.TrexchangeRate;
+                    objUpdate.CurId = obj.master.CurId;
+                    objUpdate.TrrefMain = obj.master.TrrefMain;
+                    objUpdate.EditBy = user.UserName;
+                    objUpdate.EditDate = DateTime.Now;
+                    db.SaveChanges();
+                }
+
+
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                int k = 0;
+                for (int i = 0; i < obj.lstLedger.Count; i++)
+                {
+                    if (obj.lstLedger[i].TraccCode != "-1" && obj.lstLedger[i].Tramount != 0)
+                    {
+                        k = k + 1;
+                        tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstLedger[i].TraccCode, obj.master.TrtypeAccount, "", obj.lstLedger[i].TramountConverted, 0, obj.master.TrexchangeRate, obj.lstLedger[i].TramountConverted, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+
+                        if (obj.master.Trtype != "MULTIPLE")
+                        {
+                            k = k + 1;
+                            tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.master.TrtypeAccount, obj.lstLedger[i].TraccCode, "", 0, obj.lstLedger[i].TramountWithTax, obj.master.TrexchangeRate, obj.lstLedger[i].TramountWithTax, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                        }
+                    }
+                    if (obj.lstLedger[i].TrtaxAmount != 0 && obj.lstLedger[i].TrtxsId != -1)
+                    {
+                        obj.lstAllTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxId == obj.lstLedger[i].TrtxsId).ToList();
+                        if (obj.lstAllTax != null)
+                        {
+                            obj.lstTaxAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.Coaid == obj.lstAllTax[0].Coaid).OrderBy(x => x.AccName).ToList();
+                        }
+
+                        if (obj.lstTaxAccount != null)
+                        {
+                            k = k + 1;
+                            if (obj.lstLedger[i].TramountWithTax > 0)
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", obj.lstLedger[i].TrtaxAmount, 0, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxAmount, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                            else
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", 0, obj.lstLedger[i].TrtaxAmount * -1, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxAmount * -1, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                        }
+                    }
+                    if (obj.lstLedger[i].TrtaxExciseAmount != 0 && obj.lstLedger[i].TrtxsExciseId != -1)
+                    {
+                        obj.lstAllTax = db.TxstaxDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.TaxActive == true && x.TaxType == "PURCHASE" && x.TaxId == obj.lstLedger[i].TrtxsExciseId).ToList();
+                        if (obj.lstAllTax != null)
+                        {
+                            obj.lstTaxAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccActive == true && x.AccAccountType.Contains("TRANSACTION") && x.Coaid == obj.lstAllTax[0].Coaid).OrderBy(x => x.AccName).ToList();
+                        }
+
+                        if (obj.lstTaxAccount != null)
+                        {
+                            k = k + 1;
+                            if (obj.lstLedger[i].TramountWithTax > 0)
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", obj.lstLedger[i].TrtaxExciseAmount, 0, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxExciseAmount, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                            else
+                            {
+                                tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstTaxAccount[0].AccCode, obj.lstTaxAccount[0].AccCode, "", 0, obj.lstLedger[i].TrtaxExciseAmount * -1, obj.master.TrexchangeRate, obj.lstLedger[i].TrtaxExciseAmount * -1, obj.master.CurId, obj.lstLedger[i].TrtxsId, obj.lstLedger[i].TrtaxPercent, obj.lstLedger[i].TrtaxAmount, obj.lstLedger[i].TrchequeNo, obj.lstLedger[i].TrchequeDate, obj.lstLedger[i].TrrefNo, obj.lstLedger[i].Trremarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.lstLedger[i].Tramount, obj.lstLedger[i].TramountWithTax, obj.lstLedger[i].TrtxsExciseId, obj.lstLedger[i].TrtaxExcisePercent, obj.lstLedger[i].TrtaxExciseAmount);
+                            }
+                        }
+                    }
+
+                }
+
+                if (obj.master.Trtype != "MULTIPLE")
+                {
+                    k = k + 1;
+                    tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.master.TrtypeAccount, obj.master.TrtypeAccount, "", 0, obj.master.TrtotalAmount, obj.master.TrexchangeRate, obj.master.TrtotalAmount, obj.master.CurId, -1, 0, 0, "", null, obj.master.TrrefMain, obj.master.TrmainRemarks, "TOTAL", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "TOTAL", 0, 0, 0, obj.master.TrtotalAmount, obj.master.TrtotalAmount, -1, 0, 0);
+                }
+                else
+                {
+                    for (int i = 0; i < obj.lstDetailMultiple.Count; i++)
+                    {
+                        if (obj.lstDetailMultiple[i].TraccCode != "-1" && obj.lstDetailMultiple[i].Trcredit != 0)
+                        {
+                            k = k + 1;
+                            tX.insertLedgerPaymentDetail(user.Id, user.UserName, obj.master.Trno, obj.master.Trdate, obj.master.Trgldate, "PAYMENT", "UN-POST", k, obj.lstDetailMultiple[i].TraccCode, obj.lstDetailMultiple[i].TraccCode, "", 0, obj.lstDetailMultiple[i].TramountConverted, obj.master.TrexchangeRate, obj.lstDetailMultiple[i].TramountConverted, obj.master.CurId, -1, 0, 0, obj.lstDetailMultiple[i].TrchequeNo, obj.lstDetailMultiple[i].TrchequeDate, obj.master.TrrefMain, obj.master.TrmainRemarks, "CHILD", user.UserName, DateTime.Now, "Payment Detail", obj.master.SitId, "CHILD", 0, 0, 0, obj.master.TrtotalAmount, obj.master.TrtotalAmount, -1, 0, 0);
+                        }
+                    }
+                }
+
+                obj.lstDetailBillCheck = db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno).OrderBy(x => x.PayId).ToList();
+                for (int i = 0; i < obj.lstDetailBillCheck.Count; i++)
+                {
+                    double? TotalPaid = SupplierPaidAmount(obj.master.Trno, obj.lstDetailBillCheck[i].PblCode, obj.lstDetailBillCheck[i].PblSerialNo, obj.lstDetailBillCheck[i].InvCode, "NO");
+                    TxtpurchaseDetail objUpdatePurchaseDetail = new TxtpurchaseDetail();
+                    objUpdatePurchaseDetail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurPoref == obj.lstDetailBillCheck[i].PblCode && x.PurSerialNo == obj.lstDetailBillCheck[i].PblSerialNo).FirstOrDefault();
+                    if (objUpdatePurchaseDetail != null)
+                    {
+                        objUpdatePurchaseDetail.PurPaidAmt = TotalPaid;
+                        objUpdatePurchaseDetail.PurBalAmt = objUpdatePurchaseDetail.PurNetAmt - TotalPaid;
+                        db.SaveChanges();
+                    }
+                }
+
+                db.TxtpaymentBillDetail.RemoveRange(db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno));
+                db.SaveChanges();
+
+                for (int i = 0; i < obj.lstDetailBill.Count; i++)
+                {
+                    if (obj.lstDetailBill[i].PblCode != "" && obj.lstDetailBill[i].PblPaidAmount != 0)
+                    {
+                        k = k + 1;
+                        tX.insertPaymentBill(user.Id, user.UserName, obj.master.Trno, obj.lstDetailBill[i].PblCode, obj.lstDetailBill[i].PblDate, k, obj.lstDetailBill[i].InvCode, obj.lstDetailBill[i].PblBillAmount, obj.lstDetailBill[i].PblOwingAmount, obj.lstDetailBill[i].PblPaidAmount, obj.lstDetailBill[i].PblBalanceAmount, obj.lstDetailBill[i].PblSubRemarks, "", obj.master.SupId);
+
+                        double? TotalPaid = SupplierPaidAmount(obj.master.Trno, obj.lstDetailBillCheck[i].PblCode, obj.lstDetailBillCheck[i].PblSerialNo, obj.lstDetailBillCheck[i].InvCode, "YES");
+                        TxtpurchaseDetail objUpdatePurchaseDetail = new TxtpurchaseDetail();
+                        objUpdatePurchaseDetail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurPoref == obj.lstDetailBillCheck[i].PblCode && x.PurSerialNo == obj.lstDetailBillCheck[i].PblSerialNo).FirstOrDefault();
+                        if (objUpdatePurchaseDetail != null)
+                        {
+                            objUpdatePurchaseDetail.PurPaidAmt = TotalPaid;
+                            objUpdatePurchaseDetail.PurBalAmt = objUpdatePurchaseDetail.PurNetAmt - TotalPaid;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+
+            }
+            if (Delete != null)
+            {
+                db.Txtledger.RemoveRange(db.Txtledger.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                db.TxtpaymentMaster.RemoveRange(db.TxtpaymentMaster.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.Trno == obj.master.Trno));
+                db.SaveChanges();
+
+                obj.lstDetailBillCheck = db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno).OrderBy(x => x.PayId).ToList();
+                for (int i = 0; i < obj.lstDetailBillCheck.Count; i++)
+                {
+                    double? TotalPaid = SupplierPaidAmount(obj.master.Trno, obj.lstDetailBillCheck[i].PblCode, obj.lstDetailBillCheck[i].PblSerialNo, obj.lstDetailBillCheck[i].InvCode, "NO");
+                    TxtpurchaseDetail objUpdatePurchaseDetail = new TxtpurchaseDetail();
+                    objUpdatePurchaseDetail = db.TxtpurchaseDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PurPoref == obj.lstDetailBillCheck[i].PblCode && x.PurSerialNo == obj.lstDetailBillCheck[i].PblSerialNo).FirstOrDefault();
+                    if (objUpdatePurchaseDetail != null)
+                    {
+                        objUpdatePurchaseDetail.PurPaidAmt = TotalPaid;
+                        objUpdatePurchaseDetail.PurBalAmt = objUpdatePurchaseDetail.PurNetAmt - TotalPaid;
+                        db.SaveChanges();
+                    }
+                }
+
+                db.TxtpaymentBillDetail.RemoveRange(db.TxtpaymentBillDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.PblTrcode == obj.master.Trno));
+                db.SaveChanges();
+            }
+            return RedirectToAction("showPayment");
         }
 
         #endregion
@@ -763,7 +1114,16 @@ namespace Taxtation.Controllers
         {
             string id = HttpContext.Session.GetString("UserId");
             string userName = HttpContext.Session.GetString("UserName");
-            List<Txscoadetail> lstCredit = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountSubNature == BankCash).ToList();
+            List<Txscoadetail> lstCredit = null;
+            lstCredit = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountSubNature == BankCash).ToList();
+            //if (BankCash != "MULTIPLE")
+            //{
+            //    lstCredit = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountSubNature == BankCash).ToList();
+            //}
+            //else
+            //{
+            //    lstCredit = null;
+            //}
             return lstCredit;
         }
         public List<Txscoadetail> ReceiptDebit(string BankCash)
@@ -774,31 +1134,63 @@ namespace Taxtation.Controllers
             return lstDebit;
         }
 
+        public List<Txscoadetail> CustomerSupplier(string CSName)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            List<Txscoadetail> lstCustSupp = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccAccountSubNature == CSName).ToList();
+            return lstCustSupp;
+        }
+
         public TXTPaymentMasterView supplierChange(string Trno , int ExchangeRate, string supplier)
         {
             string id = HttpContext.Session.GetString("UserId");
             string userName = HttpContext.Session.GetString("UserName");
             TXTPaymentMasterView query = new TXTPaymentMasterView();
-            List<TxtpurchaseMaster> purchase = new List<TxtpurchaseMaster>();
+            List<TxtpurchaseDetail> purchase = new List<TxtpurchaseDetail>();
+            List<TxtpaymentBillDetail> purchasePaid = new List<TxtpaymentBillDetail>();
             int supId = accCodeToSupplier(supplier);
-            Txtledger Ledger = new Txtledger();
-            purchase = db.TxtpurchaseMaster.Where(x => x.Id == id && x.UserName == userName && x.SupId == supId && x.PurPayTerm== "CREDIT").ToList();
+            //Txtledger Ledger = new Txtledger();
+
+            purchasePaid = db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.SupId == supId && x.PblTrcode == Trno).ToList();
+            if (purchasePaid != null)
+            {
+                for (int i = 0; i < purchasePaid.Count; i++)
+                {
+                    double? TotalPaid = SupplierPaidAmount1(Trno, purchasePaid[i].PblCode, purchasePaid[i].PblSerialNo, "NO");
+                    if (TotalPaid != null)
+                    {
+                        TxtpaymentBillDetail payment = new TxtpaymentBillDetail();
+                        payment.PblDate = purchasePaid[i].PblDate;
+                        payment.PblCode = purchasePaid[i].PblCode;
+                        payment.PblBillAmount = purchasePaid[i].PblBillAmount;
+                        payment.PblOwingAmount = purchasePaid[i].PblBillAmount - Convert.ToDouble(TotalPaid);
+                        payment.PblPaidAmount = purchasePaid[i].PblPaidAmount;
+                        payment.PblBalanceAmount = purchasePaid[i].PblBillAmount - purchasePaid[i].PblPaidAmount - Convert.ToDouble(TotalPaid);
+                        payment.PblSubRemarks = purchasePaid[i].PblSubRemarks;
+                        query.lstDetailBill.Add(payment);
+                    }
+                }
+            }
+
+            purchase = db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.SupId == supId && x.PurPayTerm == "CREDIT" && x.PurPaidAmt == 0).ToList();
             if(purchase != null)
             {
                 for (int i = 0; i < purchase.Count; i++)
                 {
-                    string TotalPaid = db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno != Trno && x.TrrefNo == purchase[i].PurPoref && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
+                    double? TotalPaid = SupplierPaidAmount1(Trno, purchase[i].PurPoref, purchase[i].PurSerialNo, "NO");
+                    //string TotalPaid = db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno != Trno && x.TrrefNo == purchase[i].PurPoref && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
                     if (TotalPaid != null)
                     {
-                        TxtpaymentDetail payment = new TxtpaymentDetail();
-                        payment.PayBillDate = purchase[i].PurDate;
-                        payment.PayBillNo = purchase[i].PurPoref;
-                        payment.PayOriginalAmt = Convert.ToDouble(db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.PurId == purchase[i].PurId).Sum(x => x.PurGrossAmt).ToString());
-                        payment.PayAmtOwing = payment.PayOriginalAmt - Convert.ToDouble(TotalPaid);
-                        payment.PayDiscAmt = Convert.ToDouble(db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.PurId == purchase[i].PurId).Sum(x => x.PurDiscountAmt).ToString());
-                        payment.PayPaymentAmt = payment.PayOriginalAmt - Convert.ToDouble(TotalPaid);
-                        payment.PayExcAmt = (payment.PayOriginalAmt - Convert.ToDouble(TotalPaid)) * ExchangeRate;
-                        query.lstDetailOther.Add(payment);
+                        TxtpaymentBillDetail payment = new TxtpaymentBillDetail();
+                        payment.PblDate = purchase[i].PurDate;
+                        payment.PblCode = purchase[i].PurPoref;
+                        payment.PblBillAmount = purchase[i].PurNetAmt;
+                        payment.PblOwingAmount = purchase[i].PurNetAmt - Convert.ToDouble(TotalPaid);
+                        payment.PblPaidAmount = 0;
+                        payment.PblBalanceAmount = purchase[i].PurNetAmt - Convert.ToDouble(TotalPaid);
+                        payment.PblSubRemarks = purchase[i].PurRemarks;
+                        query.lstDetailBill.Add(payment);
                     }
                 }
             }
@@ -854,8 +1246,32 @@ namespace Taxtation.Controllers
             var CoaId = db.Txscoadetail.Where(x => x.Id == id && x.UserName == userName && x.AccCode == CusCode).FirstOrDefault().Coaid;
             return db.TxscustomerDetail.Where(x => x.Id == id && x.UserName == userName && x.CoaId == CoaId).FirstOrDefault().CusId;
         }
+        public double? SupplierPaidAmount(string PblTrcode, string PblCode, double? PblSerialNo, string InvCode, string All)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            if (All == "YES")
+            {
+                return db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.PblCode == PblCode && x.PblSerialNo == PblSerialNo && x.InvCode == InvCode).Sum(x => x.PblPaidAmount);
+            }
+            else
+            {
+                return db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.PblTrcode != PblTrcode && x.PblCode == PblCode && x.PblSerialNo == PblSerialNo && x.InvCode == InvCode).Sum(x => x.PblPaidAmount);
+            }
+        }
+
+        public double? SupplierPaidAmount1(string PblTrcode, string PblCode, double? PblSerialNo, string All)
+        {
+            string id = HttpContext.Session.GetString("UserId");
+            string userName = HttpContext.Session.GetString("UserName");
+            if (All == "YES")
+            {
+                return db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.PblCode == PblCode && x.PblSerialNo == PblSerialNo).Sum(x => x.PblPaidAmount);
+            }
+            else
+            {
+                return db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.PblTrcode != PblTrcode && x.PblCode == PblCode && x.PblSerialNo == PblSerialNo).Sum(x => x.PblPaidAmount);
+            }
+        }
     }
-
-
-
 }

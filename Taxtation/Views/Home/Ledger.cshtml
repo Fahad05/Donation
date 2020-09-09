@@ -4,6 +4,10 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@{
+    ViewData["Title"] = "Ledger";
+}
+
 @if (SignInManager.IsSignedIn(User))
 {
     <div style="margin-top:20px; text-align:center;">

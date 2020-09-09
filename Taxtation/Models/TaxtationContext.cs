@@ -35,6 +35,7 @@ namespace Taxtation.Models
         public virtual DbSet<TxtjournalMaster> TxtjournalMaster { get; set; }
         public virtual DbSet<Txtledger> Txtledger { get; set; }
         public virtual DbSet<TxtopeningMaster> TxtopeningMaster { get; set; }
+        public virtual DbSet<TxtpaymentBillDetail> TxtpaymentBillDetail { get; set; }
         public virtual DbSet<TxtpaymentDetail> TxtpaymentDetail { get; set; }
         public virtual DbSet<TxtpaymentMaster> TxtpaymentMaster { get; set; }
         public virtual DbSet<TxtpurchaseDetail> TxtpurchaseDetail { get; set; }
@@ -1112,7 +1113,11 @@ namespace Taxtation.Models
                     .HasColumnName("TRAccCode")
                     .HasMaxLength(50);
 
+                entity.Property(e => e.Tramount).HasColumnName("TRAmount");
+
                 entity.Property(e => e.TramountConverted).HasColumnName("TRAmountConverted");
+
+                entity.Property(e => e.TramountWithTax).HasColumnName("TRAmountWithTax");
 
                 entity.Property(e => e.TrchequeDate)
                     .HasColumnName("TRChequeDate")
@@ -1192,11 +1197,25 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.TrsupplierRef).HasColumnName("TRSupplierRef");
 
-                entity.Property(e => e.TrtaxAmount).HasColumnName("TRTaxAmount");
+                entity.Property(e => e.TrtaxAmount)
+                    .HasColumnName("TRTaxAmount")
+                    .HasDefaultValueSql("((0))");
 
-                entity.Property(e => e.TrtaxPercent).HasColumnName("TRTaxPercent");
+                entity.Property(e => e.TrtaxExciseAmount)
+                    .HasColumnName("TRTaxExciseAmount")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TrtaxExcisePercent)
+                    .HasColumnName("TRTaxExcisePercent")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TrtaxPercent)
+                    .HasColumnName("TRTaxPercent")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.TrtaxRef).HasColumnName("TRTaxRef");
+
+                entity.Property(e => e.TrtxsExciseId).HasColumnName("TRTxsExciseId");
 
                 entity.Property(e => e.TrtxsId).HasColumnName("TRTxsId");
 
@@ -1279,6 +1298,36 @@ namespace Taxtation.Models
                 entity.Property(e => e.TrreverseStatus).HasColumnName("TRReverseStatus");
 
                 entity.Property(e => e.TrtotalAmount).HasColumnName("TRTotalAmount");
+            });
+
+            modelBuilder.Entity<TxtpaymentBillDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.PayId });
+
+                entity.ToTable("TXTPaymentBillDetail");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("IX_TXTPaymentBillDetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.PayId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Id).IsRequired();
+
+                entity.Property(e => e.InvCode).HasMaxLength(50);
+
+                entity.Property(e => e.PblCode).HasMaxLength(50);
+
+                entity.Property(e => e.PblDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.PblSubRemarks).HasMaxLength(250);
+
+                entity.Property(e => e.PblSupCode).HasMaxLength(50);
+
+                entity.Property(e => e.PblTrcode)
+                    .HasColumnName("PblTRCode")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<TxtpaymentDetail>(entity =>
@@ -1400,7 +1449,19 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.Id).HasMaxLength(450);
 
+                entity.Property(e => e.PurBalAmt).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.PurDate).HasColumnType("smalldatetime");
+
                 entity.Property(e => e.PurDisType).HasMaxLength(50);
+
+                entity.Property(e => e.PurPaidAmt).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.PurPayTerm).HasMaxLength(50);
+
+                entity.Property(e => e.PurPoref)
+                    .HasColumnName("PurPORef")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.PurRemarks).HasMaxLength(500);
 
@@ -1603,7 +1664,11 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.Id).HasMaxLength(450);
 
+                entity.Property(e => e.SalBalAmt).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.SalDisType).HasMaxLength(50);
+
+                entity.Property(e => e.SalPaidAmt).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.SalSubRemarks).HasMaxLength(500);
 

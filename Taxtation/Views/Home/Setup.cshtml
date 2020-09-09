@@ -4,6 +4,10 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@{
+    ViewData["Title"] = "Setups";
+}
+
 @if (SignInManager.IsSignedIn(User))
 {
     <div style="margin-top:50px; text-align:center;">
@@ -15,12 +19,12 @@
   position: absolute;
   top: 50%;
   -ms-transform: translateY(-50%);
-  transform: translateY(-50%);"*@ style="display: flex;justify-content: center;padding-top:10%">
-        
+  transform: translateY(-50%);" *@ style="display: flex;justify-content: center;padding-top:10%">
+
         <ul class="nav navbar-nav">
             @*<li>
-                <a asp-action="showBank" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/bank.png" class="ImgStyleMain" style="background-color:#E1BE5C;" /><br /> BANK</a>
-            </li>*@
+                    <a asp-action="showBank" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#E1BE5C"><img src="~/images/bank.png" class="ImgStyleMain" style="background-color:#E1BE5C;" /><br /> BANK</a>
+                </li>*@
             <li>
                 <a asp-action="showCOA" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#b4c33a"><img src="~/images/coa.png" class="ImgStyleMain" style="background-color:#b4c33a;" /><br />ACCOUNTS</a>
             </li>
@@ -30,11 +34,11 @@
             <li>
                 <a asp-action="showTax" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#55C77E"><img src="~/images/tax.png" class="ImgStyleMain" style="background-color:#55C77E;" /><br /> TAX</a>
             </li>
-        @*</ul>
-    </div>
-    <h4>LOCATION</h4>
-    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
-        <ul class="nav navbar-nav">*@
+            @*</ul>
+                </div>
+                <h4>LOCATION</h4>
+                <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
+                    <ul class="nav navbar-nav">*@
             <li>
                 <a asp-action="showSite" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#f97177"><img src="~/images/site.png" class="ImgStyleMain" style="background-color:#f97177;" /><br /> SITE</a>
 
@@ -46,12 +50,12 @@
             <li>
                 <a asp-action="showStore" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#48C7C8"><img src="~/images/store.png" class="ImgStyleMain" style="background-color:#48C7C8;" /><br /> STORE</a>
             </li>
-        @*</ul>
-    </div>
+            @*</ul>
+                </div>
 
-    <h4>INVENTORY</h4>
-    <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
-        <ul class="nav navbar-nav">*@
+                <h4>INVENTORY</h4>
+                <div style="margin-left:0%;align-items:center;justify-content:center;display: flex; margin-top:50px;">
+                    <ul class="nav navbar-nav">*@
             <li>
                 <a asp-action="showItem" asp-controller="Setup" class="w3-bar-item w3-button" style="color:#3498DB"><img src="~/images/item.png" class="ImgStyleMain" style="background-color:#3498DB;" /><br /> ITEM</a>
             </li>

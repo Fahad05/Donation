@@ -257,6 +257,77 @@ namespace Taxtation.App_Code
             db.SaveChanges();
         }
 
+        public void insertLedgerPaymentDetail(string id, string userName, string Trno, DateTime? Trdate, DateTime? Trgldate, string Trtype,
+            string TrpostStatus, double TrserialNo, string TraccCode, string TrrefAccCode, string TrdocReference,
+            double? Trdebit, double? Trcredit, double? TrexchangeRate, double? TramountConverted, int? TrcurId, int? TrtxsId,
+            double? TrtaxPercent, double? TrtaxAmount, string TrchequeNo, DateTime? TrchequeDate, string TrrefNo, string Trremarks, string TrentryType,
+            string EnterBy, DateTime? EnterDate, string EntryFrom, int? SitId, string TrentryTypeDoc,
+            int? TRCustomerRef, int? TRSupplierRef, int? TRTaxRef, double? Tramount, double? TramountWithTax, int? TrtxsExciseId, double? TrtaxExcisePercent, double? TrtaxExciseAmount)
+        {
+            Txtledger obj = new Txtledger();
+            obj.Id = id;
+            obj.UserName = userName;
+            obj.Trno = Trno;
+            obj.Trdate = Trdate;
+            obj.Trgldate = Trgldate;
+            obj.Trtype = Trtype;
+            obj.TrpostStatus = TrpostStatus;
+            obj.TrserialNo = TrserialNo;
+            obj.TraccCode = TraccCode;
+            obj.TrrefAccCode = TrrefAccCode;
+            obj.TrdocReference = TrdocReference;
+            obj.Trdebit = Trdebit;
+            obj.Trcredit = Trcredit;
+            obj.TrexchangeRate = TrexchangeRate;
+            obj.TramountConverted = TramountConverted;
+            obj.TrcurId = TrcurId;
+            obj.TrtxsId = TrtxsId;
+            obj.TrtaxPercent = TrtaxPercent;
+            obj.TrtaxAmount = TrtaxAmount;
+            obj.TrchequeNo = TrchequeNo;
+            obj.TrchequeDate = TrchequeDate;
+            obj.TrrefNo = TrrefNo;
+            obj.Trremarks = Trremarks;
+            obj.TrentryType = TrentryType;
+            obj.EnterBy = EnterBy;
+            obj.EnterDate = EnterDate;
+            obj.EntryFrom = EntryFrom;
+            obj.SitId = SitId;
+            obj.TrentryTypeDoc = TrentryTypeDoc;
+            obj.TrcustomerRef = TRCustomerRef;
+            obj.TrsupplierRef = TRSupplierRef;
+            obj.TrtaxRef = TRTaxRef;
+
+            obj.Tramount = Tramount;
+            obj.TramountWithTax = TramountWithTax;
+            obj.TrtxsExciseId = TrtxsExciseId;
+            obj.TrtaxExcisePercent = TrtaxExcisePercent;
+            obj.TrtaxExciseAmount = TrtaxExciseAmount;
+
+            db.Txtledger.Add(obj);
+            db.SaveChanges();
+        }
+
+        public void insertPaymentBill(string id, string userName, string PblTrcode, string PblCode, DateTime? PblDate, double? PblSerialNo, string InvCode, double? PblBillAmount, double? PblOwingAmount, double? PblPaidAmount, double? PblBalanceAmount, string PblSubRemarks, string PblSupCode, int? SupId)
+        {
+            TxtpaymentBillDetail pBill = new TxtpaymentBillDetail();
+            pBill.Id = id;
+            pBill.UserName = userName;
+            pBill.PblTrcode = PblTrcode;
+            pBill.PblCode = PblCode;
+            pBill.PblDate = PblDate;
+            pBill.PblSerialNo = PblSerialNo;
+            pBill.InvCode = InvCode;
+            pBill.PblBillAmount = PblBillAmount;
+            pBill.PblOwingAmount = PblOwingAmount;
+            pBill.PblPaidAmount = PblPaidAmount;
+            pBill.PblBalanceAmount = PblBalanceAmount;
+            pBill.PblSubRemarks = PblSubRemarks;
+            pBill.PblSupCode = PblSupCode;
+            pBill.SupId = SupId;
+            db.TxtpaymentBillDetail.Add(pBill);
+            db.SaveChanges();
+        }
 
         public void insertInventoryStockDetail(string id, string userName, int? ItmId, double? InsSerialNo, string InsNo, DateTime? InsDate, string InsRefNo, string InsRemarks, string InsSubRemarks, double? InsQuantityIn, double? InsQuantityOut, double? InsWeightIn, double? InsWeightOut, int? StrId, int? TxsId, double? QprTaxPercent, double? QprAmount, int? CurId, double? QprExchangeRate, double? QprAmountConverted, string InsEntryType, string InsPostStatus)
         {

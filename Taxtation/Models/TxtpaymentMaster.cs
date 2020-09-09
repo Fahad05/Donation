@@ -30,5 +30,6 @@ namespace Taxtation.Models
         public DateTime? EditDate { get; set; }
         public string TrmapCode { get; set; }
         public DateTime? Trgldate { get; set; }
+        public int? SupId { get; set; }
     }
 }

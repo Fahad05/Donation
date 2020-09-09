@@ -10,19 +10,79 @@
         <div class="col-sm-12" style="padding-left:8.2%;">
             @if (ViewData["_Save"].ToString() == "True")
             {
-                <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                <button type="submit" name="Save" id="Save" value="Save" AccessKey="S" class="form-control-btn buttonsize">S̲AVE</button>
             }
             @if (ViewData["_Update"].ToString() == "True")
             {
-                <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
-                <button type="submit" name="Delete" id="Delete" value="Delete" style="background-image:url(../images/button/Delete.png)" class="btnControlDML">Delete</button>
-                <button type="submit" name="Report" id="Report" value="Report" style="background-image:url(../images/button/Report.png)" class="btnControlDML">Report</button>
+                <button type="submit" name="Update" id="Update" value="Update" AccessKey="U" class="form-control-btn buttonsize">U̲PDATE</button>
+                <button type="submit" name="Delete" id="Delete" value="Delete" AccessKey="L" class="form-control-btn buttonsize">DEL̲ETE</button>
+                <button type="submit" name="Report" id="Report" value="Report" AccessKey="R" class="form-control-btn buttonsize">R̲EPORT</button>
             }
+            <button name="Add Row" id="addNewRow" value="Add Row" AccessKey="A" class="form-control-btn buttonsize">A̲DDROW</button>
+            <a asp-action="showPurchase" asp-controller="Transaction" AccessKey="B" class="form-control-btn buttonsize">B̲ACK</a>
             <div style="float:right;padding-right:8.3%">
-                <a asp-action="showPurchase" asp-controller="Transaction" style="background-image:url(../images/button/back.png)" class="btnControlDML">Back</a>
+                <table class="w3-table-all">
+                    <tr>
+                        <td>
+                            Sub Total
+                            <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control" />
+                        </td>
+                        <td>
+                            Excise Tax
+                            <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control" />
+                        </td>
+                        <td>
+                            VAT Tax&nbsp;&nbsp;&nbsp;
+                            <input type="text" asp-for="VAT" readonly="readonly" class="form-control" />
+                        </td>
+                        <td>
+                            Total Amount
+                            <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control" />
+                        </td>
+                        <td>
+                            Paid Amount
+                            <input type="text" asp-for="Paid" readonly="readonly" class="form-control" />
+                        </td>
+                        <td>
+                            Balance Amount
+                            <input type="text" asp-for="TotalBalance" readonly="readonly" class="form-control" />
+                        </td>
+                    </tr>
+                </table>
             </div>
-        </div>
 
+            @*<div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
+                <div class="col-md-2">
+                    Sub Total
+                    <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control-footer" />
+                </div>
+                <div class="col-md-1">
+                    Exise Tax
+                    <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control-footer" />
+                </div>
+                <div class="col-md-1">
+                    Vat
+                    <input type="text" asp-for="VAT" readonly="readonly" class="form-control-footer" />
+                </div>
+                <div class="col-md-2">
+                    Total
+                    <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control-footer" />
+                </div>
+                <div class="col-md-2">
+                    Advance
+                    <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
+                </div>
+                <div class="col-md-2">
+                    Paid
+                    <input type="text" asp-for="Paid" readonly="readonly" class="form-control-footer" />
+                </div>
+                <div class="col-md-2">
+                    Balance
+                    <input type="text" asp-for="TotalBalance" readonly="readonly" class="form-control-footer" />
+                </div>
+            </div>*@
+
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-4">
@@ -35,17 +95,17 @@
             <input type="text" asp-for="master.PurId" hidden="hidden" class="form-control" />
         </div>
     </div>
-    <div class="row" style="padding-top:70px;z-index:1">
+    <div class="row toppadding3">
         <div class="col-md-3">
-            Purchase Order:
+            Transaction No<span class="mandatory">*</span>:
             <input type="text" asp-for="master.PurPoref" class="form-control" />
         </div>
         <div class="col-md-3">
-            Transaction Date:
+            Transaction Date<span class="mandatory">*</span>:
             <input type="date" asp-for="master.PurDate" class="form-control" required />
         </div>
         <div class="col-md-3">
-            Term:
+            Term<span class="mandatory">*</span>:
             <select asp-for="master.PurPayTerm" class="form-control" required="required">
                 <option value="CREDIT">CREDIT</option>
                 <option value="CASH">CASH</option>
@@ -53,7 +113,7 @@
             </select>
 
         </div><div class="col-md-3">
-            Cash/Bank:
+            Cash/Bank<span class="mandatory">*</span>:
             <select asp-for="master.Coaid" class="form-control" required>
                 <option value="">Select</option>
                 @foreach (var j in Model.lstAccount)
@@ -64,16 +124,7 @@
         </div>
     </div>
     <div class="row">
-
-
         <div class="col-md-3">
-            Cheque/Ref No:
-            <input type="text" asp-for="master.PurChqNo" class="form-control" />
-        </div>
-        <div class="col-md-3">
-            Cheque Date:
-            <input type="date" asp-for="master.PurChqDate" class="form-control" />
-        </div> <div class="col-md-3">
             Purchase Type:
             <select asp-for="master.PurType" class="form-control" required="required">
                 <option value="LOCAL">LOCAL</option>
@@ -88,47 +139,16 @@
                 <option value="IMPORT">IMPORTED</option>
             </select>
         </div>
+        <div class="col-md-3">
+            Cheque/Ref No:
+            <input type="text" asp-for="master.PurChqNo" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            Cheque Date:
+            <input type="date" asp-for="master.PurChqDate" class="form-control" />
+        </div>
     </div>
     <div class="row">
-
-        <div class="col-md-3">
-            Exchange Rate:
-            <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" class="form-control" required="required" />
-        </div> <div class="col-md-3">
-            Site:
-            <select asp-for="master.SitId" class="form-control" required="required">
-                <option value="">Select</option>
-                @foreach (var j in Model.lstSite)
-                {
-                    <option value=@j.SitId>@j.SitName</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-3">
-            Store Name:
-            <select asp-for="master.StrId" class="form-control" required="required">
-                <option value="">Select</option>
-                @foreach (var j in Model.lstStore)
-                {
-                    <option value=@j.StrId>@j.StrName</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-3">
-            Supplier Name:
-            <select asp-for="master.SupId" class="form-control" required="required">
-                <option value="">Select</option>
-                @foreach (var j in Model.lstSupplier)
-                {
-                    <option value=@j.SupId>@j.SupName</option>
-                }
-            </select>
-        </div>
-
-    </div>
-    <div class="row">
-
-
         <div class="col-md-3">
             Currency:
             <select asp-for="master.CurId" class="form-control" required="required">
@@ -140,8 +160,43 @@
             </select>
         </div>
         <div class="col-md-3">
+            Exchange Rate<span class="mandatory">*</span>:
+            <input type="number" asp-for="master.PurExRate" onchange="ExchangeRate()" class="form-control" required="required" />
+        </div>
+        <div class="col-md-3">
+            Site:
+            <select asp-for="master.SitId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstSite)
+                {
+                    <option value=@j.SitId>@j.SitName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Store<span class="mandatory">*</span>:
+            <select asp-for="master.StrId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstStore)
+                {
+                    <option value=@j.StrId>@j.StrName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            Supplier<span class="mandatory">*</span>:
+            <select asp-for="master.SupId" class="form-control" required="required">
+                <option value="">Select</option>
+                @foreach (var j in Model.lstSupplier)
+                {
+                    <option value=@j.SupId>@j.SupName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
             Remarks:
-            <input type="text" asp-for="master.PurRemarks" class="form-control" />
+            @*<input type="text" asp-for="master.PurRemarks" class="form-control" />*@
+            <textarea asp-for="master.PurRemarks" class="form-control textareavertical" rows="1" cols="15"></textarea>
         </div>
     </div>
     <br>
@@ -157,11 +212,11 @@
             <table id="myTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th style="width:230px;">Item</th>
+                        <th style="width:230px;">Item<span class="mandatory">*</span></th>
                         <th style="width:70px;">UOM</th>
                         <th style="width:120px;">Last Price</th>
-                        <th style="width:120px;">Quantity</th>
-                        <th style="width:120px;">Price</th>
+                        <th style="width:120px;">Quantity<span class="mandatory">*</span></th>
+                        <th style="width:120px;">Price<span class="mandatory">*</span></th>
                         <th style="width:120px;">Sub. Amount</th>
                         <th style="width:230px;">Excise Slab</th>
                         <th style="width:120px;">Excise Percent</th>
@@ -226,41 +281,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <br />
-
-    <div class="row" style="position:sticky;z-index:1;color:#000000;right:0;">
-
-        <div class="col-md-2">
-            Sub Total
-            <input type="text" asp-for="SubTotal" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-1">
-            Exise Tax
-            <input type="text" asp-for="ExciseTax" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-1">
-            Vat
-            <input type="text" asp-for="VAT" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-2">
-            Total
-            <input type="text" asp-for="TotalAmount" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-2">
-            Advance
-            <input type="text" asp-for="Advance" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-2">
-            Paid
-            <input type="text" asp-for="Paid" readonly="readonly" class="form-control-footer" />
-        </div>
-        <div class="col-md-2">
-            Balance
-            <input type="text" asp-for="TotalBalance" readonly="readonly" class="form-control-footer" />
-        </div>
-
-
     </div>
 </form>
 

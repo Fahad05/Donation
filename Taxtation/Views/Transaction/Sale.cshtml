@@ -188,9 +188,11 @@
                         <tr>
                             <td>
                                 <select asp-for="Detail.saleDetail[i].ItmId" onchange="changeItem(this)" data-rowNo=@i class="form-control" style="width:230px;">
-                                    <option value="-1">Select</option>@foreach (var j in Model.lstItem)
+                                    <option value="-1">Select</option>
+                                    @foreach (var j in Model.lstItem)
                                     {
-                                        <option value=@j.ItmId>@j.ItmName</option>}
+                                        <option value=@j.ItmId>@j.ItmName</option>
+                                    }
                                 </select>
                             </td>
                             <td><input type="text" asp-for="Detail.sale[i].BarCode" readonly="readonly" class="form-control" style="width:70px;" /></td>

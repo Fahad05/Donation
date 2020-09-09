@@ -25,6 +25,21 @@
     width: 100px;
     margin-top: -2px;
 }
+.toppadding1 {
+    padding-top: 60px;
+    z-index: 1;
+    margin-top: 30px;
+}
+.toppadding2 {
+    padding-top: 60px;
+    z-index: 1;
+    margin-top: 30px;
+}
+.toppadding3 {
+    padding-top: 60px;
+    z-index: 1;
+    margin-top: 80px;
+}
 @media screen and (max-width:400px) {
     .buttonsize {
         width: 64px;
@@ -34,7 +49,22 @@
     .buttonsizesetup {
         margin-top: -2px;
         margin-bottom: 5px;
-    } 
+    }
+    .toppadding1 {
+        padding-top: 60px;
+        z-index: 1;
+        margin-top: 60px;
+    }
+    .toppadding2 {
+        padding-top: 60px;
+        z-index: 1;
+        margin-top: 80px;
+    }
+    .toppadding3 {
+        padding-top: 60px;
+        z-index: 1;
+        margin-top: 80px;
+    }
 }
 @media screen and (max-width:400px) {
     .top-padding-main {

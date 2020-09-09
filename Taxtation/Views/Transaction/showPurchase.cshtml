@@ -1,8 +1,10 @@
 ﻿@model Taxtation.ViewModel.TXTPurchaseDetailView
 @{
-    ViewData["Title"] = "show Purchase";
+    ViewData["Title"] = "List Purchase Detail";
     var query = from mas in Model.lstMaster
                 join det in Model.detail.detail on mas.PurId equals det.PurId
+                join item in Model.lstItem on det.ItmId equals item.ItmId into items
+                from item in items.DefaultIfEmpty()
                 join bank in Model.lstBank on mas.BnkId equals bank.BnkId into banks
                 from bank in banks.DefaultIfEmpty()
                 join currency in Model.lstCurrency on mas.CurId equals currency.CurId into currencies
@@ -11,63 +13,70 @@
                 from supplier in suppliers.DefaultIfEmpty()
                 join store in Model.lstStore on mas.StrId equals store.StrId into stores
                 from store in stores.DefaultIfEmpty()
-                select new { mas, det, bank, currency, supplier, store };
+                select new { mas, det, item, bank, currency, supplier, store };
 }
 
 <div class="MainDiv">
     <div>
-        <h2>List Purchase</h2>
+        <h2>List Purchase Detail</h2>
     </div>
-    <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Purchase","Transaction")'></div>
-    <br />
     <div style="float:left;">
-        <a asp-action="Purchase" asp-controller="Transaction" class="form-control-btn" style="width:120px;">Add New</a>
+        <a asp-action="Purchase" asp-controller="Transaction" AccessKey="A" class="form-control-btn" style="width:100px;">A̲DD NEW</a>
     </div>
-    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllPurchase", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+    <div style="text-align:right;width:100px;float:left;padding-left:2px;padding-right:1px;">@Html.ActionLink("R̲EPORT", "PrintAllPurchase", "Reports", new { }, new { target = "_blank", @class = "form-control-btn", @accesskey = "R" })</div>
+    <div style="float:left;">
+        <a asp-action="Purchase" asp-controller="Home" AccessKey="B" class="form-control-btn" style="width:100px;">B̲ACK</a>
+    </div>
     <div style="float:right;">
-        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Search..." style="width:330px;">
     </div>
 </div>
 <div class="GridStyle">
     <table class="table table-striped" id="myTable">
         <thead>
-            <tr>
+            <tr style="white-space:nowrap;">
                 <th></th>
-                <th>Purchase Order</th>
-                <th>Purchase Date</th>
-                <th>Pur. Sup Date</th>
-                <th>Purchase Type</th>
+                <th>PO No</th>
+                <th>PO Date</th>
                 <th>Supplier</th>
-                <th>Pay Term</th>
-                <th>Bank</th>
+                <th>Purchase Type</th>
+                <th>Payment Term</th>
+                <th>Bank/Cash</th>
                 <th>Cheque No</th>
                 <th>Cheque Date</th>
-                <th>Scope</th>
-                <th>Prices</th>
-                <th>Remarks</th>
                 <th>Currency</th>
                 <th>Store</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Prices</th>
+                <th>Net Amount</th>
+                <th>Paid Amount</th>
+                <th>Balance Amount</th>
+                <th>Remarks</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var j in query)
             {
-            <tr>
-                <td>@Html.ActionLink("Edit", "Purchase", "Transaction", new { id = j.mas.PurId })</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurId)</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurDate)</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurSupDate)</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurType)</td>
+            <tr style="white-space:nowrap;">
+                <td>@Html.ActionLink("Edit", "Purchase", "Transaction", new { id = j.mas.PurId }, new { @class = "form-control-btn-edit" })</td>
+                <td>@Html.DisplayFor(modelItem => j.mas.PurPoref)</td>
+                <td>@Convert.ToString(string.Format("{0:dd-MMM-yyyy}", j.mas.PurDate))</td>
                 <td>@Html.DisplayFor(modelItem => j.supplier.SupName)</td>
+                <td>@Html.DisplayFor(modelItem => j.mas.PurType)</td>
                 <td>@Html.DisplayFor(modelItem => j.mas.PurPayTerm)</td>
                 <td>@Html.DisplayFor(modelItem => j.bank.BnkName)</td>
                 <td>@Html.DisplayFor(modelItem => j.mas.PurChqNo)</td>
                 <td>@Html.DisplayFor(modelItem => j.mas.PurChqDate)</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurScope)</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurPrices)</td>
-                <td>@Html.DisplayFor(modelItem => j.mas.PurRemarks)</td>
                 <td>@Html.DisplayFor(modelItem => j.currency.CurName)</td>
                 <td>@Html.DisplayFor(modelItem => j.store.StrName)</td>
+                <td>@Html.DisplayFor(modelItem => j.item.ItmName)</td>
+                <td>@String.Format("{0:n0}", j.det.PurQty)</td>
+                <td>@String.Format("{0:n0}", j.det.PurRate)</td>
+                <td>@String.Format("{0:n0}", j.det.PurNetAmt)</td>
+                <td>@String.Format("{0:n0}", j.det.PurPaidAmt)</td>
+                <td>@String.Format("{0:n0}", j.det.PurBalAmt)</td>
+                <td>@Html.DisplayFor(modelItem => j.det.PurRemarks)</td>
             </tr>
 
             }
