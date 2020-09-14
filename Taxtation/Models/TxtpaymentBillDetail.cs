@@ -20,5 +20,6 @@ namespace Taxtation.Models
         public DateTime? PblDate { get; set; }
         public double? PblBalanceAmount { get; set; }
         public int? SupId { get; set; }
+        public int? ItmId { get; set; }
     }
 }

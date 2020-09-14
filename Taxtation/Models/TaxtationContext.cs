@@ -33,6 +33,7 @@ namespace Taxtation.Models
         public virtual DbSet<TxtcreditNoteMaster> TxtcreditNoteMaster { get; set; }
         public virtual DbSet<TxtdebitNoteDetail> TxtdebitNoteDetail { get; set; }
         public virtual DbSet<TxtdebitNoteMaster> TxtdebitNoteMaster { get; set; }
+        public virtual DbSet<TxtdonationDetail> TxtdonationDetail { get; set; }
         public virtual DbSet<TxtfundTransferMaster> TxtfundTransferMaster { get; set; }
         public virtual DbSet<TxtinventoryStockDetail> TxtinventoryStockDetail { get; set; }
         public virtual DbSet<TxtjournalMaster> TxtjournalMaster { get; set; }
@@ -1002,6 +1003,37 @@ namespace Taxtation.Models
                 entity.Property(e => e.PdnTotalBalance).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.PdnTotalPaid).HasDefaultValueSql("((0))");
+            });
+
+            modelBuilder.Entity<TxtdonationDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.DnnId });
+
+                entity.ToTable("TXTDonationDetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.DnnChequeNo).HasMaxLength(256);
+
+                entity.Property(e => e.DnnDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.DnnDesc).HasMaxLength(450);
+
+                entity.Property(e => e.DnnType)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.EditBy).HasMaxLength(256);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(256);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
             });
 
             modelBuilder.Entity<TxtfundTransferMaster>(entity =>

@@ -1401,7 +1401,7 @@ namespace Taxtation.Controllers
 
         #endregion
 
-
+      
         [HttpGet]
         public List<Txscoadetail> lstCOAAccount(string id, string userName, string type)
         {

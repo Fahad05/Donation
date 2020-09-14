@@ -1,0 +1,116 @@
+﻿@model Taxtation.ViewModel.TXTDonationDetailView
+
+<div style="height:25px;"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Donation Detail</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            ×
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("Donation", "Donation", FormMethod.Post))
+                        {
+                            <div>
+                                <input type="text" asp-for="master.DnnId" class="form-control" hidden="hidden" />
+                            </div>
+                            <div style="float:right">
+                                @Html.CheckBox("DnnActive", Model.master.DnnActive.Value)Active
+                            </div>
+                            <div>
+                                Donor<span class="mandatory">*</span>:
+                                <select asp-for="master.DnnDnrId" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstDonor)
+                                    {
+                                        <option value=@j.DnrId>@j.DnrName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Payment Mode<span class="mandatory">*</span>:
+                                <select asp-for="master.DnnType" id="Type" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    <option value="CHEQUE">CHEQUE</option>
+                                    <option value="CASH">CASH</option>
+                                    <option value="CREDIT CARD">CREDIT CARD</option>
+                                </select>
+                            </div>
+                            <div>
+                                Cheque No<span class="mandatory">*</span>:
+                                <input type="text" id="ChequeNo" asp-for="master.DnnChequeNo" class="form-control"  />
+
+                            </div>
+                            <div>
+                                Amount<span class="mandatory">*</span>:
+                                <input type="text" asp-for="master.DnnAmount" class="form-control" required="required" />
+
+                            </div>
+                            <div>
+                                Date<span class="mandatory">*</span>:
+                                <input type="date" asp-for="master.DnnDate" class="form-control" required="required" />
+                            </div>
+                            <div>
+                                Funds<span class="mandatory">*</span>:
+                                <select asp-for="master.DnnDcaId" class="form-control" required="required">
+                                    <option value="">Select</option>
+                                    @foreach (var j in Model.lstCategory)
+                                    {
+                                        <option value=@j.DcaId>@j.DcaName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                Description:
+                                <input type="text" asp-for="master.DnnDesc" class="form-control" />
+                            </div>
+                            <div style="float:right">
+                                @Html.CheckBox("DnnTaxable", Model.master.DnnTaxable.Value)Taxable
+                            </div>
+                            <br />
+                            <div>
+                                @if (ViewData["_Save"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Save" id="Save" value="Save" style="background-image:url(../images/button/Save.png)" class="btnControlDML">Save</button>
+                                }
+                                @if (ViewData["_Update"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Update" id="Update" value="Update" style="background-image:url(../images/button/Update.png)" class="btnControlDML">Update</button>
+                                }
+                                <button type="button" style="float:right;background-image:url(../images/button/Clear.png)" id="btnHideModal" data-dismiss="modal" class="btnControlDML">
+                                    Hide
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#Type").change(function () {
+            if ($(this).val() == "CHEQUE") {
+                $("#ChequeNo").removeAttr("disabled");
+                $("#ChequeNo").focus();
+            } else {
+                $("#ChequeNo").attr("disabled", "disabled");
+            }
+        });
+    });
+</script>
