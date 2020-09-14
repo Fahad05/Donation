@@ -3,19 +3,18 @@ using System.Collections.Generic;
 
 namespace Taxtation.Models
 {
-    public partial class TxsstoreDetail
+    public partial class TxsdonationCategoryDetail
     {
         public string Id { get; set; }
         public string UserName { get; set; }
-        public int StrId { get; set; }
-        public string StrName { get; set; }
-        public string StrAbbr { get; set; }
-        public string StrDesc { get; set; }
-        public bool? StrActive { get; set; }
+        public int DcaId { get; set; }
+        public string DcaName { get; set; }
+        public string DcaAbbr { get; set; }
+        public string DcaDesc { get; set; }
+        public bool? DcaActive { get; set; }
         public string EnterBy { get; set; }
         public DateTime? EnterDate { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
-        public bool? StrDefault { get; set; }
     }
 }

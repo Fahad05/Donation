@@ -1142,57 +1142,47 @@ namespace Taxtation.Controllers
             return lstCustSupp;
         }
 
-        public TXTPaymentMasterView supplierChange(string Trno , int ExchangeRate, string supplier)
+        public TXTPaymentMasterView supplierChange(string Trno , int ExchangeRate, double supplierid)
         {
             string id = HttpContext.Session.GetString("UserId");
             string userName = HttpContext.Session.GetString("UserName");
             TXTPaymentMasterView query = new TXTPaymentMasterView();
             List<TxtpurchaseDetail> purchase = new List<TxtpurchaseDetail>();
             List<TxtpaymentBillDetail> purchasePaid = new List<TxtpaymentBillDetail>();
-            int supId = accCodeToSupplier(supplier);
+            //int supId = accCodeToSupplier(supplier);
             //Txtledger Ledger = new Txtledger();
 
-            purchasePaid = db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.SupId == supId && x.PblTrcode == Trno).ToList();
-            if (purchasePaid != null)
+            purchasePaid = db.TxtpaymentBillDetail.Where(x => x.Id == id && x.UserName == userName && x.SupId == supplierid && x.PblTrcode == Trno).ToList();
+            for (int i = 0; i < purchasePaid.Count; i++)
             {
-                for (int i = 0; i < purchasePaid.Count; i++)
-                {
-                    double? TotalPaid = SupplierPaidAmount1(Trno, purchasePaid[i].PblCode, purchasePaid[i].PblSerialNo, "NO");
-                    if (TotalPaid != null)
-                    {
-                        TxtpaymentBillDetail payment = new TxtpaymentBillDetail();
-                        payment.PblDate = purchasePaid[i].PblDate;
-                        payment.PblCode = purchasePaid[i].PblCode;
-                        payment.PblBillAmount = purchasePaid[i].PblBillAmount;
-                        payment.PblOwingAmount = purchasePaid[i].PblBillAmount - Convert.ToDouble(TotalPaid);
-                        payment.PblPaidAmount = purchasePaid[i].PblPaidAmount;
-                        payment.PblBalanceAmount = purchasePaid[i].PblBillAmount - purchasePaid[i].PblPaidAmount - Convert.ToDouble(TotalPaid);
-                        payment.PblSubRemarks = purchasePaid[i].PblSubRemarks;
-                        query.lstDetailBill.Add(payment);
-                    }
-                }
+                double? TotalPaid = SupplierPaidAmount1(Trno, purchasePaid[i].PblCode, purchasePaid[i].PblSerialNo, "NO");
+                if (TotalPaid == null) { TotalPaid = 0; }
+                TxtpaymentBillDetail payment = new TxtpaymentBillDetail();
+                payment.PblDate = purchasePaid[i].PblDate;
+                payment.PblCode = purchasePaid[i].PblCode;
+                payment.PblBillAmount = purchasePaid[i].PblBillAmount;
+                payment.PblOwingAmount = purchasePaid[i].PblBillAmount - Convert.ToDouble(TotalPaid);
+                payment.PblPaidAmount = purchasePaid[i].PblPaidAmount;
+                payment.PblBalanceAmount = purchasePaid[i].PblBillAmount - purchasePaid[i].PblPaidAmount - Convert.ToDouble(TotalPaid);
+                payment.PblSubRemarks = purchasePaid[i].PblSubRemarks;
+                query.lstDetailBill.Add(payment);
             }
 
-            purchase = db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.SupId == supId && x.PurPayTerm == "CREDIT" && x.PurPaidAmt == 0).ToList();
-            if(purchase != null)
+            purchase = db.TxtpurchaseDetail.Where(x => x.Id == id && x.UserName == userName && x.SupId == supplierid && x.PurPayTerm == "CREDIT" && x.PurPaidAmt == 0).ToList();
+            for (int i = 0; i < purchase.Count; i++)
             {
-                for (int i = 0; i < purchase.Count; i++)
-                {
-                    double? TotalPaid = SupplierPaidAmount1(Trno, purchase[i].PurPoref, purchase[i].PurSerialNo, "NO");
-                    //string TotalPaid = db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno != Trno && x.TrrefNo == purchase[i].PurPoref && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
-                    if (TotalPaid != null)
-                    {
-                        TxtpaymentBillDetail payment = new TxtpaymentBillDetail();
-                        payment.PblDate = purchase[i].PurDate;
-                        payment.PblCode = purchase[i].PurPoref;
-                        payment.PblBillAmount = purchase[i].PurNetAmt;
-                        payment.PblOwingAmount = purchase[i].PurNetAmt - Convert.ToDouble(TotalPaid);
-                        payment.PblPaidAmount = 0;
-                        payment.PblBalanceAmount = purchase[i].PurNetAmt - Convert.ToDouble(TotalPaid);
-                        payment.PblSubRemarks = purchase[i].PurRemarks;
-                        query.lstDetailBill.Add(payment);
-                    }
-                }
+                double? TotalPaid = SupplierPaidAmount1(Trno, purchase[i].PurPoref, purchase[i].PurSerialNo, "NO");
+                //string TotalPaid = db.Txtledger.Where(x => x.Id == id && x.UserName == userName && x.Trno != Trno && x.TrrefNo == purchase[i].PurPoref && x.TrentryTypeDoc == "CHILD").Sum(x => x.Trdebit - x.Trcredit).ToString();
+                if (TotalPaid == null) { TotalPaid = 0; }
+                TxtpaymentBillDetail payment = new TxtpaymentBillDetail();
+                payment.PblDate = purchase[i].PurDate;
+                payment.PblCode = purchase[i].PurPoref;
+                payment.PblBillAmount = purchase[i].PurNetAmt;
+                payment.PblOwingAmount = purchase[i].PurNetAmt - Convert.ToDouble(TotalPaid);
+                payment.PblPaidAmount = 0;
+                payment.PblBalanceAmount = purchase[i].PurNetAmt - Convert.ToDouble(TotalPaid);
+                payment.PblSubRemarks = purchase[i].PurRemarks;
+                query.lstDetailBill.Add(payment);
             }
             return query;
         }

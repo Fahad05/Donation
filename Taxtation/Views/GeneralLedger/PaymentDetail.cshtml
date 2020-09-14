@@ -407,7 +407,7 @@
                 $(".chosen-select").chosen('destroy');
             })
 
-            $('#master_TrSupAccCode').change(function () {
+            $('#master_SupId').change(function () {
                 //if ($('#master_TrtypeAccount').val() == '') {
                 //    alert('Please Select Any Credit Account!');
                 //}
@@ -415,7 +415,7 @@
                     $.ajax({
                         type: 'GET',
                         url: '/GeneralLedger/supplierChange',
-                        data: { Trno: $('#master_Trno').val(), ExchangeRate: $('#master_TrexchangeRate').val(), supplier: $('#master_TrSupAccCode').val() },
+                        data: { Trno: $('#master_Trno').val(), ExchangeRate: $('#master_TrexchangeRate').val(), supplierid: $('#master_SupId').val() },
                         dataType: 'json',
                         contentType: "application/json; charset=utf-8",
                         success: function (result) {

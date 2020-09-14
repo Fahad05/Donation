@@ -19,7 +19,10 @@ namespace Taxtation.Models
         public virtual DbSet<TxscountryDetail> TxscountryDetail { get; set; }
         public virtual DbSet<TxscurrencyDetail> TxscurrencyDetail { get; set; }
         public virtual DbSet<TxscustomerDetail> TxscustomerDetail { get; set; }
+        public virtual DbSet<TxsdonationCategoryDetail> TxsdonationCategoryDetail { get; set; }
+        public virtual DbSet<TxsdonorDetail> TxsdonorDetail { get; set; }
         public virtual DbSet<TxsitemDetail> TxsitemDetail { get; set; }
+        public virtual DbSet<TxsorganizationDetail> TxsorganizationDetail { get; set; }
         public virtual DbSet<TxsprojectDetail> TxsprojectDetail { get; set; }
         public virtual DbSet<TxssiteDetail> TxssiteDetail { get; set; }
         public virtual DbSet<TxsstoreDetail> TxsstoreDetail { get; set; }
@@ -433,6 +436,78 @@ namespace Taxtation.Models
                     .HasMaxLength(450);
             });
 
+            modelBuilder.Entity<TxsdonationCategoryDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.DcaId });
+
+                entity.ToTable("TXSDonationCategoryDetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.DcaAbbr).HasMaxLength(50);
+
+                entity.Property(e => e.DcaDesc).HasMaxLength(450);
+
+                entity.Property(e => e.DcaName).HasMaxLength(250);
+
+                entity.Property(e => e.EditBy).HasMaxLength(256);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(256);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+            });
+
+            modelBuilder.Entity<TxsdonorDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.DnrId });
+
+                entity.ToTable("TXSDonorDetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.DnrAddress).HasMaxLength(256);
+
+                entity.Property(e => e.DnrCity).HasMaxLength(256);
+
+                entity.Property(e => e.DnrCountry).HasMaxLength(256);
+
+                entity.Property(e => e.DnrDesc).HasMaxLength(256);
+
+                entity.Property(e => e.DnrEmail).HasMaxLength(256);
+
+                entity.Property(e => e.DnrFaxNo).HasMaxLength(256);
+
+                entity.Property(e => e.DnrName).HasMaxLength(256);
+
+                entity.Property(e => e.DnrNtn)
+                    .HasColumnName("DnrNTN")
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.DnrPhNo).HasMaxLength(256);
+
+                entity.Property(e => e.DnrStrn)
+                    .HasColumnName("DnrSTRN")
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.EditBy).HasMaxLength(256);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(256);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+            });
+
             modelBuilder.Entity<TxsitemDetail>(entity =>
             {
                 entity.HasKey(e => new { e.UserName, e.ItmId });
@@ -486,6 +561,51 @@ namespace Taxtation.Models
                     .HasMaxLength(256);
             });
 
+            modelBuilder.Entity<TxsorganizationDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.UserName, e.OrgId });
+
+                entity.ToTable("TXSOrganizationDetail");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.Property(e => e.EditBy).HasMaxLength(256);
+
+                entity.Property(e => e.EditDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.EnterBy).HasMaxLength(256);
+
+                entity.Property(e => e.EnterDate).HasColumnType("smalldatetime");
+
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.OrgAddress).HasMaxLength(256);
+
+                entity.Property(e => e.OrgCity).HasMaxLength(256);
+
+                entity.Property(e => e.OrgCountry).HasMaxLength(256);
+
+                entity.Property(e => e.OrgDesc).HasMaxLength(256);
+
+                entity.Property(e => e.OrgEmail).HasMaxLength(256);
+
+                entity.Property(e => e.OrgFaxNo).HasMaxLength(256);
+
+                entity.Property(e => e.OrgName).HasMaxLength(256);
+
+                entity.Property(e => e.OrgNtn)
+                    .HasColumnName("OrgNTN")
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.OrgPhNo).HasMaxLength(256);
+
+                entity.Property(e => e.OrgStrn)
+                    .HasColumnName("OrgSTRN")
+                    .HasMaxLength(256);
+            });
+
             modelBuilder.Entity<TxsprojectDetail>(entity =>
             {
                 entity.HasKey(e => new { e.UserName, e.ProId });
@@ -493,8 +613,6 @@ namespace Taxtation.Models
                 entity.ToTable("TXSProjectDetail");
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
-
-                entity.Property(e => e.ProId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.EditBy).HasMaxLength(256);
 
@@ -512,7 +630,11 @@ namespace Taxtation.Models
 
                 entity.Property(e => e.ProDesc).HasMaxLength(450);
 
+                entity.Property(e => e.ProEndDate).HasColumnType("smalldatetime");
+
                 entity.Property(e => e.ProName).HasMaxLength(250);
+
+                entity.Property(e => e.ProStartDate).HasColumnType("smalldatetime");
             });
 
             modelBuilder.Entity<TxssiteDetail>(entity =>

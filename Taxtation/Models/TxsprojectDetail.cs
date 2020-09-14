@@ -16,5 +16,9 @@ namespace Taxtation.Models
         public DateTime? EnterDate { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDate { get; set; }
+        public DateTime? ProStartDate { get; set; }
+        public DateTime? ProEndDate { get; set; }
+        public int? ProOrg { get; set; }
+        public double? ProBudget { get; set; }
     }
 }

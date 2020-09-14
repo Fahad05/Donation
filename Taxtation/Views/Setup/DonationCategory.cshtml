@@ -1,0 +1,72 @@
+﻿@model Taxtation.Models.TxsdonationCategoryDetail
+
+<div style="height:25px;"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            Donation Category Detail
+                            <button type="button" class="close" data-dismiss="modal">
+                                ×
+                            </button>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("DonationCategory", "Setup", FormMethod.Post))
+                        {
+                            <div style="padding-bottom: 10px;">
+                                @Html.ValidationSummary(true)
+                            </div>
+                            <div style="padding-bottom: 10px;">
+                                @if (ViewData["_Save"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Save" id="Save" value="Save" AccessKey="S" class="form-control-btn buttonsizesetup">S̲AVE</button>
+                                }
+                                @if (ViewData["_Update"].ToString() == "True")
+                                {
+                                    <button type="submit" name="Update" id="Update" value="Update" AccessKey="U" class="form-control-btn buttonsizesetup">U̲PDATE</button>
+                                }
+                            </div>
+                            <div>
+                                @Html.TextBoxFor(model => model.DcaId, new { @class = "form-control", @Hidden = "Hidden" })
+                            </div>
+                            <div style="float:right;">
+                                @Html.CheckBox("DcaActive", Model.DcaActive.Value)Active
+                            </div>
+                            <div>
+                                Name<span class="mandatory">*</span>:
+                                @Html.TextBoxFor(model => model.DcaName, new { @class = "form-control", @required = true })
+                            </div>
+                            <div>
+                                Abbriviation<span class="mandatory">*</span>:
+                                @Html.TextBoxFor(model => model.DcaAbbr, new { @class = "form-control", @required = true })
+                            </div>
+                            <div>
+                                Description:
+                                @Html.TextAreaFor(model => model.DcaDesc, new { @class = "form-control textareavertical" })
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script>
+    $("#myModal").on("hidden.bs.modal", function () {
+      //  alert("Modal is closed");
+        window.location.reload();
+    });
+</script>

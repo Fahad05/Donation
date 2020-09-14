@@ -1,0 +1,166 @@
+﻿@model IEnumerable<Taxtation.Models.TxsdonationCategoryDetail>
+
+@{
+    ViewData["Title"] = "showDonationCategory";
+}
+
+
+<div class="MainDiv">
+    <div>
+        <h2>DonationCategory</h2>
+    </div>
+    <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("DonationCategory","Setup")'></div>
+    <div style="float:left;">
+        <button id="btnAddRow" AccessKey="A" style="width:100px;" class="form-control-btn">A̲DD NEW</button>
+    </div>
+    <div style="text-align:right;width:100px;float:left;padding-left:2px;padding-right:1px;">@Html.ActionLink("R̲EPORT", "PrintAllDonationCategory", "Reports", new { }, new { target = "_blank", @class = "form-control-btn", @accesskey = "R" })</div>
+    <div style="float:left;">
+        <a asp-action="Setup" asp-controller="Home" AccessKey="B" class="form-control-btn" style="width:100px;">B̲ACK</a>
+    </div>
+
+    <div style="float:right;">
+        <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name" style="width:330px;">
+    </div>
+</div>
+<div class="GridStyle">
+    <table class="table table-striped" id="myTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th style="display: none;">
+                    User ID
+                </th>
+                <th style="display: none;">
+                    User Name
+                </th>
+                <th style="display: none;">
+                    ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Abbreviation
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Active
+                </th>
+                <th style="display: none;">
+                    Enter By
+                </th>
+                <th>
+                    Enter Date
+                </th>
+                <th style="display: none;">
+                    Edit By
+                </th>
+                <th>
+                    Edit Date
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="white-space:nowrap;">
+                    <td>
+                        <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("DonationCategory","Setup", new { id=item.DcaId })'>Edit</a>
+                    </td>
+                    <td style="display: none;">
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td style="display: none;">
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td style="display: none;">
+                        @Html.DisplayFor(modelItem => item.DcaId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DcaName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DcaAbbr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DcaDesc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DcaActive)
+                    </td>
+                    <td style="display: none;">
+                        @Html.DisplayFor(modelItem => item.EnterBy)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.EnterDate)*@
+                        @Convert.ToString(string.Format("{0:dd-MMM-yyyy hh:mm tt}", item.EnterDate))
+                    </td>
+                    <td style="display: none;">
+                        @Html.DisplayFor(modelItem => item.EditBy)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.EditDate)*@
+                        @Convert.ToString(string.Format("{0:dd-MMM-yyyy hh:mm tt}", item.EditDate))
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnAddRow").click(function () {
+                var url = $('#myModal').data('url');
+                $.get(url, function (data) {
+                    $('#myModal').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $(".btnEdits").click(function (event) {
+                var url = event.target.dataset.url;
+                $.get(url, function (data) {
+                    $('#myModal').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+    </script>
+
+    <script>
+        function myFunction() {
+            debugger;
+            var input, filter, table, tr, td, i, txtValue, j;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            var tds = $('#myTable').children('tbody').children('tr').children('td').length;
+            tds = tds / tr.length;
+            for (i = 1; i < tr.length; i++) {
+                for (j = 0; j < tds; j++) {
+                    td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+}
+

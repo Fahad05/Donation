@@ -1,20 +1,18 @@
-﻿@model IEnumerable<Taxtation.Models.TxstaxDetail>
+﻿@model IEnumerable<Taxtation.Models.TxsdonorDetail>
 
 @{
-    ViewData["Title"] = "showTax";
+    ViewData["Title"] = "showDonor";
 }
-
 <div class="MainDiv">
     <div>
-        <h2>Tax</h2>
+        <h2>Donor</h2>
     </div>
-    <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Tax","Setup")'></div>
+    <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Donor","Setup")'></div>
     <br />
     <div style="float:left;">
         <button id="btnAddRow" style="width:120px;" class="form-control-btn">Add New</button>
     </div>
-    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllTax", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
-
+    <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllDonor", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
     <div style="float:right;">
         <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
     </div>
@@ -31,22 +29,34 @@
                     User Name
                 </th>
                 <th>
-                    Tax Id
-                </th>
-                <th>
-                    Tax Type
-                </th>
-                <th>
-                    Tax Categorey
+                    Type
                 </th>
                 <th>
                     Name
                 </th>
                 <th>
-                    Abbr
+                    Address
                 </th>
                 <th>
-                    Percent
+                    Phone No
+                </th>
+                <th>
+                    Fax No
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Ntn
+                </th>
+                <th>
+                    Strn
+                </th>
+                <th>
+                    City
+                </th>
+                <th>
+                    Country
                 </th>
                 <th>
                     Desc
@@ -66,64 +76,77 @@
                 <th>
                     Edit Date
                 </th>
-
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-            <tr>
-                <td>
-                    <a id="btnEdit" class="form-control-btn-edit btnEdits" data-url='@Url.Action("Tax","Setup", new { id=item.TaxId })'>Edit</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxCategory)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxAbbr)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxPercent)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxDesc)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TaxActive)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EnterBy)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EnterDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EditBy)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EditDate)
-                </td>
+                <tr>
+                    <td>
+                        <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("Donor","Setup", new { id=item.DnrId })'>Edit</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrAddress)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrPhNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrFaxNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrEmail)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrNtn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrStrn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrCity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrCountry)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrDesc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DnrActive)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EnterBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EnterDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditDate)
+                    </td>
+                   
 
-            </tr>
+                </tr>
             }
         </tbody>
     </table>
 </div>
+
 
 @section Scripts{
     <script type="text/javascript">

@@ -1,0 +1,203 @@
+﻿@model IEnumerable<Taxtation.Models.TxsorganizationDetail>
+
+    @{
+        ViewData["Title"] = "showOrganization";
+    }
+    <div class="MainDiv">
+        <div>
+            <h2>Organization</h2>
+        </div>
+        <div class="modal fade" id="myModal" role="dialog" data-url='@Url.Action("Organization","Setup")'></div>
+        <br />
+        <div style="float:left;">
+            <button id="btnAddRow" style="width:120px;" class="form-control-btn">Add New</button>
+        </div>
+        <div style="text-align:right;width:120px;float:left;padding-left:2px;">@Html.ActionLink("Report", "PrintAllOrganization", "Reports", new { }, new { target = "_blank", @class = "form-control-btn" })</div>
+        <div style="float:right;">
+            <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+        </div>
+    </div>
+    <div class="GridStyle">
+        <table class="table table-striped" id="myTable">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        User Name
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Address
+                    </th>
+                    <th>
+                        Phone No
+                    </th>
+                    <th>
+                        Fax No
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Ntn
+                    </th>
+                    <th>
+                        Strn
+                    </th>
+                    <th>
+                        City
+                    </th>
+                    <th>
+                        Country
+                    </th>
+                    <th>
+                        Desc
+                    </th>
+                    <th>
+                        Active
+                    </th>
+                    <th>
+                        Enter By
+                    </th>
+                    <th>
+                        Enter Date
+                    </th>
+                    <th>
+                        Edit By
+                    </th>
+                    <th>
+                        Edit Date
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a id="btnEdit" class="btnEdits form-control-btn-edit" data-url='@Url.Action("Organization","Setup", new { id=item.OrgId })'>Edit</a>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgAddress)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgPhNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgFaxNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgNtn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgStrn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgCity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgCountry)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgDesc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrgActive)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EnterBy)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EnterDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EditBy)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EditDate)
+                        </td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    @section Scripts{
+        <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnAddRow").click(function () {
+                var url = $('#myModal').data('url');
+                $.get(url, function (data) {
+                    $('#myModal').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $(".btnEdits").click(function (event) {
+                var url = event.target.dataset.url;
+                $.get(url, function (data) {
+                    $('#myModal').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+        </script>
+
+        <script>
+        function myFunction() {
+            debugger;
+            var input, filter, table, tr, td, i, txtValue, j;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            var tds = $('#myTable').children('tbody').children('tr').children('td').length;
+            tds = tds / tr.length;
+            for (i = 1; i < tr.length; i++) {
+                for (j = 0; j < tds; j++) {
+                    td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+        </script>
+
+    }

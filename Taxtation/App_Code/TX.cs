@@ -22,14 +22,13 @@ namespace Taxtation.App_Code
                 string subString = max.Substring(3, 8);
                 if (!string.IsNullOrEmpty(max))
                 {
-                    temp = "PM-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                    temp = "PO-" + (Convert.ToInt32(subString) + 1).ToString("D8");
                 }
             }
             catch (Exception ex)
             {
-                temp = "PM-00000001";
+                temp = "PO-00000001";
             }
-
             return temp;
         }
         public string CreditNote(string userName)
@@ -48,7 +47,6 @@ namespace Taxtation.App_Code
             {
                 temp = "CN-00000001";
             }
-
             return temp;
         }
 
@@ -68,7 +66,6 @@ namespace Taxtation.App_Code
             {
                 temp = "DN-00000001";
             }
-
             return temp;
         }
 
@@ -81,14 +78,13 @@ namespace Taxtation.App_Code
                 string subString = max.Substring(3, 8);
                 if (!string.IsNullOrEmpty(max))
                 {
-                    temp = "SM-" + (Convert.ToInt32(subString) + 1).ToString("D8");
+                    temp = "SO-" + (Convert.ToInt32(subString) + 1).ToString("D8");
                 }
             }
             catch (Exception ex)
             {
-                temp = "SM-00000001";
+                temp = "SO-00000001";
             }
-
             return temp;
         }
 
@@ -108,7 +104,6 @@ namespace Taxtation.App_Code
             {
                 temp = "JV-00000001";
             }
-
             return temp;
         }
 
@@ -128,7 +123,6 @@ namespace Taxtation.App_Code
             {
                 temp = "FT-00000001";
             }
-
             return temp;
         }
         public string OpeningDetail(string id, string userName)
@@ -147,7 +141,6 @@ namespace Taxtation.App_Code
             {
                 temp = "OP-00000001";
             }
-
             return temp;
         }
         public string PaymentVoucher(string id, string userName)
@@ -166,8 +159,7 @@ namespace Taxtation.App_Code
             {
                 temp = "PV-00000001";
             }
-            return temp;
-            
+            return temp;            
         }
         public string ReceiptVoucher(string id, string userName)
         {
@@ -186,7 +178,6 @@ namespace Taxtation.App_Code
                 temp = "RV-00000001";
             }
             return temp;
-
         }
 
         public string getParentAccountCodeDetail(string id)
@@ -208,8 +199,6 @@ namespace Taxtation.App_Code
         //{
         //    return db.GltreceiptMaster.Where(x => x.TrtypeAccount == accCode).FirstOrDefault();
         //}
-
-
 
         #region Insert
 

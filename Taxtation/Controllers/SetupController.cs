@@ -950,10 +950,90 @@ namespace Taxtation.Controllers
             return RedirectToAction("showCOA");
         }
 
-       
+
 
         #endregion
 
+
+        //#region Project
+
+        //[HttpGet]
+        //public async Task<IActionResult> showProject()
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (User == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
+        //    List<TxsprojectDetail> lstProj = new List<TxsprojectDetail>();
+        //    lstProj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+        //    return View(lstProj);
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> Project(string id)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (User == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
+        //    if (id == null)
+        //    {
+        //        ViewData["_Save"] = "True";
+        //        ViewData["_Update"] = "False";
+        //        TxsprojectDetail obj = new TxsprojectDetail();
+        //        obj.ProActive = (obj.ProActive == null) ? true : false;
+        //        return PartialView(obj);
+        //    }
+        //    else
+        //    {
+        //        ViewData["_Save"] = "False";
+        //        ViewData["_Update"] = "True";
+        //        TxsprojectDetail obj = new TxsprojectDetail();
+        //        obj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == Convert.ToInt32(id)).FirstOrDefault();
+        //        obj.ProActive = (obj.ProActive == true) ? true : false;
+        //        return PartialView(obj);
+        //    }
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> Project(TxsprojectDetail obj, string ProActive, string Save, string Update)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (User == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
+        //    if (Save != null)
+        //    {
+        //        obj.Id = user.Id;
+        //        obj.UserName = user.UserName;
+        //        obj.ProActive = (ProActive == "true") ? true : false;
+        //        obj.EnterBy = user.UserName;
+        //        obj.EnterDate = System.DateTime.Now;
+        //        db.TxsprojectDetail.Add(obj);
+        //        db.SaveChanges();
+        //    }
+        //    if (Update != null)
+        //    {
+        //        TxsprojectDetail obj1 = new TxsprojectDetail();
+        //        obj1 = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == obj.ProId).FirstOrDefault();
+        //        if (obj1 != null)
+        //        {
+        //            obj1.ProName = obj.ProName;
+        //            obj1.ProAbbr = obj.ProAbbr;
+        //            obj1.ProDesc = obj.ProDesc;
+        //            obj1.ProActive = (ProActive == "true") ? true : false;
+        //            obj1.EditBy = user.UserName;
+        //            obj1.EditDate = System.DateTime.Now;
+        //            db.SaveChanges();
+        //        }
+        //    }
+        //    return RedirectToAction("showProject");
+        //}
+
+        //#endregion
 
         #region Project
 
@@ -978,27 +1058,29 @@ namespace Taxtation.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            TXSProjectDetailView obj = new TXSProjectDetailView();
             if (id == null)
             {
                 ViewData["_Save"] = "True";
                 ViewData["_Update"] = "False";
-                TxsprojectDetail obj = new TxsprojectDetail();
-                obj.ProActive = (obj.ProActive == null) ? true : false;
+
+                obj.lstOrg = db.TxsorganizationDetail.ToList();
+                obj.master.ProActive = (obj.master.ProActive == null) ? true : false;
                 return PartialView(obj);
             }
             else
             {
                 ViewData["_Save"] = "False";
                 ViewData["_Update"] = "True";
-                TxsprojectDetail obj = new TxsprojectDetail();
-                obj = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == Convert.ToInt32(id)).FirstOrDefault();
-                obj.ProActive = (obj.ProActive == true) ? true : false;
+                obj.master = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.lstOrg = db.TxsorganizationDetail.Where(x => x.OrgId == obj.master.ProOrg).ToList();
+                obj.master.ProActive = (obj.master.ProActive == true) ? true : false;
                 return PartialView(obj);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Project(TxsprojectDetail obj, string ProActive, string Save, string Update)
+        public async Task<IActionResult> Project(TXSProjectDetailView obj, string ProActive, string Save, string Update)
         {
             var user = await _userManager.GetUserAsync(User);
             if (User == null)
@@ -1007,23 +1089,27 @@ namespace Taxtation.Controllers
             }
             if (Save != null)
             {
-                obj.Id = user.Id;
-                obj.UserName = user.UserName;
-                obj.ProActive = (ProActive == "true") ? true : false;
-                obj.EnterBy = user.UserName;
-                obj.EnterDate = System.DateTime.Now;
-                db.TxsprojectDetail.Add(obj);
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.ProActive = (ProActive == "true") ? true : false;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = System.DateTime.Now;
+                db.TxsprojectDetail.Add(obj.master);
                 db.SaveChanges();
             }
             if (Update != null)
             {
                 TxsprojectDetail obj1 = new TxsprojectDetail();
-                obj1 = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == obj.ProId).FirstOrDefault();
+                obj1 = db.TxsprojectDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.ProId == obj.master.ProId).FirstOrDefault();
                 if (obj1 != null)
                 {
-                    obj1.ProName = obj.ProName;
-                    obj1.ProAbbr = obj.ProAbbr;
-                    obj1.ProDesc = obj.ProDesc;
+                    obj1.ProName = obj.master.ProName;
+                    obj1.ProAbbr = obj.master.ProAbbr;
+                    obj1.ProDesc = obj.master.ProDesc;
+                    obj1.ProOrg = obj.master.ProOrg;
+                    obj1.ProBudget = obj.master.ProBudget;
+                    obj1.ProStartDate = obj.master.ProStartDate;
+                    obj1.ProEndDate = obj.master.ProEndDate;
                     obj1.ProActive = (ProActive == "true") ? true : false;
                     obj1.EditBy = user.UserName;
                     obj1.EditDate = System.DateTime.Now;
@@ -1035,6 +1121,285 @@ namespace Taxtation.Controllers
 
         #endregion
 
+        #region Donation Category
+
+        public async Task<IActionResult> showDonationCategory()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            HttpContext.Session.SetString("UName", user.UserName);
+            HttpContext.Session.SetString("UId", user.Id);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<TxsdonationCategoryDetail> lstDonationCategory = new List<TxsdonationCategoryDetail>();
+            lstDonationCategory = db.TxsdonationCategoryDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+            return View(lstDonationCategory);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DonationCategory(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+                TxsdonationCategoryDetail obj = new TxsdonationCategoryDetail();
+                obj.DcaActive = (obj.DcaActive == null) ? true : false;
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                TxsdonationCategoryDetail obj = new TxsdonationCategoryDetail();
+                obj = db.TxsdonationCategoryDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.DcaId == Convert.ToInt32(id)).FirstOrDefault();
+                HttpContext.Session.SetInt32("DcaId", Convert.ToInt32(id));
+                obj.DcaActive = (obj.DcaActive == true) ? true : false;
+                return PartialView(obj);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DonationCategory(TxsdonationCategoryDetail obj, string DcaActive, string Save, string Update)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TxsdonationCategoryDetail objcheck = new TxsdonationCategoryDetail();
+            string id = HttpContext.Session.GetString("UId"), name = HttpContext.Session.GetString("UName");
+            int sid = Convert.ToInt32(HttpContext.Session.GetInt32("DcaId"));
+            objcheck = db.TxsdonationCategoryDetail.Where(x => x.Id == id && x.UserName == name && x.DcaId != sid).FirstOrDefault();
+            //objcheck = db.TxssiteDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.SitId != obj.SitId && x.SitDefault == true && obj.SitDefault == true).FirstOrDefault();
+            if (objcheck != null)
+            {
+                return RedirectToAction("showDonationCategory");
+            }
+            else
+            {
+                if (Save != null)
+                {
+                    obj.Id = user.Id;
+                    obj.UserName = user.UserName;
+                    obj.DcaActive = (obj.DcaActive == true) ? true : false;
+                    obj.EnterBy = user.UserName;
+                    obj.EnterDate = System.DateTime.Now;
+                    db.TxsdonationCategoryDetail.Add(obj);
+                    db.SaveChanges();
+                }
+                if (Update != null)
+                {
+                    TxsdonationCategoryDetail obj1 = new TxsdonationCategoryDetail();
+                    obj1 = db.TxsdonationCategoryDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.DcaId == obj.DcaId).FirstOrDefault();
+                    if (obj1 != null)
+                    {
+                        obj1.DcaName = obj.DcaName;
+                        obj1.DcaAbbr = obj.DcaAbbr;
+                        obj1.DcaDesc = obj.DcaDesc;
+                        obj1.DcaActive = (obj.DcaActive == true) ? true : false;
+                        obj1.EditBy = user.UserName;
+                        obj1.EditDate = System.DateTime.Now;
+                        db.SaveChanges();
+                    }
+                }
+                return RedirectToAction("showDonationCategory");
+            }
+        }
+
+
+        #endregion
+
+        #region Donor
+
+        [HttpGet]
+        public async Task<IActionResult> showDonor()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<TxsdonorDetail> lstDonor = new List<TxsdonorDetail>();
+            lstDonor = db.TxsdonorDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+
+            return View(lstDonor);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Donor(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TXSDonorDetailView obj = new TXSDonorDetailView();
+            // obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountNature == "LIABILITY").ToList();
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+
+                obj.lstCountry = db.TxscountryDetail.ToList();
+                obj.master.DnrActive = (obj.master.DnrActive == null) ? true : false;
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                obj.lstCountry = db.TxscountryDetail.ToList();
+                obj.master = db.TxsdonorDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.DnrId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.lstCity = db.TxscityDetail.Where(x => x.CouCode == obj.master.DnrCountry).ToList();
+                obj.master.DnrActive = (obj.master.DnrActive == true) ? true : false;
+                return PartialView(obj);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Donor(TXSDonorDetailView obj, string Save, string Update, string DnrActive)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (Save != null)
+            {
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.DnrActive = (DnrActive == "true") ? true : false;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = System.DateTime.Now;
+                db.TxsdonorDetail.Add(obj.master);
+                db.SaveChanges();
+            }
+            if (Update != null)
+            {
+                TxsdonorDetail obj1 = new TxsdonorDetail();
+                obj1 = db.TxsdonorDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.DnrId == obj.master.DnrId).FirstOrDefault();
+                if (obj1 != null)
+                {
+                    obj1.DnrName = obj.master.DnrName;
+                    obj1.DnrAddress = obj.master.DnrAddress;
+                    obj1.DnrPhNo = obj.master.DnrPhNo;
+                    obj1.DnrFaxNo = obj.master.DnrFaxNo;
+                    obj1.DnrEmail = obj.master.DnrEmail;
+                    obj1.DnrNtn = obj.master.DnrNtn;
+                    obj1.DnrStrn = obj.master.DnrStrn;
+                    obj1.DnrCity = obj.master.DnrCity;
+                    obj1.DnrCountry = obj.master.DnrCountry;
+                    obj1.DnrDesc = obj.master.DnrDesc;
+                    obj1.DnrActive = (DnrActive == "true") ? true : false;
+                    obj1.EditBy = user.UserName;
+                    obj1.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("showDonor");
+        }
+
+        #endregion
+
+        #region Organization
+
+        [HttpGet]
+        public async Task<IActionResult> showOrganization()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            List<TxsorganizationDetail> lstOrganization = new List<TxsorganizationDetail>();
+            lstOrganization = db.TxsorganizationDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName).ToList();
+
+            return View(lstOrganization);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Organization(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            TXSOrganizationDetailView obj = new TXSOrganizationDetailView();
+            // obj.lstAccount = db.Txscoadetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.AccAccountNature == "LIABILITY").ToList();
+            if (id == null)
+            {
+                ViewData["_Save"] = "True";
+                ViewData["_Update"] = "False";
+
+                obj.lstCountry = db.TxscountryDetail.ToList();
+                obj.master.OrgActive = (obj.master.OrgActive == null) ? true : false;
+                return PartialView(obj);
+            }
+            else
+            {
+                ViewData["_Save"] = "False";
+                ViewData["_Update"] = "True";
+                obj.lstCountry = db.TxscountryDetail.ToList();
+                obj.master = db.TxsorganizationDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.OrgId == Convert.ToInt32(id)).FirstOrDefault();
+                obj.lstCity = db.TxscityDetail.Where(x => x.CouCode == obj.master.OrgCountry).ToList();
+                obj.master.OrgActive = (obj.master.OrgActive == true) ? true : false;
+                return PartialView(obj);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Organization(TXSOrganizationDetailView obj, string Save, string Update, string OrgActive)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (User == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            if (Save != null)
+            {
+                obj.master.Id = user.Id;
+                obj.master.UserName = user.UserName;
+                obj.master.OrgActive = (OrgActive == "true") ? true : false;
+                obj.master.EnterBy = user.UserName;
+                obj.master.EnterDate = System.DateTime.Now;
+                db.TxsorganizationDetail.Add(obj.master);
+                db.SaveChanges();
+            }
+            if (Update != null)
+            {
+                TxsorganizationDetail obj1 = new TxsorganizationDetail();
+                obj1 = db.TxsorganizationDetail.Where(x => x.Id == user.Id && x.UserName == user.UserName && x.OrgId == obj.master.OrgId).FirstOrDefault();
+                if (obj1 != null)
+                {
+                    obj1.OrgName = obj.master.OrgName;
+                    obj1.OrgAddress = obj.master.OrgAddress;
+                    obj1.OrgPhNo = obj.master.OrgPhNo;
+                    obj1.OrgFaxNo = obj.master.OrgFaxNo;
+                    obj1.OrgEmail = obj.master.OrgEmail;
+                    obj1.OrgNtn = obj.master.OrgNtn;
+                    obj1.OrgStrn = obj.master.OrgStrn;
+                    obj1.OrgCity = obj.master.OrgCity;
+                    obj1.OrgCountry = obj.master.OrgCountry;
+                    obj1.OrgDesc = obj.master.OrgDesc;
+                    obj1.OrgActive = (OrgActive == "true") ? true : false;
+                    obj1.EditBy = user.UserName;
+                    obj1.EditDate = System.DateTime.Now;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("showOrganization");
+        }
+
+        #endregion
 
 
         [HttpGet]
